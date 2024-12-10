@@ -1,0 +1,261 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   14.6 — Access functions
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   In previous lesson
+   <a href="https://www.learncpp.com/cpp-tutorial/public-and-private-members-and-access-specifiers/">
+    14.5 -- Public and private members and access specifiers
+   </a>
+   , we discussed the public and private access levels.  As a reminder, classes typically make their data members private, and private members can not be directly accessed by the public.
+  </p>
+  <p>
+   Consider the following
+   <code>
+    Date
+   </code>
+   class:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Date
+{
+private:
+    int m_year{ 2020 };
+    int m_month{ 10 };
+    int m_day{ 14 };
+
+public:
+    void print() const
+    {
+        std::cout &lt;&lt; m_year &lt;&lt; '/' &lt;&lt; m_month &lt;&lt; '/' &lt;&lt; m_day &lt;&lt; '\n';
+    }
+};
+
+int main()
+{
+    Date d{};  // create a Date object
+    d.print(); // print the date
+
+    return 0;
+}</code></pre>
+  <p>
+   While this class provides a
+   <code>
+    print()
+   </code>
+   member function to print the entire date, this may not be sufficient for what the user wants to do.  For example, what if the user of a
+   <code>
+    Date
+   </code>
+   object wanted to get the year?  Or to change the year to a different value?  They would be unable to do so, as
+   <code>
+    m_year
+   </code>
+   is private (and thus can’t be directly accessed by the public).
+  </p>
+  <p>
+   For some classes, it can be appropriate (in the context of what the class does) for us to be able to get or set the value of a private member variable.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Access functions
+  </p>
+  <p>
+   An
+   <strong>
+    access function
+   </strong>
+   is a trivial public member function whose job is to retrieve or change the value of a private member variable.
+  </p>
+  <p>
+   Access functions come in two flavors: getters and setters.
+   <strong>
+    Getters
+   </strong>
+   (also sometimes called
+   <strong>
+    accessors
+   </strong>
+   ) are public member functions that return the value of a private member variable.
+   <strong>
+    Setters
+   </strong>
+   (also sometimes called
+   <strong>
+    mutators
+   </strong>
+   ) are public member functions that set the value of a private member variable.
+  </p>
+  <p>
+   Getters are usually made const, so they can be called on both const and non-const objects.  Setters should be non-const, so they can modify the data members.
+  </p>
+  <p>
+   For illustrative purposes, let’s update our
+   <code>
+    Date
+   </code>
+   class to have a full set of getters and setters:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Date
+{
+private:
+    int m_year { 2020 };
+    int m_month { 10 };
+    int m_day { 14 };
+
+public:
+    void print()
+    {
+        std::cout &lt;&lt; m_year &lt;&lt; '/' &lt;&lt; m_month &lt;&lt; '/' &lt;&lt; m_day &lt;&lt; '\n';
+    }
+
+    int getYear() const { return m_year; }        // getter for year
+    void setYear(int year) { m_year = year; }     // setter for year
+
+    int getMonth() const  { return m_month; }     // getter for month
+    void setMonth(int month) { m_month = month; } // setter for month
+
+    int getDay() const { return m_day; }          // getter for day
+    void setDay(int day) { m_day = day; }         // setter for day
+};
+
+int main()
+{
+    Date d{};
+    d.setYear(2021);
+    std::cout &lt;&lt; "The year is: " &lt;&lt; d.getYear() &lt;&lt; '\n';
+
+    return 0;
+}</code></pre>
+  <p>
+   This prints:
+  </p>
+  <pre>The year is: 2021
+</pre>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Access function naming
+  </p>
+  <p>
+   There is no common convention for naming access functions.  However, there are a few naming conventions that are more popular than others.
+  </p>
+  <ul>
+   <li>
+    Prefixed with “get” and “set”:
+   </li>
+  </ul>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">    int getDay() const { return m_day; }  // getter
+    void setDay(int day) { m_day = day; } // setter</code></pre>
+  <p>
+   The advantage of using “get” and “set” prefixes is that it makes it clear that these are access functions (and should be inexpensive to call).
+  </p>
+  <ul>
+   <li>
+    No prefix:
+   </li>
+  </ul>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">    int day() const { return m_day; }  // getter
+    void day(int day) { m_day = day; } // setter</code></pre>
+  <p>
+   This style is more concise, and uses the same name for both the getter and setter (relying on function overloading to differentiate the two).  The C++ standard library uses this convention.
+  </p>
+  <p>
+   The downside of the no-prefix convention is that it is not particularly obvious that this is setting the value of the day member:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">d.day(5); // does this look like it's setting the day member to 5?</code></pre>
+  <div class="cpp-note cpp-lightbluebackground">
+   <p class="cpp-note-title cpp-bottomline">
+    Key insight
+   </p>
+   <p>
+    One of the best reasons to prefix private data members with “m_” is to avoid having data members and getters with the same name (something C++ doesn’t support, although other languages like Java do).
+   </p>
+  </div>
+  <ul>
+   <li>
+    “set” prefix only:
+   </li>
+  </ul>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">    int day() const { return m_day; }     // getter
+    void setDay(int day) { m_day = day; } // setter</code></pre>
+  <p>
+   Which of the above you choose is a matter of personal preference.  However, we highly recommend using the “set” prefix for setters.  Getters can use either a “get” prefix or no prefix.
+  </p>
+  <div class="cpp-note cpp-lightbluebackground">
+   <p class="cpp-note-title cpp-bottomline">
+    Tip
+   </p>
+   <p>
+    Use a “set” prefix on your setters to make it more obvious that they are changing the state of the object.
+   </p>
+  </div>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Getters should return by value or by const lvalue reference
+  </p>
+  <p>
+   Getters should provide “read-only” access to data.  Therefore, the best practice is that they should return by either value (if making a copy of the member is inexpensive) or by const lvalue reference (if making a copy of the member is expensive).
+  </p>
+  <p>
+   Because returning data members by reference is a non-trivial topic, we’ll cover that topic in more detail in lesson
+   <a href="https://www.learncpp.com/cpp-tutorial/member-functions-returning-references-to-data-members/">
+    14.7 -- Member functions returning references to data members
+   </a>
+   .
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Access functions concerns
+  </p>
+  <p>
+   There is a fair bit of discussion around cases in which access functions should be used or avoided.  Many developers would argue that use of access functions violates good class design (a topic that could easily fill an entire book).
+  </p>
+  <p>
+   For now, we’ll recommend a pragmatic approach.  As you create your classes, consider the following:
+  </p>
+  <ul>
+   <li>
+    If your class has no invariants and requires a lot of access functions, consider using a struct (whose data members are public) and providing direct access to members instead.
+   </li>
+   <li>
+    Prefer implementing behaviors or actions instead of access functions.  For example, instead of a
+    <code>
+     setAlive(bool)
+    </code>
+    setter, implement a
+    <code>
+     kill()
+    </code>
+    and a
+    <code>
+     revive()
+    </code>
+    function.
+   </li>
+   <li>
+    Only provide access functions in cases where the public would reasonably need to get or set the value of an individual member.
+   </li>
+  </ul>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Why make data private if we’re going to provide a public access function to it?
+  </p>
+  <p>
+   So glad you asked.  We’ll answer this question in upcoming lesson
+   <a href="https://www.learncpp.com/cpp-tutorial/the-benefits-of-data-hiding-encapsulation/">
+    14.8 -- The benefits of data hiding (encapsulation)
+   </a>
+   .
+  </p>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

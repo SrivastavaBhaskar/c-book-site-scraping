@@ -1,0 +1,217 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <h1 class="entry-title singular-title" itemprop="headline">
+   7.1 — Compound statements (blocks)
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   A
+   <strong>
+    compound statement
+   </strong>
+   (also called a
+   <strong>
+    block
+   </strong>
+   , or
+   <strong>
+    block statement
+   </strong>
+   ) is a group of
+   <em>
+    zero or more statements
+   </em>
+   that is treated by the compiler as if it were a single statement.
+   <p>
+    Blocks begin with a
+    <code>
+     {
+    </code>
+    symbol, end with a
+    <code>
+     }
+    </code>
+    symbol, with the statements to be executed being placed in between. Blocks can be used anywhere a single statement is allowed. No semicolon is needed at the end of a block.
+    <p>
+     You have already seen an example of blocks when writing functions, as the function body is a block:
+     <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int add(int x, int y)
+{ // start block
+    return x + y;
+} // end block (no semicolon)
+
+int main()
+{ // start block
+
+    // multiple statements
+    int value {}; // this is initialization, not a block
+    add(3, 4);
+
+    return 0;
+
+} // end block (no semicolon)</code></pre>
+     <p class="cpp-section cpp-topline" style="clear:both">
+      Blocks inside other blocks
+      <p>
+       Although functions can’t be nested inside other functions, blocks
+       <em>
+        can be
+       </em>
+       nested inside other blocks:
+       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int add(int x, int y)
+{ // block
+    return x + y;
+} // end block
+
+int main()
+{ // outer block
+
+    // multiple statements
+    int value {};
+
+    { // inner/nested block
+        add(3, 4);
+    } // end inner/nested block
+
+    return 0;
+
+} // end outer block</code></pre>
+       <p>
+        When blocks are nested, the enclosing block is typically called the
+        <strong>
+         outer block
+        </strong>
+        and the enclosed block is called the
+        <strong>
+         inner block
+        </strong>
+        or
+        <strong>
+         nested block
+        </strong>
+        .
+        <p class="cpp-section cpp-topline" style="clear:both">
+         Using blocks to execute multiple statements conditionally
+         <p>
+          One of the most common use cases for blocks is in conjunction with
+          <code>
+           if statements
+          </code>
+          . By default, an
+          <code>
+           if statement
+          </code>
+          executes a single statement if the condition evaluates to
+          <code>
+           true
+          </code>
+          . However, we can replace this single statement with a block of statements if we want multiple statements to execute when the condition evaluates to
+          <code>
+           true
+          </code>
+          .
+          <p>
+           For example:
+           <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int main()
+{ // start of outer block
+    std::cout &lt;&lt; "Enter an integer: ";
+    int value {};
+    std::cin &gt;&gt; value;
+    
+    if (value &gt;= 0)
+    { // start of nested block
+        std::cout &lt;&lt; value &lt;&lt; " is a positive integer (or zero)\n";
+        std::cout &lt;&lt; "Double this number is " &lt;&lt; value * 2 &lt;&lt; '\n';
+    } // end of nested block
+    else
+    { // start of another nested block
+        std::cout &lt;&lt; value &lt;&lt; " is a negative integer\n";
+        std::cout &lt;&lt; "The positive of this number is " &lt;&lt; -value &lt;&lt; '\n';
+    } // end of another nested block
+
+    return 0;
+} // end of outer block</code></pre>
+           <p>
+            If the user enters the number 3, this program prints:
+            <pre>Enter an integer: 3
+3 is a positive integer (or zero)
+Double this number is 6
+</pre>
+            <p>
+             If the user enters the number -4, this program prints:
+             <pre>Enter an integer: -4
+-4 is a negative integer
+The positive of this number is 4
+</pre>
+             <p class="cpp-section cpp-topline" style="clear:both">
+              Block nesting levels
+              <p>
+               It is even possible to put blocks inside of blocks inside of blocks:
+               <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int main()
+{ // block 1, nesting level 1
+    std::cout &lt;&lt; "Enter an integer: ";
+    int value {};
+    std::cin &gt;&gt; value;
+    
+    if (value &gt;  0)
+    { // block 2, nesting level 2
+        if ((value % 2) == 0)
+        { // block 3, nesting level 3
+            std::cout &lt;&lt; value &lt;&lt; " is positive and even\n";
+        }
+        else
+        { // block 4, also nesting level 3
+            std::cout &lt;&lt; value &lt;&lt; " is positive and odd\n";
+        }
+    }
+
+    return 0;
+}</code></pre>
+               <p>
+                The
+                <strong>
+                 nesting level
+                </strong>
+                (also called the
+                <strong>
+                 nesting depth
+                </strong>
+                ) of a function is the maximum number of nested blocks you can be inside at any point in the function (including the outer block). In the above function, there are 4 blocks, but the nesting level is 3 since in this program you can never be inside more than 3 blocks at any point.
+                <p>
+                 The C++ standard says that C++ compilers should support 256 levels of nesting -- however not all do (e.g. as of the time of writing, Visual Studio supports fewer).
+                 <p>
+                  It’s a good idea to keep your nesting level to 3 or less. Just as overly-long functions are good candidates for refactoring (breaking into smaller functions), overly-nested blocks are hard to read and are good candidates for refactoring (with the most-nested blocks becoming separate functions).
+                  <div class="cpp-note cpp-lightgreenbackground">
+                   <p class="cpp-note-title cpp-bottomline">
+                    Best practice
+                    <p>
+                     Keep the nesting level of your functions to 3 or less. If your function has a need for more nested levels, consider refactoring your function into sub-functions.
+                    </p>
+                   </p>
+                  </div>
+                 </p>
+                </p>
+               </p>
+              </p>
+             </p>
+            </p>
+           </p>
+          </p>
+         </p>
+        </p>
+       </p>
+      </p>
+     </p>
+    </p>
+   </p>
+  </p>
+ </div>
+</div>

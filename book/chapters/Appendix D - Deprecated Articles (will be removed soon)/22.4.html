@@ -1,0 +1,274 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   22.4 — std::string character access and conversion to C-style arrays
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   <strong>
+    Character access
+   </strong>
+  </p>
+  <p>
+   There are two almost identical ways to access characters in a string.  The easier to use and faster version is the overloaded operator[]:
+  </p>
+  <div class="cpp-table-wrapper">
+   <p>
+   </p>
+   <p>
+   </p>
+   <table class="cpp-table">
+    <tbody>
+     <tr>
+      <td>
+       <b>
+        char&amp; string::operator[] (size_type nIndex)
+       </b>
+       <br/>
+       <b>
+        const char&amp; string::operator[] (size_type nIndex) const
+       </b>
+       <p>
+       </p>
+       <ul>
+        <li>
+         Both of these functions return the character with index nIndex
+        </li>
+        <li>
+         Passing an invalid index results in undefined behavior
+        </li>
+        <li>
+         Because char&amp; is the return type, you can use this to edit characters in the array
+        </li>
+       </ul>
+       <p>
+        Sample code:
+       </p>
+       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::string sSource{ "abcdefg" };
+std::cout &lt;&lt; sSource[5] &lt;&lt; '\n';
+sSource[5] = 'X';
+std::cout &lt;&lt; sSource &lt;&lt; '\n';</code></pre>
+       <p>
+        Output:
+       </p>
+       <pre>f
+abcdeXg
+</pre>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <p>
+   There is also a non-operator version.  This version is slower since it uses exceptions to check if the nIndex is valid.  If you are not sure whether nIndex is valid, you should use this version to access the array:
+  </p>
+  <div class="cpp-table-wrapper">
+   <p>
+   </p>
+   <p>
+   </p>
+   <table class="cpp-table">
+    <tbody>
+     <tr>
+      <td>
+       <b>
+        char&amp; string::at (size_type nIndex)
+       </b>
+       <br/>
+       <b>
+        const char&amp; string::at (size_type nIndex) const
+       </b>
+       <p>
+       </p>
+       <ul>
+        <li>
+         Both of these functions return the character with index nIndex
+        </li>
+        <li>
+         Passing an invalid index results in an out_of_range exception
+        </li>
+        <li>
+         Because char&amp; is the return type, you can use this to edit characters in the array
+        </li>
+       </ul>
+       <p>
+        Sample code:
+       </p>
+       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::string sSource{ "abcdefg" };
+std::cout &lt;&lt; sSource.at(5) &lt;&lt; '\n';
+sSource.at(5) = 'X';
+std::cout &lt;&lt; sSource &lt;&lt; '\n';</code></pre>
+       <p>
+        Output:
+       </p>
+       <pre>f
+abcdeXg
+</pre>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <p>
+   <strong>
+    Conversion to C-style arrays
+   </strong>
+  </p>
+  <p>
+   Many functions (including all C functions) expect strings to be formatted as C-style strings rather than std::string.  For this reason, std::string provides 3 different ways to convert std::string to C-style strings.
+  </p>
+  <div class="cpp-table-wrapper">
+   <p>
+   </p>
+   <p>
+   </p>
+   <table class="cpp-table">
+    <tbody>
+     <tr>
+      <td>
+       <b>
+        const char* string::c_str () const
+       </b>
+       <p>
+       </p>
+       <ul>
+        <li>
+         Returns the contents of the string as a const C-style string
+        </li>
+        <li>
+         A null terminator is appended
+        </li>
+        <li>
+         The C-style string is owned by the std::string and should not be deleted
+        </li>
+       </ul>
+       <p>
+        Sample code:
+       </p>
+       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;cstring&gt;
+
+std::string sSource{ "abcdefg" };
+std::cout &lt;&lt; std::strlen(sSource.c_str());</code></pre>
+       <p>
+        Output:
+       </p>
+       <pre>7
+</pre>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <div class="cpp-table-wrapper">
+   <p>
+   </p>
+   <p>
+   </p>
+   <table class="cpp-table">
+    <tbody>
+     <tr>
+      <td>
+       <b>
+        const char* string::data () const
+       </b>
+       <p>
+       </p>
+       <ul>
+        <li>
+         Returns the contents of the string as a const C-style string
+        </li>
+        <li>
+         A null terminator is appended. This function performs the same action as
+         <code>
+          c_str()
+         </code>
+        </li>
+        <li>
+         The C-style string is owned by the std::string and should not be deleted
+        </li>
+       </ul>
+       <p>
+        Sample code:
+       </p>
+       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;cstring&gt;
+
+std::string sSource{ "abcdefg" };
+const char* szString{ "abcdefg" };
+// memcmp compares the first n characters of two C-style strings and returns 0 if they are equal
+if (std::memcmp(sSource.data(), szString, sSource.length()) == 0)
+    std::cout &lt;&lt; "The strings are equal";
+else
+    std::cout &lt;&lt; "The strings are not equal";</code></pre>
+       <p>
+        Output:
+       </p>
+       <pre>The strings are equal
+</pre>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <div class="cpp-table-wrapper">
+   <p>
+   </p>
+   <p>
+   </p>
+   <table class="cpp-table">
+    <tbody>
+     <tr>
+      <td>
+       <b>
+        size_type string::copy(char* szBuf, size_type nLength, size_type nIndex = 0) const
+       </b>
+       <p>
+       </p>
+       <ul>
+        <li>
+         Both flavors copy at most nLength characters of the string to szBuf, beginning with character nIndex
+        </li>
+        <li>
+         The number of characters copied is returned
+        </li>
+        <li>
+         No null is appended.  It is up to the caller to ensure szBuf is initialized to NULL or terminate the string using the returned length
+        </li>
+        <li>
+         The caller is responsible for not overflowing szBuf
+        </li>
+       </ul>
+       <p>
+        Sample code:
+       </p>
+       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::string sSource{ "sphinx of black quartz, judge my vow" };
+
+char szBuf[20];
+int nLength{ static_cast&lt;int&gt;(sSource.copy(szBuf, 5, 10)) };
+szBuf[nLength] = '\0';  // Make sure we terminate the string in the buffer
+
+std::cout &lt;&lt; szBuf &lt;&lt; '\n';</code></pre>
+       <p>
+        Output:
+       </p>
+       <pre>black
+</pre>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <p>
+   This function should be avoided where possible as it is relatively dangerous (as it is up to the caller to provide null-termination and avoid buffer overflows).
+  </p>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

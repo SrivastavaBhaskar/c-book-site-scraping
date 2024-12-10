@@ -1,0 +1,169 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <h1 class="entry-title singular-title" itemprop="headline">
+   28.4 — Stream classes for strings
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   So far, all of the I/O examples you have seen have been writing to cout or reading from cin. However, there is another set of classes called the stream classes for strings that allow you to use the familiar insertions (&lt;&lt;) and extraction (&gt;&gt;) operators to work with strings. Like istream and ostream, the string streams provide a buffer to hold data. However, unlike cin and cout, these streams are not connected to an I/O channel (such as a keyboard, monitor, etc…). One of the primary uses of string streams is to buffer output for display at a later time, or to process input line-by-line.
+   <p>
+    There are six stream classes for strings: istringstream (derived from istream), ostringstream (derived from ostream), and stringstream (derived from iostream) are used for reading and writing normal characters width strings. wistringstream, wostringstream, and wstringstream are used for reading and writing wide character strings. To use the stringstreams, you need to #include the sstream header.
+    <p>
+     There are two ways to get data into a stringstream:
+     <ol start="1">
+      <li>
+       Use the insertion (&lt;&lt;) operator:
+      </li>
+     </ol>
+     <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::stringstream os {};
+os &lt;&lt; "en garde!\n"; // insert "en garde!" into the stringstream</code></pre>
+     <ol start="2">
+      <li>
+       Use the str(string) function to set the value of the buffer:
+      </li>
+     </ol>
+     <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::stringstream os {};
+os.str("en garde!"); // set the stringstream buffer to "en garde!"</code></pre>
+     <p>
+      There are similarly two ways to get data out of a stringstream:
+      <ol start="1">
+       <li>
+        Use the str() function to retrieve the results of the buffer:
+       </li>
+      </ol>
+      <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::stringstream os {};
+os &lt;&lt; "12345 67.89\n";
+std::cout &lt;&lt; os.str();</code></pre>
+      <p>
+       This prints:
+       <pre>12345 67.89
+</pre>
+       <ol start="2">
+        <li>
+         Use the extraction (&gt;&gt;) operator:
+        </li>
+       </ol>
+       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::stringstream os {};
+os &lt;&lt; "12345 67.89"; // insert a string of numbers into the stream
+
+std::string strValue {};
+os &gt;&gt; strValue;
+
+std::string strValue2 {};
+os &gt;&gt; strValue2;
+
+// print the numbers separated by a dash
+std::cout &lt;&lt; strValue &lt;&lt; " - " &lt;&lt; strValue2 &lt;&lt; '\n';</code></pre>
+       <p>
+        This program prints:
+        <pre>12345 - 67.89
+</pre>
+        <p>
+         Note that the &gt;&gt; operator iterates through the string -- each successive use of &gt;&gt; returns the next extractable value in the stream. On the other hand, str() returns the whole value of the stream, even if the &gt;&gt; has already been used on the stream.
+         <p>
+          <strong>
+           Conversion between strings and numbers
+          </strong>
+          <p>
+           Because the insertion and extraction operators know how to work with all of the basic data types, we can use them in order to convert strings to numbers or vice versa.
+           <p>
+            First, let’s take a look at converting numbers into a string:
+            <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::stringstream os {};
+
+constexpr int nValue { 12345 };
+constexpr double dValue { 67.89 };
+os &lt;&lt; nValue &lt;&lt; ' ' &lt;&lt; dValue;
+
+std::string strValue1, strValue2;
+os &gt;&gt; strValue1 &gt;&gt; strValue2;
+
+std::cout &lt;&lt; strValue1 &lt;&lt; ' ' &lt;&lt; strValue2 &lt;&lt; '\n';</code></pre>
+            <p>
+             This snippet prints:
+             <pre>12345 67.89
+</pre>
+             <p>
+              Now let’s convert a numerical string to a number:
+              <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::stringstream os {};
+os &lt;&lt; "12345 67.89"; // insert a string of numbers into the stream
+int nValue {};
+double dValue {};
+
+os &gt;&gt; nValue &gt;&gt; dValue;
+
+std::cout &lt;&lt; nValue &lt;&lt; ' ' &lt;&lt; dValue &lt;&lt; '\n';</code></pre>
+              <p>
+               This program prints:
+               <pre>12345 67.89
+</pre>
+               <p>
+                <strong>
+                 Clearing a stringstream for reuse
+                </strong>
+                <p>
+                 There are several ways to empty a stringstream’s buffer.
+                 <ol start="1">
+                  <li>
+                   Set it to the empty string using str() with a blank C-style string:
+                  </li>
+                 </ol>
+                 <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::stringstream os {};
+os &lt;&lt; "Hello ";
+
+os.str(""); // erase the buffer
+
+os &lt;&lt; "World!";
+std::cout &lt;&lt; os.str();</code></pre>
+                 <ol start="2">
+                  <li>
+                   Set it to the empty string using str() with a blank std::string object:
+                  </li>
+                 </ol>
+                 <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::stringstream os {};
+os &lt;&lt; "Hello ";
+
+os.str(std::string{}); // erase the buffer
+
+os &lt;&lt; "World!";
+std::cout &lt;&lt; os.str();</code></pre>
+                 <p>
+                  Both of these programs produce the following result:
+                  <pre>World!
+</pre>
+                  <p>
+                   When clearing out a stringstream, it is also generally a good idea to call the clear() function:
+                   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::stringstream os {};
+os &lt;&lt; "Hello ";
+
+os.str(""); // erase the buffer
+os.clear(); // reset error flags
+
+os &lt;&lt; "World!";
+std::cout &lt;&lt; os.str();</code></pre>
+                   <p>
+                    clear() resets any error flags that may have been set and returns the stream back to the ok state. We will talk more about the stream state and error flags in the next lesson.
+                   </p>
+                  </p>
+                 </p>
+                </p>
+               </p>
+              </p>
+             </p>
+            </p>
+           </p>
+          </p>
+         </p>
+        </p>
+       </p>
+      </p>
+     </p>
+    </p>
+   </p>
+  </p>
+ </div>
+</div>

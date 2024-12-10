@@ -1,0 +1,408 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   10.x — Chapter 10 summary and quiz
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   Great job making it this far.  The standard conversion rules are pretty complex -- don’t worry if you don’t understand every nuance.
+  </p>
+  <p class="cpp-section">
+   Chapter Review
+  </p>
+  <p>
+   The process of converting a value from one data type to another data type is called a
+   <strong>
+    type conversion
+   </strong>
+   .
+  </p>
+  <p>
+   <strong>
+    Implicit type conversion
+   </strong>
+   (also called
+   <strong>
+    automatic type conversion
+   </strong>
+   or
+   <strong>
+    coercion
+   </strong>
+   ) is performed whenever one data type is expected, but a different data type is supplied. If the compiler can figure out how to do the conversion between the two types, it will. If it doesn’t know how, then it will fail with a compile error.
+  </p>
+  <p>
+   The C++ language defines a number of built-in conversions between its fundamental types (as well as a few conversions for more advanced types) called
+   <strong>
+    standard conversions
+   </strong>
+   .  These include numeric promotions, numeric conversions, and arithmetic conversions.
+  </p>
+  <p>
+   A
+   <strong>
+    numeric promotion
+   </strong>
+   is the conversion of certain smaller numeric types to certain larger numeric types (typically
+   <code>
+    int
+   </code>
+   or
+   <code>
+    double
+   </code>
+   ), so that the CPU can operate on data that matches the natural data size for the processor.  Numeric promotions include both integral promotions and floating-point promotions.  Numeric promotions are
+   <strong>
+    value-preserving
+   </strong>
+   , meaning there is no loss of value or precision.  Not all widening conversions are promotions.
+  </p>
+  <p>
+   A
+   <strong>
+    numeric conversion
+   </strong>
+   is a type conversion between fundamental types that isn’t a numeric promotion.  A
+   <strong>
+    narrowing conversion
+   </strong>
+   is a numeric conversion that may result in the loss of value or precision.
+  </p>
+  <p>
+   In C++, certain binary operators require that their operands be of the same type. If operands of different types are provided, one or both of the operands will be implicitly converted to matching types using a set of rules called the
+   <strong>
+    usual arithmetic conversions
+   </strong>
+   .
+  </p>
+  <p>
+   <strong>
+    Explicit type conversion
+   </strong>
+   is performed when the programmer explicitly requests conversion via a cast.  A
+   <strong>
+    cast
+   </strong>
+   represents a request by the programmer to do an explicit type conversion.  C++ supports 5 types of casts:
+   <code>
+    C-style casts
+   </code>
+   ,
+   <code>
+    static casts
+   </code>
+   ,
+   <code>
+    const casts
+   </code>
+   ,
+   <code>
+    dynamic casts
+   </code>
+   , and
+   <code>
+    reinterpret casts
+   </code>
+   .  Generally you should avoid
+   <code>
+    C-style casts
+   </code>
+   ,
+   <code>
+    const casts
+   </code>
+   , and
+   <code>
+    reinterpret casts
+   </code>
+   .
+   <code>
+    static_cast
+   </code>
+   is used to convert a value from one type to a value of another type, and is by far the most used cast in C++.
+  </p>
+  <p>
+   <strong>
+    Typedefs
+   </strong>
+   and
+   <strong>
+    type aliases
+   </strong>
+   allow the programmer to create an alias for a data type.  These aliases are not new types, and act identically to the aliased type.  Typedefs and type aliases do not provide any kind of type safety, and care needs to be taken to not assume the alias is different than the type it is aliasing.
+  </p>
+  <p>
+   The
+   <strong>
+    auto
+   </strong>
+   keyword has a number of uses.  First, auto can be used to do
+   <strong>
+    type deduction
+   </strong>
+   (also called
+   <strong>
+    type inference
+   </strong>
+   ), which will deduce a variable’s type from its initializer.  Type deduction drops const and references, so be sure to add those back if you want them.
+  </p>
+  <p>
+   Auto can also be used as a function return type to have the compiler infer the function’s return type from the function’s return statements, though this should be avoided for normal functions.  Auto is used as part of the
+   <strong>
+    trailing return syntax
+   </strong>
+   .
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Quiz time
+  </p>
+  <p class="cpp-quiz-question" style="clear: both">
+   Question #1
+  </p>
+  <p>
+   What type of conversion happens in each of the following cases?  Valid answers are: No conversion needed, numeric promotion, numeric conversion, won’t compile due to narrowing conversion.  Assume
+   <code>
+    int
+   </code>
+   and
+   <code>
+    long
+   </code>
+   are both 4 bytes.
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    int a { 5 }; // 1a
+    int b { 'a' }; // 1b
+    int c { 5.4 }; // 1c
+    int d { true }; // 1d
+    int e { static_cast&lt;int&gt;(5.4) }; // 1e
+
+    double f { 5.0f }; // 1f
+    double g { 5 }; // 1g
+
+    // Extra credit section
+    long h { 5 }; // 1h
+
+    float i { f }; // 1i (uses previously defined variable f)
+    float j { 5.0 }; // 1j
+
+}</code></pre>
+  <p>
+   1a)
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_0'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_0" style="display:none">
+   No conversion needed
+  </div>
+  <p>
+   1b)
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_1'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_1" style="display:none">
+   Numeric promotion of char ‘a’ to int
+  </div>
+  <p>
+   1c)
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_2'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_2" style="display:none">
+   Won’t compile due to narrowing conversion
+  </div>
+  <p>
+   1d)
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_3'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_3" style="display:none">
+   Numeric promotion of bool true to int
+  </div>
+  <p>
+   1e)
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_4'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_4" style="display:none">
+   Numeric conversion of double 5.4 to int
+  </div>
+  <p>
+   1f)
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_5'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_5" style="display:none">
+   Numeric promotion of float to double
+  </div>
+  <p>
+   1g)
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_6'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_6" style="display:none">
+   Numeric conversion of int to double
+  </div>
+  <p>
+   1h)
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_7'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_7" style="display:none">
+   Numeric conversion of int to long (this conversion is trivial, but it’s still a conversion)
+  </div>
+  <p>
+   1i)
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_8'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_8" style="display:none">
+   Won’t compile due to narrowing conversion from double to float
+  </div>
+  <p>
+   1j)
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_9'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_9" style="display:none">
+   Numeric conversion of double to float (this is allowed since 5.0 is constexpr and fits in the range of the float)
+  </div>
+  <p class="cpp-quiz-question cpp-topline" style="clear: both">
+   Question #2
+  </p>
+  <p>
+   2a) Update the following program to use type aliases for degrees and radians values:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+namespace constants
+{
+    constexpr double pi { 3.14159 };
+}
+
+double convertToRadians(double degrees)
+{
+    return degrees * constants::pi / 180;
+}
+
+int main()
+{
+    std::cout &lt;&lt; "Enter a number of degrees: ";
+    double degrees{};
+    std::cin &gt;&gt; degrees;
+
+    double radians { convertToRadians(degrees) };
+    std::cout &lt;&lt; degrees &lt;&lt; " degrees is " &lt;&lt; radians &lt;&lt; " radians.\n";
+
+    return 0;
+}</code></pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_10'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_10" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+namespace constants
+{
+    constexpr double pi{ 3.14159 };
+}
+
+using Degrees = double;
+using Radians = double;
+
+Radians convertToRadians(Degrees degrees)
+{
+    return degrees * constants::pi / 180;
+}
+
+int main()
+{
+    std::cout &lt;&lt; "Enter a number of degrees: ";
+    Degrees degrees{};
+    std::cin &gt;&gt; degrees;
+
+    Radians radians{ convertToRadians(degrees) };
+    std::cout &lt;&lt; degrees &lt;&lt; " degrees is " &lt;&lt; radians &lt;&lt; " radians.\n";
+
+    return 0;
+}</code></pre>
+  </div>
+  <p>
+   2b) Given the definitions for
+   <code>
+    degrees
+   </code>
+   and
+   <code>
+    radians
+   </code>
+   in the previous quiz solution, explain why the following statement will or won’t compile:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">radians = degrees;</code></pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_11'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_11" style="display:none">
+   <p>
+    It will compile.
+    <code>
+     radians
+    </code>
+    has type
+    <code>
+     Radians
+    </code>
+    , which is a type alias for
+    <code>
+     double
+    </code>
+    .
+    <code>
+     degrees
+    </code>
+    has type
+    <code>
+     Degrees
+    </code>
+    , which is also a type alias for
+    <code>
+     double
+    </code>
+    .  So this just the assignment of a
+    <code>
+     double
+    </code>
+    value to a variable of type
+    <code>
+     double
+    </code>
+    .
+   </p>
+  </div>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

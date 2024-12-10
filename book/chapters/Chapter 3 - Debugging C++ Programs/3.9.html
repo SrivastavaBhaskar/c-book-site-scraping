@@ -1,0 +1,239 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   3.9 — Using an integrated debugger: The call stack
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   Modern debuggers contain one more debugging information window that can be very useful in debugging your program, and that is the call stack window.
+  </p>
+  <p>
+   When your program calls a function, you already know that it bookmarks the current location, makes the function call, and then returns.  How does it know where to return to?  The answer is that it keeps track in the call stack.
+  </p>
+  <p>
+   The
+   <strong>
+    call stack
+   </strong>
+   is a list of all the active functions that have been called to get to the current point of execution.  The call stack includes an entry for each function called, as well as which line of code will be returned to when the function returns.  Whenever a new function is called, that function is added to the top of the call stack.  When the current function returns to the caller, it is removed from the top of the call stack, and control returns to the function just below it.
+  </p>
+  <p>
+   The
+   <strong>
+    call stack window
+   </strong>
+   is a debugger window that shows the current call stack.  If you don’t see the call stack window, you will need to tell the IDE to show it.
+  </p>
+  <div class="cpp-note cpp-lightyellowbackground">
+   <p class="cpp-note-title cpp-bottomline">
+    For Visual Studio users
+   </p>
+   <p>
+    In Visual Studio, the call stack window can be found via
+    <em>
+     Debug menu &gt; Windows &gt; Call Stack
+    </em>
+    .  Note that you have to be in a debug session to activate this window.
+   </p>
+  </div>
+  <div class="cpp-note cpp-lightyellowbackground">
+   <p class="cpp-note-title cpp-bottomline">
+    For Code::Blocks users
+   </p>
+   <p>
+    In Code::Blocks, the call stack window can be found via
+    <em>
+     Debug menu &gt; Debugging windows &gt; Call stack
+    </em>
+    .
+   </p>
+  </div>
+  <div class="cpp-note cpp-lightyellowbackground">
+   <p class="cpp-note-title cpp-bottomline">
+    For VS Code users
+   </p>
+   <p>
+    In VS Code, the call stack window appears in debug mode, docked on the left.
+   </p>
+  </div>
+  <p>
+   Let’s take a look at the call stack using a sample program:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+void a()
+{
+	std::cout &lt;&lt; "a() called\n";
+}
+
+void b()
+{
+	std::cout &lt;&lt; "b() called\n";
+	a();
+}
+
+int main()
+{
+	a();
+	b();
+
+	return 0;
+}</code></pre>
+  <p>
+   Put breakpoints on lines 5 and 10 of this program, and then start debugging mode.  Because function
+   <em>
+    a
+   </em>
+   is called first, the breakpoint on line 5 will be hit first.
+  </p>
+  <p>
+   At this point, you should see something like this:
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="" src="../../images/VS-CallStack1-min.png"/>
+  </div>
+  <p>
+   Your IDE may exhibit some differences:
+  </p>
+  <ul>
+   <li>
+    The format of your function names and line numbers may be different
+   </li>
+   <li>
+    Your line numbers may be slightly different (off by 1)
+   </li>
+   <li>
+    Instead of
+    <em>
+     [External Code]
+    </em>
+    you may see a bunch of other crazily named functions.
+   </li>
+  </ul>
+  <p>
+   These differences are inconsequential.
+  </p>
+  <p>
+   What’s relevant here is the top two lines.  From the bottom up, we can see that function
+   <em>
+    main
+   </em>
+   was called first, and then that function
+   <em>
+    a
+   </em>
+   was called next.
+  </p>
+  <p>
+   The
+   <em>
+    line 5
+   </em>
+   next to function
+   <em>
+    a
+   </em>
+   shows us where the current point of execution is (which matches the execution marker in the code window).  The
+   <em>
+    line 17
+   </em>
+   on the second line indicates the line that will be returned to when control returns to function
+   <em>
+    main
+   </em>
+   .
+  </p>
+  <div class="cpp-note cpp-lightbluebackground">
+   <p class="cpp-note-title cpp-bottomline">
+    Tip
+   </p>
+   <p>
+    The line numbers after the function names show the next line to be executed in each function.
+   </p>
+   <p>
+    Since the top entry on the call stack represents the currently executing function, the line number here shows the next line that will execute when execution resumes.  The remaining entries in the call stack represent functions that will be returned to at some point, so the line number for these represent the next statement that will execute after the function is returned to.
+   </p>
+  </div>
+  <p>
+   Now, choose the
+   <em>
+    continue
+   </em>
+   debug command to advance execution to the next breakpoint, which will be on line 10.  The call stack should update to reflect the new situation:
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="" src="../../images/VS-CallStack2-min.png"/>
+  </div>
+  <p>
+   You’ll notice that function
+   <em>
+    b
+   </em>
+   is now the top line of the call stack, reflecting the fact that function
+   <em>
+    b
+   </em>
+   is the function that is actively being executed.  Note that function
+   <em>
+    a
+   </em>
+   is no longer represented on the call stack.  This is because function
+   <em>
+    a
+   </em>
+   was removed from the call stack when it returned.
+  </p>
+  <p>
+   Choose the
+   <em>
+    continue
+   </em>
+   debug command one more time, and we’ll hit the breakpoint on line 5 again (because function
+   <em>
+    b
+   </em>
+   calls function
+   <em>
+    a
+   </em>
+   ).  The call stack will look like this:
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="" src="../../images/VS-CallStack3-min.png"/>
+  </div>
+  <p>
+   There are now three functions on the call stack: (from bottom to top)
+   <em>
+    main
+   </em>
+   , which called function
+   <em>
+    b
+   </em>
+   , which called function
+   <em>
+    a
+   </em>
+   .
+  </p>
+  <p>
+   The call stack is useful in conjunction with breakpoints, when your breakpoint is hit and you want to know what functions were called to get to that specific point in the code.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Conclusion
+  </p>
+  <p>
+   Congratulations, you now know the basics of using an integrated debugger!  Using stepping, breakpoints, watches, and the call stack window, you now have the fundamentals to be able to debug almost any problem.  Like many things, becoming good at using a debugger takes some practice and some trial and error.  But again, we’ll reiterate the point that the time devoted to learning how to use an integrated debugger effectively will be repaid many times over in time saved debugging your programs!
+  </p>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

@@ -1,0 +1,742 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   24.7 — Calling inherited functions and overriding behavior
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   By default, derived classes inherit all of the behaviors defined in a base class.  In this lesson, we’ll examine in more detail how member functions are selected, as well as how we can leverage this to change behaviors in a derived class.
+  </p>
+  <p>
+   When a member function is called on a derived class object, the compiler first looks to see if any function with that name exists in the derived class.  If so, all overloaded functions with that name are considered, and the function overload resolution process is used to determine whether there is a best match.  If not, the compiler walks up the inheritance chain, checking each parent class in turn in the same way.
+  </p>
+  <p>
+   Put another way, the compiler will select the best matching function from the most-derived class with at least one function with that name.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Calling a base class function
+  </p>
+  <p>
+   First, let’s explore what happens when the derived class has no matching function, but the base class does:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Base
+{
+public:
+    Base() { }
+
+    void identify() const { std::cout &lt;&lt; "Base::identify()\n"; }
+};
+
+class Derived: public Base
+{
+public:
+    Derived() { }
+};
+
+int main()
+{
+    Base base {};
+    base.identify();
+
+    Derived derived {};
+    derived.identify();
+
+    return 0;
+}</code></pre>
+  <p>
+   This prints:
+  </p>
+  <pre>Base::identify()
+Base::identify()
+</pre>
+  <p>
+   When
+   <code>
+    base.identify()
+   </code>
+   is called, the compiler looks to see if a function named
+   <code>
+    identify()
+   </code>
+   has been defined in class
+   <code>
+    Base
+   </code>
+   .  It has, so the compiler looks to see if it is a match.  It is, so it is called
+  </p>
+  <p>
+   When
+   <code>
+    derived.identify()
+   </code>
+   is called, the compiler looks to see if a function named
+   <code>
+    identify()
+   </code>
+   has been defined in the
+   <code>
+    Derived
+   </code>
+   class.  It hasn’t.  So it moves to the parent class (in this case,
+   <code>
+    Base
+   </code>
+   ), and tries again there.
+   <code>
+    Base
+   </code>
+   has defined an
+   <code>
+    identify()
+   </code>
+   function, so it uses that one.  In other words,
+   <code>
+    Base::identify()
+   </code>
+   was used because
+   <code>
+    Derived::identify()
+   </code>
+   doesn’t exist.
+  </p>
+  <p>
+   This means that if the behavior provided by a base class is sufficient, we can simply use the base class behavior.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Redefining behaviors
+  </p>
+  <p>
+   However, if we had defined
+   <code>
+    Derived::identify()
+   </code>
+   in the
+   <code>
+    Derived
+   </code>
+   class, it would have been used instead.
+  </p>
+  <p>
+   This means that we can make functions work differently with our derived classes by redefining them in the derived class!
+  </p>
+  <p>
+   For example, let’s say we want
+   <code>
+    derived.identify()
+   </code>
+   to print
+   <code>
+    Derived::identify()
+   </code>
+   .  We can simply add function
+   <code>
+    identify()
+   </code>
+   in the
+   <code>
+    Derived
+   </code>
+   class so it returns the correct response when we call function
+   <code>
+    identify()
+   </code>
+   with a
+   <code>
+    Derived
+   </code>
+   object.
+  </p>
+  <p>
+   To modify the way a function defined in a base class works in the derived class, simply redefine the function in the derived class.
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Base
+{
+public:
+    Base() { }
+
+    void identify() const { std::cout &lt;&lt; "Base::identify()\n"; }
+};
+
+class Derived: public Base
+{
+public:
+    Derived() { }
+
+    void identify() const { std::cout &lt;&lt; "Derived::identify()\n"; }
+};
+
+int main()
+{
+    Base base {};
+    base.identify();
+
+    Derived derived {};
+    derived.identify();
+
+    return 0;
+}</code></pre>
+  <p>
+   This prints:
+  </p>
+  <pre>Base::identify()
+Derived::identify()
+</pre>
+  <p>
+   Note that when you redefine a function in the derived class, the derived function does not inherit the access specifier of the function with the same name in the base class.  It uses whatever access specifier it is defined under in the derived class.  Therefore, a function that is defined as private in the base class can be redefined as public in the derived class, or vice-versa!
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Base
+{
+private:
+	void print() const 
+	{
+		std::cout &lt;&lt; "Base";
+	}
+};
+ 
+class Derived : public Base
+{
+public:
+	void print() const 
+	{
+		std::cout &lt;&lt; "Derived ";
+	}
+};
+ 
+ 
+int main()
+{
+	Derived derived {};
+	derived.print(); // calls derived::print(), which is public
+	return 0;
+}</code></pre>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Adding to existing functionality
+  </p>
+  <p>
+   Sometimes we don’t want to completely replace a base class function, but instead want to add additional functionality to it when called with a derived object.  In the above example, note that
+   <code>
+    Derived::identify()
+   </code>
+   completely hides
+   <code>
+    Base::identify()
+   </code>
+   !  This may not be what we want.  It is possible to have our derived function call the base version of the function of the same name (in order to reuse code) and then add additional functionality to it.
+  </p>
+  <p>
+   To have a derived function call a base function of the same name, simply do a normal function call, but prefix the function with the scope qualifier of the base class.  For example:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Base
+{
+public:
+    Base() { }
+
+    void identify() const { std::cout &lt;&lt; "Base::identify()\n"; }
+};
+
+class Derived: public Base
+{
+public:
+    Derived() { }
+
+    void identify() const
+    {
+        std::cout &lt;&lt; "Derived::identify()\n";
+        Base::identify(); // note call to Base::identify() here
+    }
+};
+
+int main()
+{
+    Base base {};
+    base.identify();
+
+    Derived derived {};
+    derived.identify();
+
+    return 0;
+}</code></pre>
+  <p>
+   This prints:
+  </p>
+  <pre>Base::identify()
+Derived::identify()
+Base::identify()
+</pre>
+  <p>
+   When
+   <code>
+    derived.identify()
+   </code>
+   is executed, it resolves to
+   <code>
+    Derived::identify()
+   </code>
+   .  After printing
+   <code>
+    Derived::identify()
+   </code>
+   , it then calls
+   <code>
+    Base::identify()
+   </code>
+   , which prints
+   <code>
+    Base::identify()
+   </code>
+   .
+  </p>
+  <p>
+   This should be pretty straightforward.  Why do we need to use the scope resolution operator (::)?  If we had defined
+   <code>
+    Derived::identify()
+   </code>
+   like this:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Base
+{
+public:
+    Base() { }
+
+    void identify() const { std::cout &lt;&lt; "Base::identify()\n"; }
+};
+
+class Derived: public Base
+{
+public:
+    Derived() { }
+
+    void identify() const
+    {
+        std::cout &lt;&lt; "Derived::identify()\n";
+        identify(); // no scope resolution results in self-call and infinite recursion
+    }
+};
+
+int main()
+{
+    Base base {};
+    base.identify();
+
+    Derived derived {};
+    derived.identify();
+
+    return 0;
+}</code></pre>
+  <p>
+   Calling function
+   <code>
+    identify()
+   </code>
+   without a scope resolution qualifier would default to the
+   <code>
+    identify()
+   </code>
+   in the current class, which would be
+   <code>
+    Derived::identify()
+   </code>
+   .  This would cause
+   <code>
+    Derived::identify()
+   </code>
+   to call itself, which would lead to an infinite recursion!
+  </p>
+  <p>
+   There’s one bit of trickiness that we can run into when trying to call friend functions in base classes, such as
+   <code>
+    operator&lt;&lt;
+   </code>
+   .  Because friend functions of the base class aren’t actually part of the base class, using the scope resolution qualifier won’t work.  Instead, we need a way to make our
+   <code>
+    Derived
+   </code>
+   class temporarily look like the
+   <code>
+    Base
+   </code>
+   class so that the right version of the function can be called.
+  </p>
+  <p>
+   Fortunately, that’s easy to do, using
+   <code>
+    static_cast
+   </code>
+   .  Here’s an example:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Base
+{
+public:
+    Base() { }
+
+	friend std::ostream&amp; operator&lt;&lt; (std::ostream&amp; out, const Base&amp;)
+	{
+		out &lt;&lt; "In Base\n";
+		return out;
+	}
+};
+
+class Derived: public Base
+{
+public:
+    Derived() { }
+
+ 	friend std::ostream&amp; operator&lt;&lt; (std::ostream&amp; out, const Derived&amp; d)
+	{
+		out &lt;&lt; "In Derived\n";
+		// static_cast Derived to a Base object, so we call the right version of operator&lt;&lt;
+		out &lt;&lt; static_cast&lt;const Base&amp;&gt;(d); 
+		return out;
+    }
+};
+
+int main()
+{
+    Derived derived {};
+
+    std::cout &lt;&lt; derived &lt;&lt; '\n';
+
+    return 0;
+}</code></pre>
+  <p>
+   Because a
+   <code>
+    Derived
+   </code>
+   is-a Base, we can
+   <code>
+    static_cast
+   </code>
+   our
+   <code>
+    Derived
+   </code>
+   object into a
+   <code>
+    Base
+   </code>
+   reference, so that the appropriate version of
+   <code>
+    operator&lt;&lt;
+   </code>
+   that uses a
+   <code>
+    Base
+   </code>
+   is called.
+  </p>
+  <p>
+   This prints:
+  </p>
+  <pre>In Derived
+In Base
+</pre>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Overload resolution in derived classes
+  </p>
+  <p>
+   As noted at the top of the lesson, the compiler will select the best matching function from the most-derived class with at least one function with that name.
+  </p>
+  <p>
+   First, let’s take a look at a simple case where we have overloaded member functions:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Base
+{
+public:
+    void print(int)    { std::cout &lt;&lt; "Base::print(int)\n"; }
+    void print(double) { std::cout &lt;&lt; "Base::print(double)\n"; }
+};
+
+class Derived: public Base
+{
+public:
+};
+
+
+int main()
+{
+    Derived d{};
+    d.print(5); // calls Base::print(int)
+
+    return 0;
+}</code></pre>
+  <p>
+   For the call
+   <code>
+    d.print(5)
+   </code>
+   , the compiler doesn’t find a function named
+   <code>
+    print()
+   </code>
+   in
+   <code>
+    Derived
+   </code>
+   , so it checks
+   <code>
+    Base
+   </code>
+   where it finds two functions with that name.  It uses the function overload resolution process to determine that
+   <code>
+    Base::print(int)
+   </code>
+   is a better match than
+   <code>
+    Base::print(double)
+   </code>
+   .  Therefore,
+   <code>
+    Base::print(int)
+   </code>
+   gets called, just like we’d expect.
+  </p>
+  <p>
+   Now let’s look at a case that doesn’t behave like we might expect:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Base
+{
+public:
+    void print(int)    { std::cout &lt;&lt; "Base::print(int)\n"; }
+    void print(double) { std::cout &lt;&lt; "Base::print(double)\n"; }
+};
+
+class Derived: public Base
+{
+public:
+    void print(double) { std::cout &lt;&lt; "Derived::print(double)"; } // this function added
+};
+
+
+int main()
+{
+    Derived d{};
+    d.print(5); // calls Derived::print(double), not Base::print(int)
+
+    return 0;
+}</code></pre>
+  <p>
+   For the call
+   <code>
+    d.print(5)
+   </code>
+   , the compiler finds one function named
+   <code>
+    print()
+   </code>
+   in
+   <code>
+    Derived
+   </code>
+   , therefore it will only consider functions in
+   <code>
+    Derived
+   </code>
+   when trying to determine what function to resolve to.  This function is also the best matching function in
+   <code>
+    Derived
+   </code>
+   for this function call.  Therefore, this calls
+   <code>
+    Derived::print(double)
+   </code>
+   .
+  </p>
+  <p>
+   Since
+   <code>
+    Base::print(int)
+   </code>
+   has a parameter that is a better match for int argument
+   <code>
+    5
+   </code>
+   than
+   <code>
+    Derived::print(double)
+   </code>
+   , you may have been expecting this function call to resolve to
+   <code>
+    Base::print(int)
+   </code>
+   .  But because
+   <code>
+    d
+   </code>
+   is a
+   <code>
+    Derived
+   </code>
+   , there is at least one
+   <code>
+    print()
+   </code>
+   function in
+   <code>
+    Derived
+   </code>
+   , and
+   <code>
+    Derived
+   </code>
+   is more derived than
+   <code>
+    Base
+   </code>
+   , the functions in
+   <code>
+    Base
+   </code>
+   are not even considered.
+  </p>
+  <p>
+   So what if we actually want
+   <code>
+    d.print(5)
+   </code>
+   to resolve to
+   <code>
+    Base::print(int)
+   </code>
+   ?  One not-great way is to define a
+   <code>
+    Derived::print(int)
+   </code>
+   :
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Base
+{
+public:
+    void print(int)    { std::cout &lt;&lt; "Base::print(int)\n"; }
+    void print(double) { std::cout &lt;&lt; "Base::print(double)\n"; }
+};
+
+class Derived: public Base
+{
+public:
+    void print(int n) { Base::print(n); } // works but not great, as we have to define 
+    void print(double) { std::cout &lt;&lt; "Derived::print(double)"; }
+};
+
+int main()
+{
+    Derived d{};
+    d.print(5); // calls Derived::print(int), which calls Base::print(int)
+
+    return 0;
+}</code></pre>
+  <p>
+   While this works, it’s not great, as we have to add a function to
+   <code>
+    Derived
+   </code>
+   for every overload we want to fall through to
+   <code>
+    Base
+   </code>
+   .  That could be a lot of extra functions that essentially just route calls to
+   <code>
+    Base
+   </code>
+   .
+  </p>
+  <p>
+   A better option is to use a using-declaration in
+   <code>
+    Derived
+   </code>
+   to make all
+   <code>
+    Base
+   </code>
+   functions with a certain name visible from within
+   <code>
+    Derived
+   </code>
+   :
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Base
+{
+public:
+    void print(int)    { std::cout &lt;&lt; "Base::print(int)\n"; }
+    void print(double) { std::cout &lt;&lt; "Base::print(double)\n"; }
+};
+
+class Derived: public Base
+{
+public:
+    using Base::print; // make all Base::print() functions eligible for overload resolution
+    void print(double) { std::cout &lt;&lt; "Derived::print(double)"; }
+};
+
+
+int main()
+{
+    Derived d{};
+    d.print(5); // calls Base::print(int), which is the best matching function visible in Derived
+
+    return 0;
+}</code></pre>
+  <p>
+   By putting the using-declaration
+   <code>
+    using Base::print;
+   </code>
+   inside
+   <code>
+    Derived
+   </code>
+   , we are telling the compiler that all
+   <code>
+    Base
+   </code>
+   functions named
+   <code>
+    print
+   </code>
+   should be visible in
+   <code>
+    Derived
+   </code>
+   , which will cause them to be eligible for overload resolution.  As a result,
+   <code>
+    Base::print(int)
+   </code>
+   is selected over
+   <code>
+    Derived::print(double)
+   </code>
+   .
+  </p>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

@@ -1,0 +1,620 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <h1 class="entry-title singular-title" itemprop="headline">
+   7.12 — Scope, duration, and linkage summary
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   The concepts of scope, duration, and linkage cause a lot of confusion, so we’re going to take an extra lesson to summarize everything. Some of these things we haven’t covered yet, and they’re here just for completeness / reference later.
+   <p style="clear:both">
+    <p>
+     <p class="cpp-section cpp-topline" style="clear:both">
+      Scope summary
+      <p>
+       An identifier’s
+       <em>
+        scope
+       </em>
+       determines where the identifier can be accessed within the source code.
+       <ul>
+        <li>
+         Variables with
+         <strong>
+          block (local) scope
+         </strong>
+         can only be accessed from the point of declaration until the end of the block in which they are declared (including nested blocks). This includes:
+         <ul>
+          <li>
+           Local variables
+           <li>
+            Function parameters
+            <li>
+             Program-defined type definitions (such as enums and classes) declared inside a block
+            </li>
+           </li>
+          </li>
+         </ul>
+         <li>
+          Variables and functions with
+          <strong>
+           global scope
+          </strong>
+          can be accessed from the point of declaration until the end of the file. This includes:
+          <ul>
+           <li>
+            Global variables
+            <li>
+             Functions
+             <li>
+              Program-defined type definitions (such as enums and classes) declared inside a namespace or in the global scope
+             </li>
+            </li>
+           </li>
+          </ul>
+         </li>
+        </li>
+       </ul>
+       <p class="cpp-section cpp-topline" style="clear:both">
+        Duration summary
+        <p>
+         A variable’s
+         <em>
+          duration
+         </em>
+         determines when it is created and destroyed.
+         <ul>
+          <li>
+           Variables with
+           <strong>
+            automatic duration
+           </strong>
+           are created at the point of definition, and destroyed when the block they are part of is exited. This includes:
+           <ul>
+            <li>
+             Local variables
+             <li>
+              Function parameters
+             </li>
+            </li>
+           </ul>
+           <li>
+            Variables with
+            <strong>
+             static duration
+            </strong>
+            are created when the program begins and destroyed when the program ends. This includes:
+            <ul>
+             <li>
+              Global variables
+              <li>
+               Static local variables
+              </li>
+             </li>
+            </ul>
+            <li>
+             Variables with
+             <strong>
+              dynamic duration
+             </strong>
+             are created and destroyed by programmer request. This includes:
+             <ul>
+              <li>
+               Dynamically allocated variables
+              </li>
+             </ul>
+            </li>
+           </li>
+          </li>
+         </ul>
+         <p class="cpp-section cpp-topline" style="clear:both">
+          Linkage summary
+          <p>
+           An identifier’s
+           <strong>
+            linkage
+           </strong>
+           determines whether a declaration of that same identifier in a different scope refers to the same entity (object, function, reference, etc…) or not.
+           <p>
+            Local variables have no linkage. Each declaration of an identifier with no linkage refers to a unique object or function.
+            <ul>
+             <li>
+              An identifier with
+              <strong>
+               no linkage
+              </strong>
+              means another declaration of the same identifier refers to a unique entity. Entities whose identifiers have no linkage include:
+              <ul>
+               <li>
+                Local variables
+                <li>
+                 Program-defined type identifiers (such as enums and classes) declared inside a block
+                </li>
+               </li>
+              </ul>
+              <li>
+               An identifier with
+               <strong>
+                internal linkage
+               </strong>
+               means a declaration of the same identifier within the same translation unit refers to the same object or function. Entities whose identifiers have internal linkage include:
+               <ul>
+                <li>
+                 Static global variables (initialized or uninitialized)
+                 <li>
+                  Static functions
+                  <li>
+                   Const global variables
+                   <li>
+                    Unnamed namespaces and anything defined within them
+                   </li>
+                  </li>
+                 </li>
+                </li>
+               </ul>
+               <li>
+                An identifier with
+                <strong>
+                 external linkage
+                </strong>
+                means a declaration of the same identifier within the entire program refers to the same object or function. Entities whose identifiers have external linkage include:
+                <ul>
+                 <li>
+                  Non-static functions
+                  <li>
+                   Non-const global variables (initialized or uninitialized)
+                   <li>
+                    Extern const global variables
+                    <li>
+                     Inline const global variables
+                     <li>
+                      Namespaces
+                     </li>
+                    </li>
+                   </li>
+                  </li>
+                 </li>
+                </ul>
+               </li>
+              </li>
+             </li>
+            </ul>
+            <p>
+             Identifiers with external linkage will generally cause a duplicate definition linker error if the definitions are compiled into more than one .cpp file (due to violating the one-definition rule). There are some exceptions to this rule (for types, templates, and inline functions and variables) -- we’ll cover these further in future lessons when we talk about those topics.
+             <p>
+              Also note that functions have external linkage by default. They can be made internal by using the static keyword.
+              <p class="cpp-section cpp-topline" style="clear:both">
+               Variable scope, duration, and linkage summary
+               <p>
+                Because variables have scope, duration, and linkage, let’s summarize in a chart:
+                <div class="cpp-table-wrapper">
+                 <p>
+                  <p>
+                   <table class="cpp-table">
+                    <tbody>
+                     <tr>
+                      <th>
+                       Type
+                       <th>
+                        Example
+                        <th>
+                         Scope
+                         <th>
+                          Duration
+                          <th>
+                           Linkage
+                           <th>
+                            Notes
+                            <tr>
+                             <td>
+                              Local variable
+                              <td>
+                               int x;
+                               <td>
+                                Block
+                                <td>
+                                 Automatic
+                                 <td>
+                                  None
+                                  <td>
+                                   <tr>
+                                    <td>
+                                     Static local variable
+                                     <td>
+                                      static int s_x;
+                                      <td>
+                                       Block
+                                       <td>
+                                        Static
+                                        <td>
+                                         None
+                                         <td>
+                                          <tr>
+                                           <td>
+                                            Dynamic local variable
+                                            <td>
+                                             int* x { new int{} };
+                                             <td>
+                                              Block
+                                              <td>
+                                               Dynamic
+                                               <td>
+                                                None
+                                                <td>
+                                                 <tr>
+                                                  <td>
+                                                   Function parameter
+                                                   <td>
+                                                    void foo(int x)
+                                                    <td>
+                                                     Block
+                                                     <td>
+                                                      Automatic
+                                                      <td>
+                                                       None
+                                                       <td>
+                                                        <tr>
+                                                         <td>
+                                                          Internal non-const global variable
+                                                          <td>
+                                                           static int g_x;
+                                                           <td>
+                                                            Global
+                                                            <td>
+                                                             Static
+                                                             <td>
+                                                              Internal
+                                                              <td>
+                                                               Initialized or uninitialized
+                                                               <tr>
+                                                                <td>
+                                                                 External non-const global variable
+                                                                 <td>
+                                                                  int g_x;
+                                                                  <td>
+                                                                   Global
+                                                                   <td>
+                                                                    Static
+                                                                    <td>
+                                                                     External
+                                                                     <td>
+                                                                      Initialized or uninitialized
+                                                                      <tr>
+                                                                       <td>
+                                                                        Inline non-const global variable (C++17)
+                                                                        <td>
+                                                                         inline int g_x;
+                                                                         <td>
+                                                                          Global
+                                                                          <td>
+                                                                           Static
+                                                                           <td>
+                                                                            External
+                                                                            <td>
+                                                                             Initialized or uninitialized
+                                                                             <tr>
+                                                                              <td>
+                                                                               Internal constant global variable
+                                                                               <td>
+                                                                                constexpr int g_x { 1 };
+                                                                                <td>
+                                                                                 Global
+                                                                                 <td>
+                                                                                  Static
+                                                                                  <td>
+                                                                                   Internal
+                                                                                   <td>
+                                                                                    Must be initialized
+                                                                                    <tr>
+                                                                                     <td>
+                                                                                      External constant global variable
+                                                                                      <td>
+                                                                                       extern const int g_x { 1 };
+                                                                                       <td>
+                                                                                        Global
+                                                                                        <td>
+                                                                                         Static
+                                                                                         <td>
+                                                                                          External
+                                                                                          <td>
+                                                                                           Must be initialized
+                                                                                           <tr>
+                                                                                            <td>
+                                                                                             Inline constant global variable (C++17)
+                                                                                             <td>
+                                                                                              inline constexpr int g_x { 1 };
+                                                                                              <td>
+                                                                                               Global
+                                                                                               <td>
+                                                                                                Static
+                                                                                                <td>
+                                                                                                 External
+                                                                                                 <td>
+                                                                                                  Must be initialized
+                                                                                                 </td>
+                                                                                                </td>
+                                                                                               </td>
+                                                                                              </td>
+                                                                                             </td>
+                                                                                            </td>
+                                                                                           </tr>
+                                                                                          </td>
+                                                                                         </td>
+                                                                                        </td>
+                                                                                       </td>
+                                                                                      </td>
+                                                                                     </td>
+                                                                                    </tr>
+                                                                                   </td>
+                                                                                  </td>
+                                                                                 </td>
+                                                                                </td>
+                                                                               </td>
+                                                                              </td>
+                                                                             </tr>
+                                                                            </td>
+                                                                           </td>
+                                                                          </td>
+                                                                         </td>
+                                                                        </td>
+                                                                       </td>
+                                                                      </tr>
+                                                                     </td>
+                                                                    </td>
+                                                                   </td>
+                                                                  </td>
+                                                                 </td>
+                                                                </td>
+                                                               </tr>
+                                                              </td>
+                                                             </td>
+                                                            </td>
+                                                           </td>
+                                                          </td>
+                                                         </td>
+                                                        </tr>
+                                                       </td>
+                                                      </td>
+                                                     </td>
+                                                    </td>
+                                                   </td>
+                                                  </td>
+                                                 </tr>
+                                                </td>
+                                               </td>
+                                              </td>
+                                             </td>
+                                            </td>
+                                           </td>
+                                          </tr>
+                                         </td>
+                                        </td>
+                                       </td>
+                                      </td>
+                                     </td>
+                                    </td>
+                                   </tr>
+                                  </td>
+                                 </td>
+                                </td>
+                               </td>
+                              </td>
+                             </td>
+                            </tr>
+                           </th>
+                          </th>
+                         </th>
+                        </th>
+                       </th>
+                      </th>
+                     </tr>
+                    </tbody>
+                   </table>
+                  </p>
+                 </p>
+                </div>
+                <p class="cpp-section cpp-topline" style="clear:both">
+                 Forward declaration summary
+                 <p>
+                  You can use a forward declaration to access a function or variable in another file. The scope of the declared variable is as per usual (global scope for globals, block scope for locals).
+                  <div class="cpp-table-wrapper">
+                   <p>
+                    <p>
+                     <table class="cpp-table">
+                      <tbody>
+                       <tr>
+                        <th>
+                         Type
+                         <th>
+                          Example
+                          <th>
+                           Notes
+                           <tr>
+                            <td>
+                             Function forward declaration
+                             <td>
+                              void foo(int x);
+                              <td>
+                               Prototype only, no function body
+                               <tr>
+                                <td>
+                                 Non-constant variable forward declaration
+                                 <td>
+                                  extern int g_x;
+                                  <td>
+                                   Must be uninitialized
+                                   <tr>
+                                    <td>
+                                     Const variable forward declaration
+                                     <td>
+                                      extern const int g_x;
+                                      <td>
+                                       Must be uninitialized
+                                       <tr>
+                                        <td>
+                                         Constexpr variable forward declaration
+                                         <td>
+                                          extern constexpr int g_x;
+                                          <td>
+                                           Not allowed, constexpr cannot be forward declared
+                                          </td>
+                                         </td>
+                                        </td>
+                                       </tr>
+                                      </td>
+                                     </td>
+                                    </td>
+                                   </tr>
+                                  </td>
+                                 </td>
+                                </td>
+                               </tr>
+                              </td>
+                             </td>
+                            </td>
+                           </tr>
+                          </th>
+                         </th>
+                        </th>
+                       </tr>
+                      </tbody>
+                     </table>
+                    </p>
+                   </p>
+                  </div>
+                  <p>
+                   A constexpr variable (which is implicitly const) can be forward declared using a const variable forward declaration. When accessed through the forward declaration, the variable will be considered const (not constexpr).
+                   <p class="cpp-section cpp-topline" style="clear:both">
+                    What the heck is a storage class specifier?
+                    <p>
+                     When used as part of an identifier declaration, the
+                     <code>
+                      static
+                     </code>
+                     and
+                     <code>
+                      extern
+                     </code>
+                     keywords are called
+                     <strong>
+                      storage class specifiers
+                     </strong>
+                     . In this context, they set the storage duration and linkage of the identifier.
+                     <p>
+                      C++ supports 4 active storage class specifiers:
+                      <div class="cpp-table-wrapper">
+                       <p>
+                        <p>
+                         <table class="cpp-table">
+                          <tbody>
+                           <tr>
+                            <th>
+                             Specifier
+                             <th>
+                              Meaning
+                              <th>
+                               Note
+                               <tr>
+                                <td>
+                                 extern
+                                 <td>
+                                  static (or thread_local) storage duration and external linkage
+                                  <td>
+                                   <tr>
+                                    <td>
+                                     static
+                                     <td>
+                                      static (or thread_local) storage duration and internal linkage
+                                      <td>
+                                       <tr>
+                                        <td>
+                                         thread_local
+                                         <td>
+                                          thread storage duration
+                                          <td>
+                                           <tr>
+                                            <td>
+                                             mutable
+                                             <td>
+                                              object allowed to be modified even if containing class is const
+                                              <td>
+                                               <tr>
+                                                <td>
+                                                 auto
+                                                 <td>
+                                                  automatic storage duration
+                                                  <td>
+                                                   Deprecated in C++11
+                                                   <tr>
+                                                    <td>
+                                                     register
+                                                     <td>
+                                                      automatic storage duration and hint to the compiler to place in a register
+                                                      <td>
+                                                       Deprecated in C++17
+                                                      </td>
+                                                     </td>
+                                                    </td>
+                                                   </tr>
+                                                  </td>
+                                                 </td>
+                                                </td>
+                                               </tr>
+                                              </td>
+                                             </td>
+                                            </td>
+                                           </tr>
+                                          </td>
+                                         </td>
+                                        </td>
+                                       </tr>
+                                      </td>
+                                     </td>
+                                    </td>
+                                   </tr>
+                                  </td>
+                                 </td>
+                                </td>
+                               </tr>
+                              </th>
+                             </th>
+                            </th>
+                           </tr>
+                          </tbody>
+                         </table>
+                        </p>
+                       </p>
+                      </div>
+                      <p>
+                       The term
+                       <em>
+                        storage class specifier
+                       </em>
+                       is typically only used in formal documentation.
+                      </p>
+                     </p>
+                    </p>
+                   </p>
+                  </p>
+                 </p>
+                </p>
+               </p>
+              </p>
+             </p>
+            </p>
+           </p>
+          </p>
+         </p>
+        </p>
+       </p>
+      </p>
+     </p>
+    </p>
+   </p>
+  </p>
+ </div>
+</div>

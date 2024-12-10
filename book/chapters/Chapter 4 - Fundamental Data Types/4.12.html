@@ -1,0 +1,911 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <h1 class="entry-title singular-title" itemprop="headline">
+   4.12 — Introduction to type conversion and static_cast
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p class="cpp-section">
+   Implicit type conversion
+   <p>
+    Consider the following program:
+    <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+void print(double x) // print takes a double parameter
+{
+	std::cout &lt;&lt; x &lt;&lt; '\n';
+}
+
+int main()
+{
+	print(5); // what happens when we pass an int value?
+
+	return 0;
+}</code></pre>
+    <p>
+     In the above example, the
+     <code>
+      print()
+     </code>
+     function has a parameter of type
+     <code>
+      double
+     </code>
+     but the caller is passing in the value
+     <code>
+      5
+     </code>
+     which is of type
+     <code>
+      int
+     </code>
+     . What happens in this case?
+     <p>
+      In most cases, C++ will allow us to convert values of one fundamental type to another fundamental type. The process of converting a value from one type to another type is called
+      <strong>
+       type conversion
+      </strong>
+      . Thus, the int argument
+      <code>
+       5
+      </code>
+      will be converted to double value
+      <code>
+       5.0
+      </code>
+      and then copied into parameter
+      <code>
+       x
+      </code>
+      . The
+      <code>
+       print()
+      </code>
+      function will print this value, resulting in the following output:
+      <pre>5
+</pre>
+      <div class="cpp-note cpp-lightgraybackground">
+       <p class="cpp-note-title cpp-bottomline">
+        A reminder
+        <p>
+         By default, floating point values whose decimal part is 0 print without the decimal places (e.g.
+         <code>
+          5.0
+         </code>
+         prints as
+         <code>
+          5
+         </code>
+         ).
+        </p>
+       </p>
+      </div>
+      <p>
+       When the compiler does type conversion on our behalf without us explicitly asking, we call this
+       <strong>
+        implicit type conversion
+       </strong>
+       . The above example illustrates this -- nowhere do we explicitly tell the compiler to convert integer value
+       <code>
+        5
+       </code>
+       to double value
+       <code>
+        5.0
+       </code>
+       . Rather, the function is expecting a double value, and we pass in an integer argument. The compiler will notice the mismatch and implicitly convert the integer to a double.
+       <p>
+        Here’s a similar example where our argument is an int variable instead of an int literal:
+        <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+void print(double x) // print takes a double parameter
+{
+	std::cout &lt;&lt; x &lt;&lt; '\n';
+}
+
+int main()
+{
+	int y { 5 };
+	print(y); // y is of type int
+
+	return 0;
+}</code></pre>
+        <p>
+         This works identically to the above. The value held by int variable
+         <code>
+          y
+         </code>
+         (
+         <code>
+          5
+         </code>
+         ) will be converted to double value
+         <code>
+          5.0
+         </code>
+         , and then copied into parameter
+         <code>
+          x
+         </code>
+         .
+         <p class="cpp-section cpp-topline" style="clear:both">
+          Type conversion produces a new value
+          <p>
+           Even though it is called a conversion, a type conversion does not actually change the value or type of the value being converted. Instead, the value to be converted is used as input, and the conversion results in a new value of the target type.
+           <p>
+            In the above example, the conversion does not change variable
+            <code>
+             y
+            </code>
+            from type
+            <code>
+             int
+            </code>
+            to
+            <code>
+             double
+            </code>
+            . Instead, the conversion uses the value of
+            <code>
+             y
+            </code>
+            (
+            <code>
+             5
+            </code>
+            ) as input to create a new double value (
+            <code>
+             5.0
+            </code>
+            ). This double value is then passed to function
+            <code>
+             print
+            </code>
+            .
+            <div class="cpp-note cpp-lightbluebackground">
+             <p class="cpp-note-title cpp-bottomline">
+              Key insight
+              <p>
+               Type conversion uses direct initialization to produce a new value of the target type from a value of a different type.
+              </p>
+             </p>
+            </div>
+            <p class="cpp-section cpp-topline" style="clear:both">
+             Implicit type conversion warnings
+             <p>
+              Although implicit type conversion is sufficient for most cases where type conversion is needed, there are a few cases where it is not. Consider the following program, which is similar to the example above:
+              <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+void print(int x) // print now takes an int parameter
+{
+	std::cout &lt;&lt; x &lt;&lt; '\n';
+}
+
+int main()
+{
+	print(5.5); // warning: we're passing in a double value
+
+	return 0;
+}</code></pre>
+              <p>
+               In this program, we’ve changed
+               <code>
+                print()
+               </code>
+               to take an
+               <code>
+                int
+               </code>
+               parameter, and the function call to
+               <code>
+                print()
+               </code>
+               is now passing in
+               <code>
+                double
+               </code>
+               value
+               <code>
+                5.5
+               </code>
+               . Similar to the above, the compiler will use implicit type conversion in order to convert double value
+               <code>
+                5.5
+               </code>
+               into a value of type
+               <code>
+                int
+               </code>
+               , so that it can be passed to function
+               <code>
+                print()
+               </code>
+               .
+               <p>
+                Unlike the initial example, when this program is compiled, your compiler will generate some kind of a warning about a possible loss of data. And because you have “treat warnings as errors” turned on (you do, right?), your compiler will abort the compilation process.
+                <div class="cpp-note cpp-lightbluebackground">
+                 <p class="cpp-note-title cpp-bottomline">
+                  Tip
+                  <p>
+                   You’ll need to disable “treat warnings as errors” temporarily if you want to compile this example. See lesson
+                   <a href="https://www.learncpp.com/cpp-tutorial/configuring-your-compiler-warning-and-error-levels/">
+                    0.11 -- Configuring your compiler: Warning and error levels
+                   </a>
+                   for more information about this setting.
+                  </p>
+                 </p>
+                </div>
+                <p>
+                 When compiled and run, this program prints the following:
+                 <pre>5
+</pre>
+                 <p>
+                  Note that although we passed in value
+                  <code>
+                   5.5
+                  </code>
+                  , the program printed
+                  <code>
+                   5
+                  </code>
+                  . Because integral values can’t hold fractions, when double value
+                  <code>
+                   5.5
+                  </code>
+                  is implicitly converted to an
+                  <code>
+                   int
+                  </code>
+                  , the fractional component is dropped, and only the integral value is retained.
+                  <p>
+                   Because converting a floating point value to an integral value results in any fractional component being dropped, the compiler will warn us when it does an implicit type conversion from a floating point to an integral value. This happens even if we were to pass in a floating point value with no fractional component, like
+                   <code>
+                    5.0
+                   </code>
+                   -- no actual loss of value occurs during the conversion to integral value
+                   <code>
+                    5
+                   </code>
+                   in this specific case, but the compiler may still warn us that the conversion is unsafe.
+                   <div class="cpp-note cpp-lightbluebackground">
+                    <p class="cpp-note-title cpp-bottomline">
+                     Key insight
+                     <p>
+                      Some type conversions are always safe to make (such as
+                      <code>
+                       int
+                      </code>
+                      to
+                      <code>
+                       double
+                      </code>
+                      ), whereas others may result in the value being changed during conversion (such as
+                      <code>
+                       double
+                      </code>
+                      to
+                      <code>
+                       int
+                      </code>
+                      ). Unsafe implicit conversions will typically either generate a compiler warning, or (in the case of brace initialization) an error.
+                      <p>
+                       This is one of the primary reasons brace initialization is the preferred initialization form. Brace initialization will ensure we don’t try to initialize a variable with an initializer that will lose value when it is implicitly type converted:
+                       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    double d { 5 }; // okay: int to double is safe
+    int x { 5.5 }; // error: double to int not safe
+
+    return 0;
+}</code></pre>
+                      </p>
+                     </p>
+                    </p>
+                   </div>
+                   <div class="cpp-note cpp-lightgraybackground">
+                    <p class="cpp-note-title cpp-bottomline">
+                     Related content
+                     <p>
+                      Implicit type conversion is a meaty topic. We dig into this topic in more depth in future lessons, starting with lesson
+                      <a href="https://www.learncpp.com/cpp-tutorial/implicit-type-conversion/">
+                       10.1 -- Implicit type conversion
+                      </a>
+                      .
+                     </p>
+                    </p>
+                   </div>
+                   <p class="cpp-section cpp-topline" style="clear:both">
+                    An introduction to explicit type conversion via the static_cast operator
+                    <p>
+                     Back to our most recent
+                     <code>
+                      print()
+                     </code>
+                     example, what if we
+                     <em>
+                      intentionally
+                     </em>
+                     wanted to pass a double value to a function taking an integer (knowing that the converted value would drop any fractional component?) Turning off “treat warnings as errors” just to make our program compile is a bad idea, because then we’ll have warnings every time we compile (which we will quickly learn to ignore), and we risk overlooking warnings about more serious issues.
+                     <p>
+                      C++ supports a second method of type conversion, called explicit type conversion.
+                      <strong>
+                       Explicit type conversion
+                      </strong>
+                      allow us (the programmer) to explicitly tell the compiler to convert a value from one type to another type, and that we take full responsibility for the result of that conversion. If such a conversion results in the loss of value, the compiler will not warn us.
+                      <p>
+                       To perform an explicit type conversion, in most cases we’ll use the
+                       <code>
+                        static_cast
+                       </code>
+                       operator. The syntax for the
+                       <code>
+                        static cast
+                       </code>
+                       looks a little funny:
+                       <pre>static_cast&lt;new_type&gt;(expression)
+</pre>
+                       <p>
+                        static_cast takes the value from an expression as input, and returns that value converted into the type specified by
+                        <em>
+                         new_type
+                        </em>
+                        (e.g. int, bool, char, double).
+                        <div class="cpp-note cpp-lightbluebackground">
+                         <p class="cpp-note-title cpp-bottomline">
+                          Key insight
+                          <p>
+                           Whenever you see C++ syntax (excluding the preprocessor) that makes use of angled brackets (&lt;&gt;), the thing between the angled brackets will most likely be a type. This is typically how C++ deals with code that need a parameterized type.
+                          </p>
+                         </p>
+                        </div>
+                        <p>
+                         Let’s update our prior program using
+                         <code>
+                          static_cast
+                         </code>
+                         :
+                         <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+void print(int x)
+{
+	std::cout &lt;&lt; x &lt;&lt; '\n';
+}
+
+int main()
+{
+	print( static_cast&lt;int&gt;(5.5) ); // explicitly convert double value 5.5 to an int
+
+	return 0;
+}</code></pre>
+                         <p>
+                          Because we’re now explicitly requesting that double value
+                          <code>
+                           5.5
+                          </code>
+                          be converted to an
+                          <code>
+                           int
+                          </code>
+                          value, the compiler will not generate a warning about a possible loss of data upon compilation (meaning we can leave “treat warnings as errors” enabled).
+                          <div class="cpp-note cpp-lightgraybackground">
+                           <p class="cpp-note-title cpp-bottomline">
+                            Related content
+                            <p>
+                             C++ supports other types of casts. We talk more about the different types of casts in future lesson
+                             <a href="https://www.learncpp.com/cpp-tutorial/explicit-type-conversion-casting-and-static-cast/">
+                              10.6 -- Explicit type conversion (casting) and static_cast
+                             </a>
+                             .
+                            </p>
+                           </p>
+                          </div>
+                          <p class="cpp-section cpp-topline" style="clear:both">
+                           Using static_cast to convert char to int
+                           <p>
+                            In the lesson on chars
+                            <a href="https://www.learncpp.com/cpp-tutorial/chars/">
+                             4.11 -- Chars
+                            </a>
+                            , we saw that printing a char value using
+                            <code>
+                             std::cout
+                            </code>
+                            results in the value being printed as a char:
+                            <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int main()
+{
+    char ch{ 97 }; // 97 is ASCII code for 'a'
+    std::cout &lt;&lt; ch &lt;&lt; '\n';
+
+    return 0;
+}</code></pre>
+                            <p>
+                             This prints:
+                             <pre>a
+</pre>
+                             <p>
+                              If we want to print the integral value instead of the char, we can do this by using
+                              <code>
+                               static_cast
+                              </code>
+                              to cast the value from a
+                              <code>
+                               char
+                              </code>
+                              to an
+                              <code>
+                               int
+                              </code>
+                              :
+                              <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int main()
+{
+    char ch{ 97 }; // 97 is ASCII code for 'a'
+    // print value of variable ch as an int
+    std::cout &lt;&lt; ch &lt;&lt; " has value " &lt;&lt; static_cast&lt;int&gt;(ch) &lt;&lt; '\n';
+
+    return 0;
+}</code></pre>
+                              <p>
+                               This prints:
+                               <pre>a has value 97
+</pre>
+                               <p>
+                                It’s worth noting that the argument to
+                                <em>
+                                 static_cast
+                                </em>
+                                evaluates as an expression. When we pass in a variable, that variable is evaluated to produce its value, and that value is then converted to the new type. The variable itself is
+                                <em>
+                                 not
+                                </em>
+                                affected by casting its value to a new type. In the above case, variable
+                                <code>
+                                 ch
+                                </code>
+                                is still a char, and still holds the same value even after we’ve cast its value to an
+                                <code>
+                                 int
+                                </code>
+                                .
+                                <p class="cpp-section cpp-topline" style="clear:both">
+                                 Sign conversions using static_cast
+                                 <p>
+                                  Signed integral values can be converted to unsigned integral values, and vice-versa, using a static cast.
+                                  <p>
+                                   If the value being converted can be represented in the destination type, the converted value will remain unchanged (only the type will change). For example:
+                                   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int main()
+{
+    unsigned int u1 { 5 };
+    // Convert value of u1 to a signed int 
+    int s1 { static_cast&lt;int&gt;(u1) };
+    std::cout &lt;&lt; s1 &lt;&lt; '\n'; // prints 5
+
+    int s2 { 5 };
+    // Convert value of s2 to an unsigned int
+    unsigned int u2 { static_cast&lt;unsigned int&gt;(s2) };
+    std::cout &lt;&lt; u2 &lt;&lt; '\n'; // prints 5
+
+    return 0;
+}</code></pre>
+                                   <p>
+                                    This prints:
+                                    <pre>5
+5
+</pre>
+                                    <p>
+                                     Since the value
+                                     <code>
+                                      5
+                                     </code>
+                                     is in the range of both a signed int and an unsigned int, the value
+                                     <code>
+                                      5
+                                     </code>
+                                     can be converted to either type without issue.
+                                     <p>
+                                      If the value being converted cannot be represented in the destination type:
+                                      <ul>
+                                       <li>
+                                        If the destination type is unsigned, the value will be modulo wrapped. We cover modulo wrapping in lesson
+                                        <a href="https://www.learncpp.com/cpp-tutorial/unsigned-integers-and-why-to-avoid-them/">
+                                         4.5 -- Unsigned integers, and why to avoid them
+                                        </a>
+                                        .
+                                        <li>
+                                         If the destination type is signed, the value is implementation-defined prior to C++20, and will be modulo wrapped as of C++20.
+                                        </li>
+                                       </li>
+                                      </ul>
+                                      <p>
+                                       Here’s an example of converting two values that are not representable in the destination type (assuming 32-bit integers):
+                                       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int main()
+{
+    int s { -1 };
+    std::cout &lt;&lt; static_cast&lt;unsigned int&gt;(s) &lt;&lt; '\n'; // prints 4294967295 
+
+    unsigned int u { 4294967295 }; // largest 32-bit unsigned int
+    std::cout &lt;&lt; static_cast&lt;int&gt;(u) &lt;&lt; '\n'; // implementation-defined prior to C++20, -1 as of C++20
+    
+    return 0;
+}</code></pre>
+                                       <p>
+                                        As of C++20, this produces the result:
+                                        <pre>4294967295
+-1
+</pre>
+                                        <p>
+                                         Signed int value
+                                         <code>
+                                          -1
+                                         </code>
+                                         cannot be represented as an unsigned int. The result modulo wraps to unsigned int value
+                                         <code>
+                                          4294967295
+                                         </code>
+                                         .
+                                         <p>
+                                          Unsigned int value
+                                          <code>
+                                           4294967295
+                                          </code>
+                                          cannot be represented as a signed int. Prior to C++20, the result is implementation defined (but will probably be
+                                          <code>
+                                           -1
+                                          </code>
+                                          ). As of C++20, the result will modulo wrap to
+                                          <code>
+                                           -1
+                                          </code>
+                                          .
+                                          <div class="cpp-note cpp-lightredbackground">
+                                           <p class="cpp-note-title cpp-bottomline">
+                                            Warning
+                                            <p>
+                                             Converting an unsigned integral value to a signed integral value will result in implementation-defined behavior prior to C++20 if the value being converted can not be represented in the signed type.
+                                            </p>
+                                           </p>
+                                          </div>
+                                          <p class="cpp-section cpp-topline" style="clear:both">
+                                           std::int8_t and std::uint8_t likely behave like chars instead of integers
+                                           <p>
+                                            As noted in lesson
+                                            <a href="https://www.learncpp.com/cpp-tutorial/fixed-width-integers-and-size-t/">
+                                             4.6 -- Fixed-width integers and size_t
+                                            </a>
+                                            , most compilers define and treat
+                                            <code>
+                                             std::int8_t
+                                            </code>
+                                            and
+                                            <code>
+                                             std::uint8_t
+                                            </code>
+                                            (and the corresponding fast and least fixed-width types) identically to types
+                                            <code>
+                                             signed char
+                                            </code>
+                                            and
+                                            <code>
+                                             unsigned char
+                                            </code>
+                                            respectively. Now that we’ve covered what chars are, we can demonstrate where this can be problematic:
+                                            <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;cstdint&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    std::int8_t myInt{65};      // initialize myInt with value 65
+    std::cout &lt;&lt; myInt &lt;&lt; '\n'; // you're probably expecting this to print 65
+
+    return 0;
+}</code></pre>
+                                            <p>
+                                             Because
+                                             <code>
+                                              std::int8_t
+                                             </code>
+                                             describes itself as an int, you might be tricked into believing that the above program will print the integral value
+                                             <code>
+                                              65
+                                             </code>
+                                             . However, on most systems, this program will print
+                                             <code>
+                                              A
+                                             </code>
+                                             instead (treating
+                                             <code>
+                                              myInt
+                                             </code>
+                                             as a
+                                             <code>
+                                              signed char
+                                             </code>
+                                             ). However, this is not guaranteed (on some systems, it may actually print
+                                             <code>
+                                              65
+                                             </code>
+                                             ).
+                                             <p>
+                                              If you want to ensure that a
+                                              <code>
+                                               std::int8_t
+                                              </code>
+                                              or
+                                              <code>
+                                               std::uint8_t
+                                              </code>
+                                              object is treated as an integer, you can convert the value to an integer using
+                                              <code>
+                                               static_cast
+                                              </code>
+                                              :
+                                              <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;cstdint&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    std::int8_t myInt{65};
+    std::cout &lt;&lt; static_cast&lt;int&gt;(myInt) &lt;&lt; '\n'; // will always print 65
+
+    return 0;
+}</code></pre>
+                                              <p>
+                                               In cases where
+                                               <code>
+                                                std::int8_t
+                                               </code>
+                                               is treated as a char, input from the console can also cause problems:
+                                               <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;cstdint&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    std::cout &lt;&lt; "Enter a number between 0 and 127: ";
+    std::int8_t myInt{};
+    std::cin &gt;&gt; myInt;
+
+    std::cout &lt;&lt; "You entered: " &lt;&lt; static_cast&lt;int&gt;(myInt) &lt;&lt; '\n';
+
+    return 0;
+}</code></pre>
+                                               <p>
+                                                A sample run of this program:
+                                                <pre>Enter a number between 0 and 127: 35
+You entered: 51
+</pre>
+                                                <p>
+                                                 Here’s what’s happening. When
+                                                 <code>
+                                                  std::int8_t
+                                                 </code>
+                                                 is treated as a char, the input routines interpret our input as a sequence of characters, not as an integer. So when we enter
+                                                 <code>
+                                                  35
+                                                 </code>
+                                                 , we’re actually entering two chars,
+                                                 <code>
+                                                  '3'
+                                                 </code>
+                                                 and
+                                                 <code>
+                                                  '5'
+                                                 </code>
+                                                 . Because a char object can only hold one character, the
+                                                 <code>
+                                                  '3'
+                                                 </code>
+                                                 is extracted (the
+                                                 <code>
+                                                  '5'
+                                                 </code>
+                                                 is left in the input stream for possible extraction later). Because the char
+                                                 <code>
+                                                  '3'
+                                                 </code>
+                                                 has ASCII code point 51, the value
+                                                 <code>
+                                                  51
+                                                 </code>
+                                                 is stored in
+                                                 <code>
+                                                  myInt
+                                                 </code>
+                                                 , which we then print later as an int.
+                                                 <p>
+                                                  In contrast, the other fixed-width types will always print and input as integral values.
+                                                  <p>
+                                                   <p class="cpp-section cpp-topline" style="clear:both">
+                                                    Quiz time
+                                                    <p class="cpp-quiz-question" style="clear:both">
+                                                     Question #1
+                                                     <p>
+                                                      <p>
+                                                       Write a short program where the user is asked to enter a single character. Print the value of the character and its ASCII code, using
+                                                       <code>
+                                                        static_cast
+                                                       </code>
+                                                       .
+                                                       <p>
+                                                        The program’s output should match the following:
+                                                        <pre>Enter a single character: a
+You entered 'a', which has ASCII code 97.
+</pre>
+                                                        <p>
+                                                         <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_0'),this,'Show Solution','Hide Solution')">
+                                                          Show Solution
+                                                         </a>
+                                                         <div class="wpsolution" id="cpp_solution_id_0" style="display:none">
+                                                          <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int main()
+{
+	std::cout &lt;&lt; "Enter a single character: ";
+	char c{};
+	std::cin &gt;&gt; c;
+	std::cout &lt;&lt; "You entered '" &lt;&lt; c &lt;&lt; "', which has ASCII code " &lt;&lt; static_cast&lt;int&gt;(c) &lt;&lt; ".\n";
+
+	return 0;
+}</code></pre>
+                                                         </div>
+                                                         <p class="cpp-quiz-question cpp-topline" style="clear:both">
+                                                          Question #2
+                                                          <p>
+                                                           Modify the program you wrote for quiz #1 to use implicit type conversion instead of
+                                                           <code>
+                                                            static_cast
+                                                           </code>
+                                                           . How many different ways can you think of to do this?
+                                                           <p>
+                                                            Note: You should favor explicit conversions over implicit conversions, so don’t actually do this in real programs -- this is just to test your understanding of where implicit conversions can occur.
+                                                            <p>
+                                                             <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_1'),this,'Show Solution','Hide Solution')">
+                                                              Show Solution
+                                                             </a>
+                                                             <div class="wpsolution" id="cpp_solution_id_1" style="display:none">
+                                                              <p>
+                                                               There are a few easy ways to do this.
+                                                               <p>
+                                                                First, we can create an
+                                                                <code>
+                                                                 int
+                                                                </code>
+                                                                variable, and initialize it with our
+                                                                <code>
+                                                                 char
+                                                                </code>
+                                                                value. This will do the implicit conversion on initialization.
+                                                                <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int main()
+{
+	std::cout &lt;&lt; "Enter a single character: ";
+	char c{};
+	std::cin &gt;&gt; c;
+
+	int ascii{ c };
+	std::cout &lt;&lt; "You entered '" &lt;&lt; c &lt;&lt; "', which has ASCII code " &lt;&lt; ascii &lt;&lt; ".\n";
+
+	return 0;
+}</code></pre>
+                                                                <p>
+                                                                 Alternatively, we can use a function to return the
+                                                                 <code>
+                                                                  char
+                                                                 </code>
+                                                                 value as an
+                                                                 <code>
+                                                                  int
+                                                                 </code>
+                                                                 . This will do the implicit conversion at the point of return.
+                                                                 <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int charAsInt(char c)
+{
+	return c;
+}
+
+int main()
+{
+	std::cout &lt;&lt; "Enter a single character: ";
+	char c{};
+	std::cin &gt;&gt; c;
+
+	std::cout &lt;&lt; "You entered '" &lt;&lt; c &lt;&lt; "', which has ASCII code " &lt;&lt; charAsInt(c) &lt;&lt; ".\n";
+
+	return 0;
+}</code></pre>
+                                                                 <p>
+                                                                  We can also use a function and have the implicit conversion happen at the point where the argument is copied into the function parameter:
+                                                                  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int getInt(int c)
+{
+	return c;
+}
+
+int main()
+{
+	std::cout &lt;&lt; "Enter a single character: ";
+	char c{};
+	std::cin &gt;&gt; c;
+
+	std::cout &lt;&lt; "You entered '" &lt;&lt; c &lt;&lt; "', which has ASCII code " &lt;&lt; getInt(c) &lt;&lt; ".\n";
+
+	return 0;
+}</code></pre>
+                                                                 </p>
+                                                                </p>
+                                                               </p>
+                                                              </p>
+                                                             </div>
+                                                            </p>
+                                                           </p>
+                                                          </p>
+                                                         </p>
+                                                        </p>
+                                                       </p>
+                                                      </p>
+                                                     </p>
+                                                    </p>
+                                                   </p>
+                                                  </p>
+                                                 </p>
+                                                </p>
+                                               </p>
+                                              </p>
+                                             </p>
+                                            </p>
+                                           </p>
+                                          </p>
+                                         </p>
+                                        </p>
+                                       </p>
+                                      </p>
+                                     </p>
+                                    </p>
+                                   </p>
+                                  </p>
+                                 </p>
+                                </p>
+                               </p>
+                              </p>
+                             </p>
+                            </p>
+                           </p>
+                          </p>
+                         </p>
+                        </p>
+                       </p>
+                      </p>
+                     </p>
+                    </p>
+                   </p>
+                  </p>
+                 </p>
+                </p>
+               </p>
+              </p>
+             </p>
+            </p>
+           </p>
+          </p>
+         </p>
+        </p>
+       </p>
+      </p>
+     </p>
+    </p>
+   </p>
+  </p>
+ </div>
+</div>

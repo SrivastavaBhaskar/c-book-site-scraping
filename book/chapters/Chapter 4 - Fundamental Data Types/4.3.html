@@ -1,0 +1,674 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <h1 class="entry-title singular-title" itemprop="headline">
+   4.3 — Object sizes and the sizeof operator
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p class="cpp-section">
+   Object sizes
+   <p>
+    As you learned in the lesson
+    <a href="https://www.learncpp.com/cpp-tutorial/introduction-to-fundamental-data-types/">
+     4.1 -- Introduction to fundamental data types
+    </a>
+    , memory on modern machines is typically organized into byte-sized units, with each byte of memory having a unique address. Up to this point, it has been useful to think of memory as a bunch of cubbyholes or mailboxes where we can put and retrieve information, and variables as names for accessing those cubbyholes or mailboxes.
+    <p>
+     However, this analogy is not quite correct in one regard -- most objects actually take up more than 1 byte of memory. A single object may use 1, 2, 4, 8, or even more consecutive memory addresses. The amount of memory that an object uses is based on its data type.
+     <p>
+      Because we typically access memory through variable names (and not directly via memory addresses), the compiler is able to hide the details of how many bytes a given object uses from us. When we access some variable
+      <code>
+       x
+      </code>
+      in our source code, the compiler knows how many bytes of data need to be retrieved (based on the type of variable
+      <code>
+       x
+      </code>
+      ), and will output the appropriate machine language code to handle that detail for us.
+      <p>
+       Even so, there are several reasons it is useful to know how much memory an object uses.
+       <p>
+        First, the more memory an object uses, the more information it can hold.
+        <p>
+         A single bit can hold 2 possible values, a 0, or a 1:
+         <div class="cpp-table-wrapper">
+          <p>
+           <p>
+            <table class="cpp-table">
+             <tbody>
+              <tr>
+               <th>
+                bit 0
+                <tr>
+                 <td>
+                  0
+                  <tr>
+                   <td>
+                    1
+                   </td>
+                  </tr>
+                 </td>
+                </tr>
+               </th>
+              </tr>
+             </tbody>
+            </table>
+           </p>
+          </p>
+         </div>
+         <p>
+          2 bits can hold 4 possible values:
+          <div class="cpp-table-wrapper">
+           <p>
+            <p>
+             <table class="cpp-table">
+              <tbody>
+               <tr>
+                <th>
+                 bit 0
+                 <th>
+                  bit 1
+                  <tr>
+                   <td>
+                    0
+                    <td>
+                     0
+                     <tr>
+                      <td>
+                       0
+                       <td>
+                        1
+                        <tr>
+                         <td>
+                          1
+                          <td>
+                           0
+                           <tr>
+                            <td>
+                             1
+                             <td>
+                              1
+                             </td>
+                            </td>
+                           </tr>
+                          </td>
+                         </td>
+                        </tr>
+                       </td>
+                      </td>
+                     </tr>
+                    </td>
+                   </td>
+                  </tr>
+                 </th>
+                </th>
+               </tr>
+              </tbody>
+             </table>
+            </p>
+           </p>
+          </div>
+          <p>
+           3 bits can hold 8 possible values:
+           <div class="cpp-table-wrapper">
+            <p>
+             <p>
+              <table class="cpp-table">
+               <tbody>
+                <tr>
+                 <th>
+                  bit 0
+                  <th>
+                   bit 1
+                   <th>
+                    bit 2
+                    <tr>
+                     <td>
+                      0
+                      <td>
+                       0
+                       <td>
+                        0
+                        <tr>
+                         <td>
+                          0
+                          <td>
+                           0
+                           <td>
+                            1
+                            <tr>
+                             <td>
+                              0
+                              <td>
+                               1
+                               <td>
+                                0
+                                <tr>
+                                 <td>
+                                  0
+                                  <td>
+                                   1
+                                   <td>
+                                    1
+                                    <tr>
+                                     <td>
+                                      1
+                                      <td>
+                                       0
+                                       <td>
+                                        0
+                                        <tr>
+                                         <td>
+                                          1
+                                          <td>
+                                           0
+                                           <td>
+                                            1
+                                            <tr>
+                                             <td>
+                                              1
+                                              <td>
+                                               1
+                                               <td>
+                                                0
+                                                <tr>
+                                                 <td>
+                                                  1
+                                                  <td>
+                                                   1
+                                                   <td>
+                                                    1
+                                                   </td>
+                                                  </td>
+                                                 </td>
+                                                </tr>
+                                               </td>
+                                              </td>
+                                             </td>
+                                            </tr>
+                                           </td>
+                                          </td>
+                                         </td>
+                                        </tr>
+                                       </td>
+                                      </td>
+                                     </td>
+                                    </tr>
+                                   </td>
+                                  </td>
+                                 </td>
+                                </tr>
+                               </td>
+                              </td>
+                             </td>
+                            </tr>
+                           </td>
+                          </td>
+                         </td>
+                        </tr>
+                       </td>
+                      </td>
+                     </td>
+                    </tr>
+                   </th>
+                  </th>
+                 </th>
+                </tr>
+               </tbody>
+              </table>
+             </p>
+            </p>
+           </div>
+           <p>
+            To generalize, an object with
+            <em>
+             n
+            </em>
+            bits (where n is an integer) can hold 2
+            <sup>
+             n
+            </sup>
+            (2 to the power of n, also commonly written 2^n) unique values. Therefore, with an 8-bit byte, a byte-sized object can hold 2
+            <sup>
+             8
+            </sup>
+            (256) different values. An object that uses 2 bytes can hold 2^16 (65536) different values!
+            <p>
+             Thus, the size of the object puts a limit on the amount of unique values it can store -- objects that utilize more bytes can store a larger number of unique values. We will explore this further when we talk more about integers.
+             <p>
+              Second, computers have a finite amount of free memory. Every time we define an object, a small portion of that free memory is used for as long as the object is in existence. Because modern computers have a lot of memory, this impact is usually negligible. However, for programs that need a large amount of objects or data (e.g. a game that is rendering millions of polygons), the difference between using 1 byte and 8 byte objects can be significant.
+              <div class="cpp-note cpp-lightbluebackground">
+               <p class="cpp-note-title cpp-bottomline">
+                Key insight
+                <p>
+                 New programmers often focus too much on optimizing their code to use as little memory as possible. In most cases, this makes a negligible difference. Focus on writing maintainable code, and optimize only when and where the benefit will be substantive.
+                </p>
+               </p>
+              </div>
+              <p class="cpp-section cpp-topline" style="clear:both">
+               Fundamental data type sizes
+               <p>
+                The obvious next question is “how much memory do variables of different data types take?”.
+                <p>
+                 Perhaps surprisingly, the C++ standard does not define the exact size (in bits) for any of the fundamental types. char must be 1 byte, but no assumption is made that a byte is 8 bits. Integral types have a minimum size (in bits), but could be larger.
+                 <p>
+                  In this tutorial series, we will take a simplified view, by making some reasonable assumptions that are generally true for modern architectures:
+                  <ul>
+                   <li>
+                    A byte is 8 bits.
+                    <li>
+                     Memory is byte addressable, so the smallest object is 1 byte.
+                     <li>
+                      Floating point support is IEEE-754 compliant.
+                      <li>
+                       We are on a 32-bit or 64-bit architecture.
+                      </li>
+                     </li>
+                    </li>
+                   </li>
+                  </ul>
+                  <p>
+                   Given that, we can state the following:
+                   <div class="cpp-table-wrapper">
+                    <p>
+                     <p>
+                      <table class="cpp-table">
+                       <tbody>
+                        <tr>
+                         <th>
+                          Category
+                          <th>
+                           Type
+                           <th>
+                            Minimum Size
+                            <th>
+                             Typical Size
+                             <th>
+                              Note
+                              <tr>
+                               <td>
+                                Boolean
+                                <td>
+                                 bool
+                                 <td>
+                                  1 byte
+                                  <td>
+                                   1 byte
+                                   <td>
+                                    <tr>
+                                     <td>
+                                      character
+                                      <td>
+                                       char
+                                       <td>
+                                        1 byte
+                                        <td>
+                                         1 byte
+                                         <td>
+                                          always exactly 1 byte
+                                          <tr>
+                                           <td>
+                                            <td>
+                                             wchar_t
+                                             <td>
+                                              1 byte
+                                              <td>
+                                               2 or 4 bytes
+                                               <td>
+                                                <tr>
+                                                 <td>
+                                                  <td>
+                                                   char8_t
+                                                   <td>
+                                                    1 byte
+                                                    <td>
+                                                     1 byte
+                                                     <td>
+                                                      <tr>
+                                                       <td>
+                                                        <td>
+                                                         char16_t
+                                                         <td>
+                                                          2 bytes
+                                                          <td>
+                                                           2 bytes
+                                                           <td>
+                                                            <tr>
+                                                             <td>
+                                                              <td>
+                                                               char32_t
+                                                               <td>
+                                                                4 bytes
+                                                                <td>
+                                                                 4 bytes
+                                                                 <td>
+                                                                  <tr>
+                                                                   <td>
+                                                                    integer
+                                                                    <td>
+                                                                     short
+                                                                     <td>
+                                                                      2 bytes
+                                                                      <td>
+                                                                       2 bytes
+                                                                       <td>
+                                                                        <tr>
+                                                                         <td>
+                                                                          <td>
+                                                                           int
+                                                                           <td>
+                                                                            2 bytes
+                                                                            <td>
+                                                                             4 bytes
+                                                                             <td>
+                                                                              <tr>
+                                                                               <td>
+                                                                                <td>
+                                                                                 long
+                                                                                 <td>
+                                                                                  4 bytes
+                                                                                  <td>
+                                                                                   4 or 8 bytes
+                                                                                   <td>
+                                                                                    <tr>
+                                                                                     <td>
+                                                                                      <td>
+                                                                                       long long
+                                                                                       <td>
+                                                                                        8 bytes
+                                                                                        <td>
+                                                                                         8 bytes
+                                                                                         <td>
+                                                                                          <tr>
+                                                                                           <td>
+                                                                                            floating point
+                                                                                            <td>
+                                                                                             float
+                                                                                             <td>
+                                                                                              4 bytes
+                                                                                              <td>
+                                                                                               4 bytes
+                                                                                               <td>
+                                                                                                <tr>
+                                                                                                 <td>
+                                                                                                  <td>
+                                                                                                   double
+                                                                                                   <td>
+                                                                                                    8 bytes
+                                                                                                    <td>
+                                                                                                     8 bytes
+                                                                                                     <td>
+                                                                                                      <tr>
+                                                                                                       <td>
+                                                                                                        <td>
+                                                                                                         long double
+                                                                                                         <td>
+                                                                                                          8 bytes
+                                                                                                          <td>
+                                                                                                           8, 12, or 16 bytes
+                                                                                                           <td>
+                                                                                                            <tr>
+                                                                                                             <td>
+                                                                                                              pointer
+                                                                                                              <td>
+                                                                                                               std::nullptr_t
+                                                                                                               <td>
+                                                                                                                4 bytes
+                                                                                                                <td>
+                                                                                                                 4 or 8 bytes
+                                                                                                                 <td>
+                                                                                                                 </td>
+                                                                                                                </td>
+                                                                                                               </td>
+                                                                                                              </td>
+                                                                                                             </td>
+                                                                                                            </tr>
+                                                                                                           </td>
+                                                                                                          </td>
+                                                                                                         </td>
+                                                                                                        </td>
+                                                                                                       </td>
+                                                                                                      </tr>
+                                                                                                     </td>
+                                                                                                    </td>
+                                                                                                   </td>
+                                                                                                  </td>
+                                                                                                 </td>
+                                                                                                </tr>
+                                                                                               </td>
+                                                                                              </td>
+                                                                                             </td>
+                                                                                            </td>
+                                                                                           </td>
+                                                                                          </tr>
+                                                                                         </td>
+                                                                                        </td>
+                                                                                       </td>
+                                                                                      </td>
+                                                                                     </td>
+                                                                                    </tr>
+                                                                                   </td>
+                                                                                  </td>
+                                                                                 </td>
+                                                                                </td>
+                                                                               </td>
+                                                                              </tr>
+                                                                             </td>
+                                                                            </td>
+                                                                           </td>
+                                                                          </td>
+                                                                         </td>
+                                                                        </tr>
+                                                                       </td>
+                                                                      </td>
+                                                                     </td>
+                                                                    </td>
+                                                                   </td>
+                                                                  </tr>
+                                                                 </td>
+                                                                </td>
+                                                               </td>
+                                                              </td>
+                                                             </td>
+                                                            </tr>
+                                                           </td>
+                                                          </td>
+                                                         </td>
+                                                        </td>
+                                                       </td>
+                                                      </tr>
+                                                     </td>
+                                                    </td>
+                                                   </td>
+                                                  </td>
+                                                 </td>
+                                                </tr>
+                                               </td>
+                                              </td>
+                                             </td>
+                                            </td>
+                                           </td>
+                                          </tr>
+                                         </td>
+                                        </td>
+                                       </td>
+                                      </td>
+                                     </td>
+                                    </tr>
+                                   </td>
+                                  </td>
+                                 </td>
+                                </td>
+                               </td>
+                              </tr>
+                             </th>
+                            </th>
+                           </th>
+                          </th>
+                         </th>
+                        </tr>
+                       </tbody>
+                      </table>
+                     </p>
+                    </p>
+                   </div>
+                   <div class="cpp-note cpp-lightbluebackground">
+                    <p class="cpp-note-title cpp-bottomline">
+                     Tip
+                     <p>
+                      For maximum portability, you shouldn’t assume that variables are larger than the specified minimum size.
+                      <p>
+                       Alternatively, if you want to assume that a type has a certain size (e.g. that an int is at least
+                       <code>
+                        4
+                       </code>
+                       bytes), you can use
+                       <code>
+                        static_assert
+                       </code>
+                       to have the compiler fail a build if it is compiled on an architecture where this assumption is not true. We cover how to do this in lesson
+                       <a href="https://www.learncpp.com/cpp-tutorial/assert-and-static_assert/#static_assert">
+                        9.6 -- Assert and static_assert
+                       </a>
+                       .
+                      </p>
+                     </p>
+                    </p>
+                   </div>
+                   <div class="cpp-note cpp-lightgraybackground">
+                    <p class="cpp-note-title cpp-bottomline">
+                     Related content
+                     <p>
+                      If you are using C++ on a system that does not comply with our assumptions, or are just curious, you can find more information about what the C++ standard says about the minimum size of various types
+                      <a href="https://en.cppreference.com/w/cpp/language/types">
+                       here
+                      </a>
+                      .
+                     </p>
+                    </p>
+                   </div>
+                   <p class="cpp-section cpp-topline" style="clear:both">
+                    The sizeof operator
+                    <p>
+                     In order to determine the size of data types on a particular machine, C++ provides an operator named
+                     <em>
+                      sizeof
+                     </em>
+                     . The
+                     <strong>
+                      sizeof operator
+                     </strong>
+                     is a unary operator that takes either a type or a variable, and returns its size in bytes. You can compile and run the following program to find out how large some of your data types are:
+                     <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iomanip&gt; // for std::setw (which sets the width of the subsequent output)
+#include &lt;iostream&gt;
+
+int main()
+{
+    std::cout &lt;&lt; std::left; // left justify output
+    std::cout &lt;&lt; std::setw(16) &lt;&lt; "bool:" &lt;&lt; sizeof(bool) &lt;&lt; " bytes\n";
+    std::cout &lt;&lt; std::setw(16) &lt;&lt; "char:" &lt;&lt; sizeof(char) &lt;&lt; " bytes\n";
+    std::cout &lt;&lt; std::setw(16) &lt;&lt; "short:" &lt;&lt; sizeof(short) &lt;&lt; " bytes\n";
+    std::cout &lt;&lt; std::setw(16) &lt;&lt; "int:" &lt;&lt; sizeof(int) &lt;&lt; " bytes\n";
+    std::cout &lt;&lt; std::setw(16) &lt;&lt; "long:" &lt;&lt; sizeof(long) &lt;&lt; " bytes\n";
+    std::cout &lt;&lt; std::setw(16) &lt;&lt; "long long:" &lt;&lt; sizeof(long long) &lt;&lt; " bytes\n";
+    std::cout &lt;&lt; std::setw(16) &lt;&lt; "float:" &lt;&lt; sizeof(float) &lt;&lt; " bytes\n";
+    std::cout &lt;&lt; std::setw(16) &lt;&lt; "double:" &lt;&lt; sizeof(double) &lt;&lt; " bytes\n";
+    std::cout &lt;&lt; std::setw(16) &lt;&lt; "long double:" &lt;&lt; sizeof(long double) &lt;&lt; " bytes\n";
+
+    return 0;
+}</code></pre>
+                     <p>
+                      Here is the output from the author’s machine:
+                      <pre>bool:           1 bytes
+char:           1 bytes
+short:          2 bytes
+int:            4 bytes
+long:           4 bytes
+long long:      8 bytes
+float:          4 bytes
+double:         8 bytes
+long double:    8 bytes
+</pre>
+                      <p>
+                       Your results may vary based on compiler, computer architecture, OS, compilation settings (32-bit vs 64-bit), etc…
+                       <p>
+                        Trying to use
+                        <code>
+                         sizeof
+                        </code>
+                        on an incomplete type (such as
+                        <code>
+                         void
+                        </code>
+                        ) will result in a compilation error.
+                        <p>
+                         You can also use the
+                         <code>
+                          sizeof
+                         </code>
+                         operator on a variable name:
+                         <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int main()
+{
+    int x{};
+    std::cout &lt;&lt; "x is " &lt;&lt; sizeof(x) &lt;&lt; " bytes\n";
+
+    return 0;
+}</code></pre>
+                         <pre>x is 4 bytes
+</pre>
+                         <div class="cpp-note cpp-lightgraybackground">
+                          <p class="cpp-note-title cpp-bottomline">
+                           For advanced readers
+                           <p>
+                            <code>
+                             sizeof
+                            </code>
+                            does not include dynamically allocated memory used by an object. We discuss dynamic memory allocation in a future lesson.
+                           </p>
+                          </p>
+                         </div>
+                         <p class="cpp-section cpp-topline" style="clear:both">
+                          Fundamental data type performance
+                          <p>
+                           On modern machines, objects of the fundamental data types are fast, so performance while using or copying these types should generally not be a concern.
+                           <div class="cpp-note cpp-lightgraybackground">
+                            <p class="cpp-note-title cpp-bottomline">
+                             As an aside…
+                             <p>
+                              You might assume that types that use less memory would be faster than types that use more memory. This is not always true. CPUs are often optimized to process data of a certain size (e.g. 32 bits), and types that match that size may be processed quicker. On such a machine, a 32-bit int could be faster than a 16-bit short or an 8-bit char.
+                             </p>
+                            </p>
+                           </div>
+                          </p>
+                         </p>
+                        </p>
+                       </p>
+                      </p>
+                     </p>
+                    </p>
+                   </p>
+                  </p>
+                 </p>
+                </p>
+               </p>
+              </p>
+             </p>
+            </p>
+           </p>
+          </p>
+         </p>
+        </p>
+       </p>
+      </p>
+     </p>
+    </p>
+   </p>
+  </p>
+ </div>
+</div>

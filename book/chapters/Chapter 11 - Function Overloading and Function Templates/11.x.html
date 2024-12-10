@@ -1,0 +1,703 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   11.x — Chapter 11 summary and quiz
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   Nice work.  Function templates may seem pretty complex, but they are a very powerful way to make your code work with objects of different types.  We’ll see a lot more template stuff in future chapters, so hold on to your hat.
+  </p>
+  <p class="cpp-section">
+   Chapter Review
+  </p>
+  <p>
+   <strong>
+    Function overloading
+   </strong>
+   allows us to create multiple functions with the same name, so long as each identically named function has different set of parameter types (or the functions can be otherwise differentiated).  Such a function is called an
+   <strong>
+    overloaded function
+   </strong>
+   (or
+   <strong>
+    overload
+   </strong>
+   for short).  Return types are not considered for differentiation.
+  </p>
+  <p>
+   When resolving overloaded functions, if an exact match isn’t found, the compiler will favor overloaded functions that can be matched via numeric promotions over those that require numeric conversions.  When a function call is made to function that has been overloaded, the compiler will try to match the function call to the appropriate overload based on the arguments used in the function call.  This is called
+   <strong>
+    overload resolution
+   </strong>
+   .
+  </p>
+  <p>
+   An
+   <strong>
+    ambiguous match
+   </strong>
+   occurs when the compiler finds two or more functions that can match a function call to an overloaded function and can’t determine which one is best.
+  </p>
+  <p>
+   A
+   <strong>
+    default argument
+   </strong>
+   is a default value provided for a function parameter.  Parameters with default arguments must always be the rightmost parameters, and they are not used to differentiate functions when resolving overloaded functions.
+  </p>
+  <p>
+   <strong>
+    Function templates
+   </strong>
+   allow us to create a function-like definition that serves as a pattern for creating related functions.  In a function template, we use
+   <strong>
+    type template parameters
+   </strong>
+   as placeholders for any types we want to be specified later.  The syntax that tells the compiler we’re defining a template and declares the template types is called a
+   <strong>
+    template parameter declaration
+   </strong>
+   .
+  </p>
+  <p>
+   The process of creating functions (with specific types) from function templates (with template types) is called
+   <strong>
+    function template instantiation
+   </strong>
+   (or
+   <strong>
+    instantiation
+   </strong>
+   ) for short.  When this process happens due to a function call, it’s called
+   <strong>
+    implicit instantiation
+   </strong>
+   .  An instantiated function is called a
+   <strong>
+    function instance
+   </strong>
+   (or
+   <strong>
+    instance
+   </strong>
+   for short, or sometimes a
+   <strong>
+    template function
+   </strong>
+   ).
+  </p>
+  <p>
+   <strong>
+    Template argument deduction
+   </strong>
+   allows the compiler to deduce the actual type that should be used to instantiate a function from the arguments of the function call.  Template argument deduction does not do type conversion.
+  </p>
+  <p>
+   Template types are sometimes called
+   <strong>
+    generic types
+   </strong>
+   , and programming using templates is sometimes called
+   <strong>
+    generic programming
+   </strong>
+   .
+  </p>
+  <p>
+   In C++20, when the auto keyword is used as a parameter type in a normal function, the compiler will automatically convert the function into a function template with each auto parameter becoming an independent template type parameter. This method for creating a function template is called an
+   <strong>
+    abbreviated function template
+   </strong>
+   .
+  </p>
+  <p>
+   A
+   <strong>
+    non-type template parameter
+   </strong>
+   is a template parameter with a fixed type that serves as a placeholder for a constexpr value passed in as a template argument.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Quiz time
+  </p>
+  <p class="cpp-quiz-question" style="clear: both">
+   Question #1
+  </p>
+  <p>
+   1a) What is the output of this program and why?
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+void print(int x)
+{
+    std::cout &lt;&lt; "int " &lt;&lt; x &lt;&lt; '\n';
+}
+
+void print(double x)
+{
+    std::cout &lt;&lt; "double " &lt;&lt; x &lt;&lt; '\n';
+}
+
+int main()
+{
+    short s { 5 };
+    print(s);
+
+    return 0;
+}</code></pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_0'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_0" style="display:none">
+   <p>
+    The output is
+    <code>
+     int 5
+    </code>
+    .  Converting a
+    <code>
+     short
+    </code>
+    to an
+    <code>
+     int
+    </code>
+    is a numeric promotion, whereas converting a
+    <code>
+     short
+    </code>
+    to a
+    <code>
+     double
+    </code>
+    is a numeric conversion.  The compiler will favor the option that is a numeric promotion over the option that is a numeric conversion.
+   </p>
+  </div>
+  <p>
+   1b) Why won’t the following compile?
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+void print()
+{
+    std::cout &lt;&lt; "void\n";
+}
+
+void print(int x=0)
+{
+    std::cout &lt;&lt; "int " &lt;&lt; x &lt;&lt; '\n';
+}
+
+void print(double x)
+{
+    std::cout &lt;&lt; "double " &lt;&lt; x &lt;&lt; '\n';
+}
+
+int main()
+{
+    print(5.0f);
+    print();
+
+    return 0;
+}</code></pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_1'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_1" style="display:none">
+   <p>
+    Because parameters with default arguments aren’t counted for resolving overloaded functions, the compiler can’t tell whether the call to
+    <code>
+     print()
+    </code>
+    should resolve to
+    <code>
+     print()
+    </code>
+    or
+    <code>
+     print(int x=0)
+    </code>
+    .
+   </p>
+  </div>
+  <p>
+   1c) Why won’t the following compile?
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+void print(long x)
+{
+    std::cout &lt;&lt; "long " &lt;&lt; x &lt;&lt; '\n';
+}
+
+void print(double x)
+{
+    std::cout &lt;&lt; "double " &lt;&lt; x &lt;&lt; '\n';
+}
+
+int main()
+{
+    print(5);
+
+    return 0;
+}</code></pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_2'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_2" style="display:none">
+   <p>
+    The literal 5 is an
+    <code>
+     int
+    </code>
+    .  Converting an
+    <code>
+     int
+    </code>
+    to a
+    <code>
+     long
+    </code>
+    or a
+    <code>
+     double
+    </code>
+    is a numeric conversion, and the compiler will be unable to determine which function is a better match.
+   </p>
+  </div>
+  <p class="cpp-quiz-question cpp-topline" style="clear: both">
+   Question #2
+  </p>
+  <p class="cpp-quiz-question cpp-topline" style="clear: both">
+   &gt; Step #1
+  </p>
+  <p>
+   Write a function template named
+   <code>
+    add()
+   </code>
+   that allows the users to add 2 values of the same type.  The following program should run:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+// write your add function template here
+
+int main()
+{
+	std::cout &lt;&lt; add(2, 3) &lt;&lt; '\n';
+	std::cout &lt;&lt; add(1.2, 3.4) &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+  <p>
+   and produce the following output:
+  </p>
+  <pre>5
+4.6
+</pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_3'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_3" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+template &lt;typename T&gt;
+T add(T x, T y)
+{
+	return x + y;
+}
+
+int main()
+{
+	std::cout &lt;&lt; add(2, 3) &lt;&lt; '\n';
+	std::cout &lt;&lt; add(1.2, 3.4) &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+  </div>
+  <p>
+  </p>
+  <p class="cpp-quiz-question cpp-topline" style="clear: both">
+   &gt; Step #2
+  </p>
+  <br/>
+  Write a function template named
+  <code>
+   mult()
+  </code>
+  that allows the user to multiply one value of any type (first parameter) and an integer (second parameter).  The second parameter should not be a template type.  The function should return the same type as the first parameter.  The following program should run:
+  <p>
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+// write your mult function template here
+
+int main()
+{
+	std::cout &lt;&lt; mult(2, 3) &lt;&lt; '\n';
+	std::cout &lt;&lt; mult(1.2, 3) &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+  <p>
+   and produce the following output:
+  </p>
+  <pre>6
+3.6
+</pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_4'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_4" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+template &lt;typename T&gt;
+T mult(T x, int y)
+{
+	return x * y;
+}
+
+int main()
+{
+	std::cout &lt;&lt; mult(2, 3) &lt;&lt; '\n';
+	std::cout &lt;&lt; mult(1.2, 3) &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+  </div>
+  <p class="cpp-quiz-question cpp-topline" style="clear: both">
+   &gt; Step #3
+  </p>
+  <p>
+   Write a function template named
+   <code>
+    sub()
+   </code>
+   that allows the user to subtract two values of different types.  The following program should run:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+// write your sub function template here
+
+int main()
+{
+	std::cout &lt;&lt; sub(3, 2) &lt;&lt; '\n';
+	std::cout &lt;&lt; sub(3.5, 2) &lt;&lt; '\n';
+	std::cout &lt;&lt; sub(4, 1.5) &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+  <p>
+   and produce the following output:
+  </p>
+  <pre>1
+1.5
+2.5
+</pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_5'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_5" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+template &lt;typename T, typename U&gt;
+auto sub(T x, U y)
+{
+	return x - y;
+}
+
+/* 
+//If C++20 capable, you can use an abbreviated function template instead
+auto sub(auto x, auto y)
+{
+	return x - y;
+}
+*/
+
+int main()
+{
+	std::cout &lt;&lt; sub(3, 2) &lt;&lt; '\n';
+	std::cout &lt;&lt; sub(3.5, 2) &lt;&lt; '\n';
+	std::cout &lt;&lt; sub(4, 1.5) &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+  </div>
+  <p class="cpp-quiz-question cpp-topline" style="clear: both">
+   Question #3
+  </p>
+  <p>
+   What is the output of this program and why?
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+template &lt;typename T&gt;
+int count(T) // This is the same as int count(T x), except we're not giving the parameter a name since we don't use the parameter
+{
+    static int c { 0 };
+    return ++c;
+}
+
+int main()
+{
+    std::cout &lt;&lt; count(1) &lt;&lt; '\n';
+    std::cout &lt;&lt; count(1) &lt;&lt; '\n';
+    std::cout &lt;&lt; count(2.3) &lt;&lt; '\n';
+    std::cout &lt;&lt; count&lt;double&gt;(1) &lt;&lt; '\n';
+    
+    return 0;
+}</code></pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_6'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_6" style="display:none">
+   <pre>1
+2
+1
+2
+</pre>
+   <p>
+    When
+    <code>
+     count(1)
+    </code>
+    is called, the compiler will instantiate the function
+    <code>
+     count&lt;int&gt;(int)
+    </code>
+    and call it.  This will return value
+    <code>
+     1
+    </code>
+    .
+   </p>
+   <p>
+    When
+    <code>
+     count(1)
+    </code>
+    is called again, the compiler will see that
+    <code>
+     count&lt;int&gt;(int)
+    </code>
+    already exists, and call it again.  This will return value
+    <code>
+     2
+    </code>
+    .
+   </p>
+   <p>
+    When
+    <code>
+     count(2.3)
+    </code>
+    is called, the compiler will instantiate the function with prototype
+    <code>
+     count&lt;double&gt;(double)
+    </code>
+    and call it.  This is a new function with its own
+    <code>
+     static c
+    </code>
+    variable, so this will return value
+    <code>
+     1
+    </code>
+    .
+   </p>
+   <p>
+    When
+    <code>
+     count&lt;double&gt;(1)
+    </code>
+    is called, the compiler will see that we’re explicitly requesting the double version of
+    <code>
+     count()
+    </code>
+    .  This function already exists due to the prior statement, so
+    <code>
+     count&lt;double&gt;(double)
+    </code>
+    will be called and the
+    <code>
+     int
+    </code>
+    argument will be implicitly converted to a
+    <code>
+     double
+    </code>
+    .  This function will return value
+    <code>
+     2
+    </code>
+    .
+   </p>
+  </div>
+  <p class="cpp-quiz-question cpp-topline" style="clear: both">
+   Question #4
+  </p>
+  <p>
+   What is the output of this program?
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int foo(int n)
+{
+    return n + 10;
+}
+
+template &lt;typename T&gt;
+int foo(T n)
+{
+    return n;
+}
+
+int main()
+{
+    std::cout &lt;&lt; foo(1) &lt;&lt; '\n'; // #1
+
+    short s { 2 };
+    std::cout &lt;&lt; foo(s) &lt;&lt; '\n'; // #2
+    
+    std::cout &lt;&lt; foo&lt;int&gt;(4) &lt;&lt; '\n'; // #3
+
+    std::cout &lt;&lt; foo&lt;int&gt;(s) &lt;&lt; '\n'; // #4
+
+    std::cout &lt;&lt; foo&lt;&gt;(6) &lt;&lt; '\n'; // #5
+    
+    return 0;
+}</code></pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_7'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_7" style="display:none">
+   <pre>11
+2
+4
+2
+6
+</pre>
+   <p>
+    In case 1,
+    <code>
+     foo(1)
+    </code>
+    matches
+    <code>
+     foo(int)
+    </code>
+    exactly, so non-template function
+    <code>
+     foo(int)
+    </code>
+    is called.
+   </p>
+   <p>
+    In case 2,
+    <code>
+     foo(s)
+    </code>
+    does not match non-template function
+    <code>
+     foo(int)
+    </code>
+    exactly, but the argument
+    <code>
+     s
+    </code>
+    can be converted to an
+    <code>
+     int
+    </code>
+    so
+    <code>
+     foo(int)
+    </code>
+    is a candidate.  However, the compiler will prefer to use function template
+    <code>
+     foo&lt;T&gt;(T)
+    </code>
+    to stencil out exact match
+    <code>
+     foo&lt;short&gt;(short)
+    </code>
+    .  So this calls
+    <code>
+     foo&lt;short&gt;(short)
+    </code>
+    .
+   </p>
+   <p>
+    In case 3,
+    <code>
+     foo&lt;int&gt;(4)
+    </code>
+    is an explicit call to
+    <code>
+     foo&lt;int&gt;
+    </code>
+    , so
+    <code>
+     foo(int)
+    </code>
+    isn’t considered.  The compiler stencils out
+    <code>
+     foo&lt;int&gt;(int)
+    </code>
+    and calls it.
+   </p>
+   <p>
+    In case 4, this is also an explicit call to
+    <code>
+     foo&lt;int&gt;
+    </code>
+    .  The compiler promotes argument
+    <code>
+     s
+    </code>
+    to an
+    <code>
+     int
+    </code>
+    to match the parameter.
+   </p>
+   <p>
+    In case 5, this syntax will only match function templates, so
+    <code>
+     foo(int)
+    </code>
+    is not considered.
+    <code>
+     foo&lt;int&gt;(int)
+    </code>
+    is called.
+   </p>
+  </div>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

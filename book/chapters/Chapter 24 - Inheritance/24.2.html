@@ -1,0 +1,376 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   24.2 — Basic inheritance in C++
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   Now that we’ve talked about what inheritance is in an abstract sense, let’s talk about how it’s used within C++.
+  </p>
+  <p>
+   Inheritance in C++ takes place between classes.  In an inheritance (is-a) relationship, the class being inherited from is called the
+   <strong>
+    parent class
+   </strong>
+   ,
+   <strong>
+    base class
+   </strong>
+   , or
+   <strong>
+    superclass
+   </strong>
+   , and the class doing the inheriting is called the
+   <strong>
+    child class
+   </strong>
+   ,
+   <strong>
+    derived class
+   </strong>
+   , or
+   <strong>
+    subclass
+   </strong>
+   .
+  </p>
+  <p>
+   <img src="../../images/FruitInheritance.png"/>
+  </p>
+  <p>
+   In the above diagram, Fruit is the parent, and both Apple and Banana are children.
+  </p>
+  <p>
+   <img src="../../images/ShapesInheritance.png"/>
+  </p>
+  <p>
+   In this diagram, Triangle is both a child (to Shape) and a parent (to Right Triangle).
+  </p>
+  <p>
+   A child class inherits both behaviors (member functions) and properties (member variables) from the parent (subject to some access restrictions that we’ll cover in a future lesson).
+   <br/>
+   These variables and functions become members of the derived class.
+  </p>
+  <p>
+   Because child classes are full-fledged classes, they can (of course) have their own members that are specific to that class.  We’ll see an example of this in a moment.
+  </p>
+  <p>
+   <strong>
+    A Person class
+   </strong>
+  </p>
+  <p>
+   Here’s a simple class to represent a generic person:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;string&gt;
+#include &lt;string_view&gt;
+
+class Person
+{
+// In this example, we're making our members public for simplicity
+public: 
+    std::string m_name{};
+    int m_age{};
+
+    Person(std::string_view name = "", int age = 0)
+        : m_name{ name }, m_age{ age }
+    {
+    }
+
+    const std::string&amp; getName() const { return m_name; }
+    int getAge() const { return m_age; }
+
+};</code></pre>
+  <p>
+   Because this Person class is designed to represent a generic person, we’ve only defined members that would be common to any type of person.  Every person (regardless of gender, profession, etc…) has a name and age, so those are represented here.
+  </p>
+  <p>
+   Note that in this example, we’ve made all of our variables and functions public.  This is purely for the sake of keeping these examples simple right now.  Normally we would make the variables private.  We will talk about access controls and how those interact with inheritance later in this chapter.
+  </p>
+  <p>
+   <strong>
+    A BaseballPlayer class
+   </strong>
+  </p>
+  <p>
+   Let’s say we wanted to write a program that keeps track of information about some baseball players.  Baseball players need to contain information that is specific to baseball players -- for example, we might want to store a player’s batting average, and the number of home runs they’ve hit.
+  </p>
+  <p>
+   Here’s our incomplete Baseball player class:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">class BaseballPlayer
+{
+// In this example, we're making our members public for simplicity
+public:
+    double m_battingAverage{};
+    int m_homeRuns{};
+
+    BaseballPlayer(double battingAverage = 0.0, int homeRuns = 0)
+       : m_battingAverage{battingAverage}, m_homeRuns{homeRuns}
+    {
+    }
+};</code></pre>
+  <p>
+   Now, we also want to keep track of a baseball player’s name and age, and we already have that information as part of our Person class.
+  </p>
+  <p>
+   We have three choices for how to add name and age to BaseballPlayer:
+  </p>
+  <ol start="1">
+   <li>
+    Add name and age to the BaseballPlayer class directly as members.  This is probably the worst choice, as we’re duplicating code that already exists in our Person class.  Any updates to Person will have to be made in BaseballPlayer too.
+   </li>
+   <li>
+    Add Person as a member of BaseballPlayer using composition.  But we have to ask ourselves, “does a BaseballPlayer have a Person”?  No, it doesn’t.  So this isn’t the right paradigm.
+   </li>
+   <li>
+    Have BaseballPlayer inherit those attributes from Person.  Remember that inheritance represents an is-a relationship.  Is a BaseballPlayer a Person?  Yes, it is.  So inheritance is a good choice here.
+   </li>
+  </ol>
+  <p>
+   <strong>
+    Making BaseballPlayer a derived class
+   </strong>
+  </p>
+  <p>
+   To have BaseballPlayer inherit from our Person class, the syntax is fairly simple.  After the
+   <code>
+    class BaseballPlayer
+   </code>
+   declaration, we use a colon, the word “public”, and the name of the class we wish to inherit.  This is called
+   <em>
+    public inheritance
+   </em>
+   .  We’ll talk more about what public inheritance means in a future lesson.
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">// BaseballPlayer publicly inheriting Person
+class BaseballPlayer : public Person
+{
+public:
+    double m_battingAverage{};
+    int m_homeRuns{};
+
+    BaseballPlayer(double battingAverage = 0.0, int homeRuns = 0)
+       : m_battingAverage{battingAverage}, m_homeRuns{homeRuns}
+    {
+    }
+};</code></pre>
+  <p>
+   Using a derivation diagram, our inheritance looks like this:
+  </p>
+  <p>
+   <img src="../../images/BaseballPlayerInheritance.png"/>
+  </p>
+  <p>
+   When BaseballPlayer inherits from Person, BaseballPlayer acquires the member functions and variables from Person.  Additionally, BaseballPlayer defines two members of its own: m_battingAverage and m_homeRuns.  This makes sense, since these properties are specific to a BaseballPlayer, not to any Person.
+  </p>
+  <p>
+   Thus, BaseballPlayer objects will have 4 member variables: m_battingAverage and m_homeRuns from BaseballPlayer, and m_name and m_age from Person.
+  </p>
+  <p>
+   This is easy to prove:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;string_view&gt;
+
+class Person
+{
+public:
+    std::string m_name{};
+    int m_age{};
+
+    Person(std::string_view name = "", int age = 0)
+        : m_name{name}, m_age{age}
+    {
+    }
+
+    const std::string&amp; getName() const { return m_name; }
+    int getAge() const { return m_age; }
+
+};
+
+// BaseballPlayer publicly inheriting Person
+class BaseballPlayer : public Person
+{
+public:
+    double m_battingAverage{};
+    int m_homeRuns{};
+
+    BaseballPlayer(double battingAverage = 0.0, int homeRuns = 0)
+       : m_battingAverage{battingAverage}, m_homeRuns{homeRuns}
+    {
+    }
+};
+
+int main()
+{
+    // Create a new BaseballPlayer object
+    BaseballPlayer joe{};
+    // Assign it a name (we can do this directly because m_name is public)
+    joe.m_name = "Joe";
+    // Print out the name
+    std::cout &lt;&lt; joe.getName() &lt;&lt; '\n'; // use the getName() function we've acquired from the Person base class
+
+    return 0;
+}</code></pre>
+  <p>
+   Which prints the value:
+  </p>
+  <pre>Joe
+</pre>
+  <p>
+   This compiles and runs because joe is a BaseballPlayer, and all BaseballPlayer objects have a m_name member variable and a getName() member function inherited from the Person class.
+  </p>
+  <p>
+   <strong>
+    An Employee derived class
+   </strong>
+  </p>
+  <p>
+   Now let’s write another class that also inherits from Person.  This time, we’ll write an Employee class.  An employee “is a” person, so using inheritance is appropriate:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">// Employee publicly inherits from Person
+class Employee: public Person
+{
+public:
+    double m_hourlySalary{};
+    long m_employeeID{};
+
+    Employee(double hourlySalary = 0.0, long employeeID = 0)
+        : m_hourlySalary{hourlySalary}, m_employeeID{employeeID}
+    {
+    }
+
+    void printNameAndSalary() const
+    {
+        std::cout &lt;&lt; m_name &lt;&lt; ": " &lt;&lt; m_hourlySalary &lt;&lt; '\n';
+    }
+};</code></pre>
+  <p>
+   Employee inherits m_name and m_age from Person (as well as the two access functions), and adds two more member variables and a member function of its own.  Note that printNameAndSalary() uses variables both from the class it belongs to (Employee::m_hourlySalary) and the parent class (Person::m_name).
+  </p>
+  <p>
+   This gives us a derivation chart that looks like this:
+  </p>
+  <p>
+   <img src="../../images/EmployeeInheritance.png"/>
+  </p>
+  <p>
+   Note that Employee and BaseballPlayer don’t have any direct relationship, even though they both inherit from Person.
+  </p>
+  <p>
+   Here’s a full example using Employee:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;string_view&gt;
+
+class Person
+{
+public:
+    std::string m_name{};
+    int m_age{};
+
+    Person(std::string_view name = "", int age = 0)
+        : m_name{name}, m_age{age}
+    {
+    }
+
+    const std::string&amp; getName() const { return m_name; }
+    int getAge() const { return m_age; }
+
+};
+
+// Employee publicly inherits from Person
+class Employee: public Person
+{
+public:
+    double m_hourlySalary{};
+    long m_employeeID{};
+
+    Employee(double hourlySalary = 0.0, long employeeID = 0)
+        : m_hourlySalary{hourlySalary}, m_employeeID{employeeID}
+    {
+    }
+
+    void printNameAndSalary() const
+    {
+        std::cout &lt;&lt; m_name &lt;&lt; ": " &lt;&lt; m_hourlySalary &lt;&lt; '\n';
+    }
+};
+
+int main()
+{
+    Employee frank{20.25, 12345};
+    frank.m_name = "Frank"; // we can do this because m_name is public
+
+    frank.printNameAndSalary();
+    
+    return 0;
+}</code></pre>
+  <p>
+   This prints:
+  </p>
+  <pre>Frank: 20.25
+</pre>
+  <p>
+   <strong>
+    Inheritance chains
+   </strong>
+  </p>
+  <p>
+   It’s possible to inherit from a class that is itself derived from another class.  There is nothing noteworthy or special when doing so -- everything proceeds as in the examples above.
+  </p>
+  <p>
+   For example, let’s write a Supervisor class.  A Supervisor is an Employee, which is a Person.  We’ve already written an Employee class, so let’s use that as the base class from which to derive Supervisor:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">class Supervisor: public Employee
+{
+public:
+    // This Supervisor can oversee a max of 5 employees
+    long m_overseesIDs[5]{};
+};</code></pre>
+  <p>
+   Now our derivation chart looks like this:
+  </p>
+  <p>
+   <img src="../../images/SupervisorInheritance.png"/>
+  </p>
+  <p>
+   All Supervisor objects inherit the functions and variables from both Employee and Person, and add their own m_overseesIDs member variable.
+  </p>
+  <p>
+   By constructing such inheritance chains, we can create a set of reusable classes that are very general (at the top) and become progressively more specific at each level of inheritance.
+  </p>
+  <p>
+   <strong>
+    Why is this kind of inheritance useful?
+   </strong>
+  </p>
+  <p>
+   Inheriting from a base class means we don’t have to redefine the information from the base class in our derived classes.  We automatically receive the member functions and member variables of the base class through inheritance, and then simply add the additional functions or member variables we want.  This not only saves work, but also means that if we ever update or modify the base class (e.g. add new functions, or fix a bug), all of our derived classes will automatically inherit the changes!
+  </p>
+  <p>
+   For example, if we ever added a new function to Person, then Employee, Supervisor, and BaseballPlayer would automatically gain access to it.  If we added a new variable to Employee, then Supervisor would also gain access to it.  This allows us to construct new classes in an easy, intuitive, and low-maintenance way!
+  </p>
+  <p>
+   <strong>
+    Conclusion
+   </strong>
+  </p>
+  <p>
+   Inheritance allows us to reuse classes by having other classes inherit their members.  In future lessons, we’ll continue to explore how this works.
+  </p>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

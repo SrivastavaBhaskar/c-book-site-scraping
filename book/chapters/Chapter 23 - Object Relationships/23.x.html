@@ -1,0 +1,340 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <h1 class="entry-title singular-title" itemprop="headline">
+   23.x — Chapter 23 summary and quiz
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   In this chapter, we learned about some different kinds of relationships between two objects.
+   <p>
+    <strong>
+     Summary
+    </strong>
+    <p>
+     The process of building complex objects from simpler ones is called
+     <strong>
+      object composition
+     </strong>
+     . There are two types of object composition: composition, and aggregation.
+     <p>
+      <strong>
+       Composition
+      </strong>
+      exists when a member of a class has a part-of relationship with the class. In a composition relationship, the class manages the existence of the members. To qualify as a
+      <strong>
+       composition
+      </strong>
+      , an object and a part must have the following relationship:
+      <ul>
+       <li>
+        The part (member) is part of the object (class)
+        <li>
+         The part (member) can only belong to one object (class) at a time
+         <li>
+          The part (member) has its existence managed by the object (class)
+          <li>
+           The part (member) does not know about the existence of the object (class)
+          </li>
+         </li>
+        </li>
+       </li>
+      </ul>
+      <p>
+       Compositions are typically implemented via normal member variables, or by pointers where the class manages all the memory allocation and deallocation. If you can implement a class as a composition, you should implement a class as a composition.
+       <p>
+        <strong>
+         Aggregations
+        </strong>
+        exists when a class has a has-a relationship with the member. In an aggregation relationship, the class does not manage the existence of the members. To qualify as an
+        <strong>
+         aggregation
+        </strong>
+        , an object and its parts must have the following relationship:
+        <ul>
+         <li>
+          The part (member) is part of the object (class)
+          <li>
+           The part (member) can belong to more than one object (class) at a time
+           <li>
+            The part (member) does
+            <em>
+             not
+            </em>
+            have its existence managed by the object (class)
+            <li>
+             The part (member) does not know about the existence of the object (class)
+            </li>
+           </li>
+          </li>
+         </li>
+        </ul>
+        <p>
+         Aggregations are typically implemented via pointer or reference.
+         <p>
+          <strong>
+           Associations
+          </strong>
+          are a looser type of relationship, where the class uses-an otherwise unrelated object. To qualify as an
+          <strong>
+           association
+          </strong>
+          , an object and an associated object must have the following relationship:
+          <ul>
+           <li>
+            The associated object (member) is otherwise unrelated to the object (class)
+            <li>
+             The associated object (member) can belong to more than one object (class) at a time
+             <li>
+              The associated object (member) does
+              <em>
+               not
+              </em>
+              have its existence managed by the object (class)
+              <li>
+               The associated object (member) may or may not know about the existence of the object (class)
+              </li>
+             </li>
+            </li>
+           </li>
+          </ul>
+          <p>
+           Associations may be implemented via pointer or reference, or by a more indirect means (such as holding the index or key of the associated object).
+           <p>
+            In a
+            <strong>
+             dependency
+            </strong>
+            , one class uses another class to perform a task. The dependent class typically is not a member of the class using it, but rather is temporarily created, used, and then destroyed, or passed into a member function from an external source.
+            <p>
+             In a
+             <strong>
+              container class
+             </strong>
+             one class provides a container to hold multiple objects of another type. A
+             <strong>
+              value container
+             </strong>
+             is a composition that stores copies of the objects it is holding. A
+             <strong>
+              reference container
+             </strong>
+             is an aggregation that stores pointers or references to objects that live outside the container.
+             <p>
+              std::initializer_list can be used to implement constructors, assignment operators, and other functions that accept a list initialization parameter. std::initializer_list lives in the &lt;initializer_list&gt; header.
+              <div class="cpp-table-wrapper">
+               <p>
+                <p>
+                 <table class="cpp-table">
+                  <tbody>
+                   <tr>
+                    <th>
+                     Property\Type
+                     <th>
+                      Composition
+                      <th>
+                       Aggregation
+                       <th>
+                        Association
+                        <th>
+                         Dependency
+                         <tr>
+                          <td>
+                           Relationship type
+                           <td>
+                            Whole/part
+                            <td>
+                             Whole/part
+                             <td>
+                              Otherwise unrelated
+                              <td>
+                               Otherwise unrelated
+                               <tr>
+                                <td>
+                                 Members can belong to multiple classes
+                                 <td>
+                                  No
+                                  <td>
+                                   Yes
+                                   <td>
+                                    Yes
+                                    <td>
+                                     Yes
+                                     <tr>
+                                      <td>
+                                       Members existence managed by class
+                                       <td>
+                                        Yes
+                                        <td>
+                                         No
+                                         <td>
+                                          No
+                                          <td>
+                                           No
+                                           <tr>
+                                            <td>
+                                             Directionality
+                                             <td>
+                                              Unidirectional
+                                              <td>
+                                               Unidirectional
+                                               <td>
+                                                Unidirectional or bidirectional
+                                                <td>
+                                                 Unidirectional
+                                                 <tr>
+                                                  <td>
+                                                   Relationship verb
+                                                   <td>
+                                                    Part-of
+                                                    <td>
+                                                     Has-a
+                                                     <td>
+                                                      Uses-a
+                                                      <td>
+                                                       Depends-on
+                                                      </td>
+                                                     </td>
+                                                    </td>
+                                                   </td>
+                                                  </td>
+                                                 </tr>
+                                                </td>
+                                               </td>
+                                              </td>
+                                             </td>
+                                            </td>
+                                           </tr>
+                                          </td>
+                                         </td>
+                                        </td>
+                                       </td>
+                                      </td>
+                                     </tr>
+                                    </td>
+                                   </td>
+                                  </td>
+                                 </td>
+                                </td>
+                               </tr>
+                              </td>
+                             </td>
+                            </td>
+                           </td>
+                          </td>
+                         </tr>
+                        </th>
+                       </th>
+                      </th>
+                     </th>
+                    </th>
+                   </tr>
+                  </tbody>
+                 </table>
+                </p>
+               </p>
+              </div>
+              <p>
+               <strong>
+                Quiz time
+               </strong>
+               <p>
+                This chapter is pretty straightforward and a little more abstract than the previous ones, so this quiz will be short and to the point.
+                <ol start="1">
+                 <li>
+                  What type of relationship (composition, aggregation, association, or dependency) do the following describe?
+                 </li>
+                </ol>
+                <p>
+                 1a) An Animal class that contains an animal type (enum) and name (string).
+                 <br/>
+                 <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_0'),this,'Show Solution','Hide Solution')">
+                  Show Solution
+                 </a>
+                 <div class="wpsolution" id="cpp_solution_id_0" style="display:none">
+                  Composition -- The animal type and name don’t have a use outside of the Animal.
+                 </div>
+                 <p>
+                  1b) A text editor class with a save() function that takes a File object as an argument. The save() function writes the contents of the editor to disk.
+                  <br/>
+                  <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_1'),this,'Show Solution','Hide Solution')">
+                   Show Solution
+                  </a>
+                  <div class="wpsolution" id="cpp_solution_id_1" style="display:none">
+                   Dependency -- The text editor class is using the File object for the task of saving to disk.
+                  </div>
+                  <p>
+                   1c) An Adventurer class that can carry various kinds of Items, such as swords, wands, potions, or spellbooks. These Items can be dropped and picked up by other Adventurers.
+                   <br/>
+                   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_2'),this,'Show Solution','Hide Solution')">
+                    Show Solution
+                   </a>
+                   <div class="wpsolution" id="cpp_solution_id_2" style="display:none">
+                    Association -- the Adventurer and Items aren’t a whole-part relationship, so this isn’t an aggregation. The Adventurer uses-a Items, and doesn’t manage their existence.
+                   </div>
+                   <p>
+                    1d) The Player prays at a Shrine (to receive a new power).
+                    <br/>
+                    <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_3'),this,'Show Solution','Hide Solution')">
+                     Show Solution
+                    </a>
+                    <div class="wpsolution" id="cpp_solution_id_3" style="display:none">
+                     Dependency -- They player depends on the shrine to receive the power, but does not have any long-term association with it.
+                    </div>
+                    <p>
+                     1e) A Computer class that contains a CPU class. The CPU can be removed from the Computer and tested on its own.
+                     <br/>
+                     <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_4'),this,'Show Solution','Hide Solution')">
+                      Show Solution
+                     </a>
+                     <div class="wpsolution" id="cpp_solution_id_4" style="display:none">
+                      Aggregation -- The computer has a CPU, but does not manage its existence.
+                     </div>
+                     <p>
+                      1f) A blacksmith has a specific anvil that he uses to do his work.
+                      <br/>
+                      <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_5'),this,'Show Solution','Hide Solution')">
+                       Show Solution
+                      </a>
+                      <div class="wpsolution" id="cpp_solution_id_5" style="display:none">
+                       Association -- The blacksmith uses the anvil, but does not have a whole-part relationship with it.
+                      </div>
+                      <ol start="2">
+                       <li>
+                        Select one: If you can design a class using (pick one: composition, aggregation, association, or dependency), then you should.
+                       </li>
+                      </ol>
+                      <p>
+                       <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_6'),this,'Show Solution','Hide Solution')">
+                        Show Solution
+                       </a>
+                       <div class="wpsolution" id="cpp_solution_id_6" style="display:none">
+                        composition
+                       </div>
+                      </p>
+                     </p>
+                    </p>
+                   </p>
+                  </p>
+                 </p>
+                </p>
+               </p>
+              </p>
+             </p>
+            </p>
+           </p>
+          </p>
+         </p>
+        </p>
+       </p>
+      </p>
+     </p>
+    </p>
+   </p>
+  </p>
+ </div>
+</div>

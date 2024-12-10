@@ -1,0 +1,819 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   13.y — Using a language reference
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   Depending on where you’re at in your journey with learning programming languages (and specifically, C++), LearnCpp.com might be the only resource you’re using to learn C++ or to look something up.  LearnCpp.com is designed to explain concepts in a beginner-friendly fashion, but it simply can’t cover every aspect of the language.  As you begin to explore outside the topics that these tutorials cover, you’ll inevitably run into questions that these tutorials don’t answer.  In that case, you’ll need to leverage outside resources.
+  </p>
+  <p>
+   One such resource is
+   <a href="https://stackoverflow.com">
+    Stack Overflow
+   </a>
+   , where you can ask questions (or better, read the answer to the same question someone before you asked).  But sometimes a better first stop is a reference guide.  Unlike tutorials, which tend to focus on the most important topics and use informal/common language to make learning easier, reference guides describe C++ precisely using formal terminology.  Because of this, reference material tends to be comprehensive, accurate, and… hard to understand.
+  </p>
+  <p>
+   In this lesson, we’ll show how to use
+   <a href="https://cppreference.com">
+    cppreference
+   </a>
+   , a popular standard reference that we refer to throughout the lessons, by researching 3 examples.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Overview
+  </p>
+  <p>
+   Cppreference greets you with an
+   <a href="https://en.cppreference.com/w/cpp">
+    overview
+   </a>
+   of the core language and libraries:
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="cppreference overview" src="../../images/cppreference overview.png"/>
+  </div>
+  <p>
+   From here, you can get to everything cppreference has to offer, but it’s easier to use the search function, or a search engine. The overview is a great place to visit once you’ve finished the tutorials on LearnCpp.com, to delve deeper into the libraries, and to see what else the language has to offer that you might not be aware of.
+  </p>
+  <p>
+   The upper half of the table shows features currently in the language, while the bottom half shows technical specifications, which are features that may or may not be added to C++ in a future version, or have already been partially accepted into the language.  This can be useful if you want to see what new capabilities are coming soon.
+  </p>
+  <p>
+   Starting with C++11, cppreference marks all features with the language standard version they’ve been added in. The standard version is the little green number you can see next to some of the links in the above image. Features without a version number have been available since C++98/03. The version numbers are not only in the overview, but everywhere on cppreference, letting you know exactly what you can or cannot use in a specific C++ version.
+  </p>
+  <div class="cpp-note cpp-lightredbackground">
+   <p class="cpp-note-title cpp-bottomline">
+    Warning
+   </p>
+   <p>
+    If you use a search engine and a technical specification has just been accepted into the standard, you might get linked to a technical specification rather than the official reference, which can differ.
+   </p>
+  </div>
+  <div class="cpp-note cpp-lightbluebackground">
+   <p class="cpp-note-title cpp-bottomline">
+    Tip
+   </p>
+   <p>
+    Cppreference is a reference for both C++ and C. Since C++ shares some function names with C, you may find yourself in the C reference after searching for something. The URL and the navigation bar at the top of cppreference always show you if you’re browsing the C or C++ reference.
+   </p>
+  </div>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   std::string::length
+  </p>
+  <p>
+   We’ll start by researching a function that you know from a previous lesson,
+   <code>
+    std::string::length
+   </code>
+   , which returns the length of a string.
+  </p>
+  <p>
+   On the top right of cppreference, search for “string”. Doing so shows a long list of types and functions, of which only the top is relevant for now.
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="string search" src="../../images/string search.png"/>
+  </div>
+  <p>
+   We could have searched for “string length” right away, but for the purpose of showing as much as possible in this lesson, we’re taking the long route. Clicking on “Strings library” takes us to a page talking about the various kinds of strings that C++ supports.
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="strings library page" src="../../images/strings library page.png"/>
+  </div>
+  <p>
+   If we look under the “std::basic_string” section, we can see a list of typedefs, and within that list is std::string.
+  </p>
+  <p>
+   Clicking on “std::string” leads to the page for
+   <a href="https://en.cppreference.com/w/cpp/string/basic_string">
+    <code>
+     std::basic_string
+    </code>
+   </a>
+   . There is no page for
+   <code>
+    std::string
+   </code>
+   , because
+   <code>
+    std::string
+   </code>
+   is a
+   <code>
+    typedef
+   </code>
+   for
+   <code>
+    std::basic_string&lt;char&gt;
+   </code>
+   , which again can be seen in the
+   <code>
+    typedef
+   </code>
+   list:
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="typedef" src="../../images/typedef.png"/>
+  </div>
+  <p>
+   The
+   <code>
+    &lt;char&gt;
+   </code>
+   means that each character of the string is of type
+   <code>
+    char
+   </code>
+   .  You’ll note that C++ offers other strings that use different character types.  These can be useful when using Unicode instead of ASCII.
+  </p>
+  <p>
+   Further down the same page, there’s a
+   <a href="https://en.cppreference.com/w/cpp/string/basic_string#Member_functions">
+    list of member functions
+   </a>
+   (the behaviors that a type has). If you want to know what you can do with a type, this list is very convenient. In this list, you’ll find a row for
+   <code>
+    length
+   </code>
+   (and
+   <code>
+    size
+   </code>
+   ).
+  </p>
+  <p>
+   Following the link brings us to the detailed function description of
+   <a href="https://en.cppreference.com/w/cpp/string/basic_string/size">
+    <code>
+     length
+    </code>
+    and
+    <code>
+     size
+    </code>
+   </a>
+   , which both do the same thing.
+  </p>
+  <p>
+   The top of each page starts with a short summary of the feature and syntax, overloads, or declarations:
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="string length overloads" src="../../images/string length overloads.png"/>
+  </div>
+  <p>
+   The title of the page shows the name of the class and function with all template parameters. We can ignore this part.  Below the title, we see all of the different function overloads (different versions of the function that share the same name) and which language standard they apply to.
+  </p>
+  <p>
+   Below that, we can see the parameters that the function takes, and what the return value means.
+  </p>
+  <p>
+   Because
+   <code>
+    std::string::length
+   </code>
+   is a simple function, there’s not a lot of content on this page.  Many pages show example uses of the feature they’re documenting, as does this one:
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="string length example" src="../../images/string length example.png"/>
+  </div>
+  <p>
+   While you’re still learning C++, there will be features in the examples that you haven’t seen before. If there are enough examples, you’re probably able to understand a sufficient amount of it to get an idea of how the function is used and what it does. If the example is too complicated, you can search for an example somewhere else or read the reference of the parts you don’t understand (you can click on functions and types in the examples to see what they do).
+  </p>
+  <p>
+   Now we know what
+   <code>
+    std::string::length
+   </code>
+   does, but we knew that before. Let’s have a look at something new!
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   std::cin.ignore
+  </p>
+  <p>
+   In lesson
+   <a href="https://www.learncpp.com/cpp-tutorial/stdcin-and-handling-invalid-input/">
+    9.5 -- std::cin and handling invalid input
+   </a>
+   , we talked about
+   <code>
+    std::cin.ignore
+   </code>
+   , which is used to ignore everything up to a line break.  One of the parameters of this function is some long and verbose value. What was that again? Can’t you just use a big number? What does this argument do anyway? Let’s figure it out!
+  </p>
+  <p>
+   Typing “std::cin.ignore” into the cppreference search yields the following results:
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="Search engine results" src="../../images/Search engine results.png"/>
+  </div>
+  <ul>
+   <li>
+    <code>
+     std::cin, std::wcin
+    </code>
+    - We want
+    <code>
+     .ignore
+    </code>
+    , not plain
+    <code>
+     std::cin
+    </code>
+    .
+   </li>
+   <li>
+    <code>
+     std::basic_istream&lt;CharT,Traits&gt;::ignore
+    </code>
+    - Eew, what is this?  Let’s skip for now.
+   </li>
+   <li>
+    <code>
+     std::ignore
+    </code>
+    - No, that’s not it.
+   </li>
+   <li>
+    <code>
+     std::basic_istream
+    </code>
+    - That’s not it either.
+   </li>
+  </ul>
+  <p>
+   It’s not there, what now? Let’s go to
+   <a href="https://en.cppreference.com/w/cpp/io/cin">
+    <code>
+     std::cin
+    </code>
+   </a>
+   and work our way from there. There’s nothing immediately obvious on that page. On the top, we can see the declaration of
+   <code>
+    std::cin
+   </code>
+   and
+   <code>
+    std::wcin
+   </code>
+   , and it tells us which header we need to include to use
+   <code>
+    std::cin
+   </code>
+   :
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="Declaration" src="../../images/Declaration.png"/>
+  </div>
+  <p>
+   We can see that
+   <code>
+    std::cin
+   </code>
+   is an object of type
+   <code>
+    std::istream
+   </code>
+   . Let’s follow the link to
+   <a href="https://en.cppreference.com/w/cpp/io/basic_istream">
+    <code>
+     std::istream
+    </code>
+   </a>
+   :
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="basic_istream" src="../../images/basic_istream.png"/>
+  </div>
+  <p>
+   Hold up! We’ve seen
+   <code>
+    std::basic_istream
+   </code>
+   before when we searched for “std::cin.ignore” in our search engine.  It turns out that
+   <code>
+    istream
+   </code>
+   is a typedef name for
+   <code>
+    basic_istream
+   </code>
+   , so maybe our search wasn’t so wrong after all.
+  </p>
+  <p>
+   Scrolling down on that page, we’re greeted with familiar functions:
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="Member functions" src="../../images/Member functions.png"/>
+  </div>
+  <p>
+   We’ve used many of these functions already:
+   <code>
+    operator&gt;&gt;
+   </code>
+   ,
+   <code>
+    get
+   </code>
+   ,
+   <code>
+    getline
+   </code>
+   ,
+   <code>
+    ignore
+   </code>
+   . Scroll around on that page to get an idea of what else there is in
+   <code>
+    std::cin
+   </code>
+   . Then click
+   <a href="https://en.cppreference.com/w/cpp/io/basic_istream/ignore">
+    <code>
+     ignore
+    </code>
+   </a>
+   , since that’s what we’re interested in.
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="ignore" src="../../images/ignore.png"/>
+  </div>
+  <p>
+   On the top of the page there’s the function signature and a description of what the function and its two parameters do. The
+   <code>
+    =
+   </code>
+   signs after the parameters indicate a
+   <strong>
+    default argument
+   </strong>
+   (we cover this in lesson
+   <a href="https://www.learncpp.com/cpp-tutorial/default-arguments/">
+    11.5 -- Default arguments
+   </a>
+   ). If we don’t provide an argument for a parameter that has a default value, the default value is used.
+  </p>
+  <p>
+   The first bullet point answers all of our questions.  We can see that
+   <code>
+    std::numeric_limits&lt;std::streamsize&gt;::max()
+   </code>
+   has special meaning to
+   <code>
+    std::cin.ignore
+   </code>
+   , in that it disables the character count check.  This means
+   <code>
+    std::cin.ignore
+   </code>
+   will continue ignoring characters until it finds the delimiter, or until it runs out of characters to look at.
+  </p>
+  <p>
+   Many times, you don’t need to read the entire description of a function if you already know it but forgot what the parameters or return value mean. In such situations, reading the parameter or return value description suffices.
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="Parameters and return value" src="../../images/Parameters and return value.png"/>
+  </div>
+  <p>
+   The parameter description is brief. It doesn’t contain the special handling of
+   <code>
+    std::numeric_limits&lt;std::streamsize&gt;::max()
+   </code>
+   or the other stop conditions, but serves as a good reminder.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   A language grammar example
+  </p>
+  <p>
+   Alongside the standard library, cppreference also documents the language grammar. Here’s a valid program:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int getUserInput()
+{
+  int i{};
+  std::cin &gt;&gt; i;
+  return i;
+}
+
+int main()
+{
+  std::cout &lt;&lt; "How many bananas did you eat today? \n";
+
+  if (int iBananasEaten{ getUserInput() }; iBananasEaten &lt;= 2)
+  {
+    std::cout &lt;&lt; "Yummy\n";
+  }
+  else
+  {
+    std::cout &lt;&lt; iBananasEaten &lt;&lt; " is a lot!\n";
+  }
+
+  return 0;  
+}</code></pre>
+  <p>
+   Why is there a variable definition inside the condition of the
+   <code>
+    if-statement
+   </code>
+   ? Let’s use cppreference to figure out what it does by searching for “cppreference if statement” in our favorite search engine. Doing so leads us to
+   <a href="https://en.cppreference.com/w/cpp/language/if">
+    if statements
+   </a>
+   . At the top, there’s a syntax reference.
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="" src="../../images/syntax-min.png"/>
+  </div>
+  <p>
+   Look at the syntax for the
+   <code>
+    if-statement
+   </code>
+   .  If you remove all of the optional parts, you get an
+   <code>
+    if-statement
+   </code>
+   that you already know.  Before the
+   <code>
+    condition
+   </code>
+   , there’s an optional
+   <code>
+    init-statement
+   </code>
+   , that looks like what’s happening in the code above.
+  </p>
+  <pre>if ( init-statement condition ) statement-true
+if ( init-statement condition ) statement-true else statement-false
+</pre>
+  <p>
+   Below the syntax reference, there’s an explanation of each part of the syntax, including the
+   <code>
+    init-statement
+   </code>
+   . It says that the
+   <code>
+    init-statement
+   </code>
+   is typically a declaration of a variable with an initializer.
+  </p>
+  <p>
+   Following the syntax is an explanation of
+   <code>
+    if-statements
+   </code>
+   and simple examples:
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="Explanation on examples" src="../../images/Explanation on examples.png"/>
+  </div>
+  <p>
+   We already know how
+   <code>
+    if-statements
+   </code>
+   work, and the examples don’t include an
+   <code>
+    init-statement
+   </code>
+   , so we scroll down a little to find a section dedicated to
+   <code>
+    if-statements
+   </code>
+   with initializers:
+  </p>
+  <div class="cpp-image-wrapper">
+   <img alt="If Statements with Initializer" src="../../images/If Statements with Initializer.png"/>
+  </div>
+  <p>
+   First, it is shown how the
+   <code>
+    init-statement
+   </code>
+   can be written without actually using an
+   <code>
+    init-statement
+   </code>
+   . Now we know what the code in question is doing. It’s a normal variable declaration, just merged into the
+   <code>
+    if-statement
+   </code>
+   .
+  </p>
+  <p>
+   The sentence after that is interesting, because it lets us know that the names from the
+   <code>
+    init-statement
+   </code>
+   are available in
+   <em>
+    both
+   </em>
+   statements (
+   <code>
+    statement-true
+   </code>
+   and
+   <code>
+    statement-false
+   </code>
+   ).  This may be surprising, since you might otherwise assume the variable is only available in the
+   <code>
+    statement-true
+   </code>
+   .
+  </p>
+  <p>
+   The
+   <code>
+    init-statement
+   </code>
+   examples use features and types that we haven’t covered yet. You don’t have to understand everything you see to understand how the
+   <code>
+    init-statement
+   </code>
+   works. Let’s skip everything that’s too confusing until we find something we can work with:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">// Iterators, we don't know them. Skip.
+if (auto it = m.find(10); it != m.end()) { return it-&gt;second.size(); }
+
+// [10], what's that? Skip.
+if (char buf[10]; std::fgets(buf, 10, stdin)) { m[0] += buf; }
+
+// std::lock_guard, we don't know that, but it's some type. We know what types are!
+if (std::lock_guard lock(mx); shared_flag) { unsafe_ping(); shared_flag = false; }
+
+// This is easy, that's an int!
+if (int s; int count = ReadBytesWithSignal(&amp;s)) { publish(count); raise(s); }
+
+// Whew, no thanks!
+if (auto keywords = {"if", "for", "while"};
+    std::any_of(keywords.begin(), keywords.end(),
+                [&amp;s](const char* kw) { return s == kw; })) {
+  std::cerr &lt;&lt; "Token must not be a keyword\n";
+}</code></pre>
+  <p>
+   The easiest example seems to be the one with an
+   <code>
+    int
+   </code>
+   . Then we look after the semicolon and there’s another definition, odd… Let’s go back to the
+   <code>
+    std::lock_guard
+   </code>
+   example.
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">if (std::lock_guard lock(mx); shared_flag)
+{
+  unsafe_ping();
+  shared_flag = false;
+}</code></pre>
+  <p>
+   From this, it’s relatively easy to see how an
+   <code>
+    init-statement
+   </code>
+   works. Define some variable (
+   <code>
+    lock
+   </code>
+   ), then a semicolon, then the condition. That’s exactly what happened in our example.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   A warning about the accuracy of cppreference
+  </p>
+  <p>
+   Cppreference is not an official documentation source -- rather, it is a wiki.  With wikis, anyone can add and modify content -- the content is sourced from the community.  Although this means that it’s easy for someone to add wrong information, that misinformation is typically quickly caught and removed, making cppreference a reliable source.
+  </p>
+  <p>
+   The only official source for C++ is
+   <a href="https://isocpp.org/std/the-standard">
+    the standard
+   </a>
+   (Free drafts on
+   <a href="https://github.com/cplusplus/draft/tree/master/papers">
+    github
+   </a>
+   ), which is a formal document and not easily usable as a reference.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Quiz time
+  </p>
+  <div class="quiz" style="clear: both">
+   <p class="quiz-header">
+    Question #1
+   </p>
+   <p>
+    What does the following program print? Don’t run it, use a reference to figure out what
+    <code>
+     erase
+    </code>
+    does.
+   </p>
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main()
+{
+  std::string str{ "The rice is cooking" };
+
+  str.erase(4, 11);
+
+  std::cout &lt;&lt; str &lt;&lt; '\n';
+
+  return 0;
+}</code></pre>
+   <div class="cpp-note cpp-lightbluebackground">
+    <p class="cpp-note-title cpp-bottomline">
+     Tip
+    </p>
+    <p>
+     When you find
+     <code>
+      erase
+     </code>
+     on cppreference, you can ignore the overloads that use iterators.
+    </p>
+   </div>
+   <div class="cpp-note cpp-lightbluebackground">
+    <p class="cpp-note-title cpp-bottomline">
+     Tip
+    </p>
+    <p>
+     Indexes in C++ start at 0. The character at index 0 in the string “House” is ‘H’, at 1 it’s ‘o’, and so on.
+    </p>
+   </div>
+   <p>
+    <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_0'), this, 'Show Solution', 'Hide Solution')">
+     Show Solution
+    </a>
+   </p>
+   <div class="wpsolution" id="cpp_solution_id_0" style="display:none">
+    <pre>The king
+</pre>
+    <p>
+     Here’s how you’d get there by using the search function on cppreference (you might have skipped the first step by using a search engine):
+    </p>
+    <p>
+     <a href="https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&amp;search=string&amp;button=">
+      Searching for string
+     </a>
+     and clicking “std::string” leads us to
+     <a href="https://en.cppreference.com/w/cpp/string/basic_string">
+      <code>
+       std::basic_string
+      </code>
+     </a>
+     .
+    </p>
+    <p>
+     Scrolling to the “Member functions” list, we find
+     <a href="https://en.cppreference.com/w/cpp/string/basic_string/erase">
+      erase
+     </a>
+     . As hinted in the tip above, the first
+     <strong>
+      function overload
+     </strong>
+     is used. It takes 2
+     <code>
+      size_type
+     </code>
+     (Unsigned integer type) arguments. In our example, 4 and 11. According to the description of (1), it removes “
+     <code>
+      min(count, size() - index)
+     </code>
+     characters starting at
+     <code>
+      index
+     </code>
+     “. Plugging in our arguments, it removes
+     <code>
+      min(11, 19 - 4) = 11
+     </code>
+     characters starting at index 4.
+    </p>
+   </div>
+   <p>
+   </p>
+  </div>
+  <div class="quiz" style="clear: both">
+   <p class="quiz-header">
+    Question #2
+   </p>
+   <p>
+    In the following code, modify
+    <code>
+     str
+    </code>
+    so that its value is “I saw a blue car yesterday.” without repeating the string.  For example, don’t do this:
+   </p>
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">str = "I saw a blue car yesterday.";</code></pre>
+   <p>
+    You only need to call one function to
+    <em>
+     replace
+    </em>
+    “red” with “blue”.
+   </p>
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main()
+{
+  std::string str{ "I saw a red car yesterday." };  
+
+  // ...
+
+  std::cout &lt;&lt; str &lt;&lt; '\n'; // I saw a blue car yesterday.
+
+  return 0;
+}</code></pre>
+   <p>
+    <a class="hint_link_show" href="javascript:void(0)" onclick="cppHintToggle(document.getElementById('cpp_hint_id_0'), this, 'Show Hint', '')">
+     Show Hint
+    </a>
+   </p>
+   <div class="wphint" id="cpp_hint_id_0" style="display:none; margin-bottom: 1em">
+    Hint:
+    <a href="https://en.cppreference.com/w/cpp/string/basic_string">
+     <code>
+      std::basic_string
+     </code>
+    </a>
+   </div>
+   <p>
+    <a class="hint_link_show" href="javascript:void(0)" onclick="cppHintToggle(document.getElementById('cpp_hint_id_1'), this, 'Show Hint', '')">
+     Show Hint
+    </a>
+   </p>
+   <div class="wphint" id="cpp_hint_id_1" style="display:none; margin-bottom: 1em">
+    Hint:
+    <a href="https://en.cppreference.com/w/cpp/string/basic_string#Member_functions">
+     Member functions of
+     <code>
+      std::basic_string
+     </code>
+    </a>
+   </div>
+   <p>
+    <a class="hint_link_show" href="javascript:void(0)" onclick="cppHintToggle(document.getElementById('cpp_hint_id_2'), this, 'Show Hint', '')">
+     Show Hint
+    </a>
+   </p>
+   <div class="wphint" id="cpp_hint_id_2" style="display:none; margin-bottom: 1em">
+    Hint:
+    <a href="https://en.cppreference.com/w/cpp/string/basic_string#modifiers">
+     Modifiers of
+     <code>
+      std::basic_string
+     </code>
+    </a>
+   </div>
+   <p>
+    <a class="hint_link_show" href="javascript:void(0)" onclick="cppHintToggle(document.getElementById('cpp_hint_id_3'), this, 'Show Hint', '')">
+     Show Hint
+    </a>
+   </p>
+   <div class="wphint" id="cpp_hint_id_3" style="display:none; margin-bottom: 1em">
+    Hint:
+    <a href="https://en.cppreference.com/w/cpp/string/basic_string/replace">
+     <code>
+      std::basic_string::replace
+     </code>
+    </a>
+   </div>
+   <p>
+    <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_1'), this, 'Show Solution', 'Hide Solution')">
+     Show Solution
+    </a>
+   </p>
+   <div class="wpsolution" id="cpp_solution_id_1" style="display:none">
+    <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main()
+{
+  std::string str{ "I saw a red car yesterday." };  
+
+  str.replace(8, 3, "blue");
+
+  std::cout &lt;&lt; str &lt;&lt; '\n'; // I saw a blue car yesterday.
+
+  return 0;
+}</code></pre>
+   </div>
+  </div>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

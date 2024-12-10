@@ -1,0 +1,241 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <h1 class="entry-title singular-title" itemprop="headline">
+   17.5 — Arrays of references via std::reference_wrapper
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   In the prior lesson, we mentioned that arrays can have elements of any object type. This includes objects with fundamental types (e.g. int) and objects with compound types (e.g. pointer to int).
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;array&gt;
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main()
+{
+    int x { 1 };
+    int y { 2 };
+
+    [[maybe_unused]] std::array valarr { x, y };   // an array of int values
+    [[maybe_unused]] std::vector ptrarr { &amp;x, &amp;y }; // a vector of int pointers
+    
+    return 0;
+}</code></pre>
+   <p>
+    However, because references are not objects, you cannot make an array of references. The elements of an array must also be assignable, and references can’t be reseated.
+    <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;array&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    int x { 1 };
+    int y { 2 };
+
+    [[maybe_unused]] std::array&lt;int&amp;, 2&gt; refarr { x, y }; // compile error: cannot define array of references
+
+    int&amp; ref1 { x };
+    int&amp; ref2 { y };
+    [[maybe_unused]] std::array valarr { ref1, ref2 }; // ok: this is actually a std::array&lt;int, 2&gt;, not an array of references
+
+    return 0;
+}</code></pre>
+    <p>
+     In this lesson, we’ll use
+     <code>
+      std::array
+     </code>
+     in the examples, but this is equally applicable to all array types.
+     <p>
+      However, if you want an array of references, there is a workaround.
+      <p class="cpp-section cpp-topline" style="clear:both">
+       std::reference_wrapper
+       <p>
+        <code>
+         std::reference_wrapper
+        </code>
+        is a standard library class template that lives in the &lt;functional&gt; header. It takes a type template argument T, and then behaves like a modifiable lvalue reference to T.
+        <p>
+         There are a few things worth noting about
+         <code>
+          std::reference_wrapper
+         </code>
+         :
+         <ul>
+          <li>
+           <code>
+            Operator=
+           </code>
+           will reseat a
+           <code>
+            std::reference_wrapper
+           </code>
+           (change which object is being referenced).
+           <li>
+            <code>
+             std::reference_wrapper&lt;T&gt;
+            </code>
+            will implicitly convert to
+            <code>
+             T&amp;
+            </code>
+            .
+            <li>
+             The
+             <code>
+              get()
+             </code>
+             member function can be used to get a
+             <code>
+              T&amp;
+             </code>
+             . This is useful when we want to update the value of the object being referenced.
+            </li>
+           </li>
+          </li>
+         </ul>
+         <p>
+          Here’s a simple example:
+          <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;array&gt;
+#include &lt;functional&gt; // for std::reference_wrapper
+#include &lt;iostream&gt;
+
+int main()
+{
+    int x { 1 };
+    int y { 2 };
+    int z { 3 };
+
+    std::array&lt;std::reference_wrapper&lt;int&gt;, 3&gt; arr { x, y, z };
+    
+    arr[1].get() = 5; // modify the object in array element 1
+
+    std::cout &lt;&lt; arr[1] &lt;&lt; y &lt;&lt; '\n'; // show that we modified arr[1] and y, prints 55
+    
+    return 0;
+}</code></pre>
+          <p>
+           This example prints the following:
+           <pre>55
+</pre>
+           <p>
+            Note that we must use
+            <code>
+             arr[1].get() = 5
+            </code>
+            and not
+            <code>
+             arr[1] = 5
+            </code>
+            . The latter is ambiguous, as the compiler can’t tell if we intend to reseat the
+            <code>
+             std::reference_wrapper&lt;int&gt;
+            </code>
+            to value 5 (something that is illegal anyway) or change the value being referenced. Using
+            <code>
+             get()
+            </code>
+            disambiguates this.
+            <p>
+             When printing
+             <code>
+              arr[1]
+             </code>
+             , the compiler will realize it can’t print a
+             <code>
+              std::reference_wrapper&lt;int&gt;
+             </code>
+             , so it will implicitly convert it to an
+             <code>
+              int&amp;
+             </code>
+             , which it can print. So we don’t need to use
+             <code>
+              get()
+             </code>
+             here.
+             <p class="cpp-section cpp-topline" style="clear:both">
+              <code>
+               std::ref
+              </code>
+              and
+              <code>
+               std::cref
+              </code>
+              <p>
+               Prior to C++17, CTAD (class template argument deduction) didn’t exist, so all template arguments for a class type needed to be listed explicitly. Thus, to create a
+               <code>
+                std::reference_wrapper&lt;int&gt;
+               </code>
+               , you could do either of these:
+               <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">    int x { 5 };
+
+    std::reference_wrapper&lt;int&gt; ref1 { x };        // C++11
+    auto ref2 { std::reference_wrapper&lt;int&gt;{ x }}; // C++11</code></pre>
+               <p>
+                Between the long name and having to explicitly list the template arguments, creating many such reference wrappers could be a pain.
+                <p>
+                 To make things easier, the
+                 <code>
+                  std::ref()
+                 </code>
+                 and
+                 <code>
+                  std::cref()
+                 </code>
+                 functions were provided as shortcuts to create
+                 <code>
+                  std::reference_wrapper
+                 </code>
+                 and
+                 <code>
+                  const std::reference_wrapper
+                 </code>
+                 wrapped objects. Note that these functions can be used with
+                 <code>
+                  auto
+                 </code>
+                 to avoid having to explicitly specify the template argument.
+                 <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">    int x { 5 };
+    auto ref { std::ref(x) };   // C++11, deduces to std::reference_wrapper&lt;int&gt;
+    auto cref { std::cref(x) }; // C++11, deduces to std::reference_wrapper&lt;const int&gt;</code></pre>
+                 <p>
+                  Of course, now that we have CTAD in C++17, we can also do this:
+                  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">    std::reference_wrapper ref1 { x };        // C++17
+    auto ref2 { std::reference_wrapper{ x }}; // C++17</code></pre>
+                  <p>
+                   But since
+                   <code>
+                    std::ref()
+                   </code>
+                   and
+                   <code>
+                    std::cref()
+                   </code>
+                   are shorter to type, they are still widely used to create
+                   <code>
+                    std::reference_wrapper
+                   </code>
+                   objects.
+                  </p>
+                 </p>
+                </p>
+               </p>
+              </p>
+             </p>
+            </p>
+           </p>
+          </p>
+         </p>
+        </p>
+       </p>
+      </p>
+     </p>
+    </p>
+   </p>
+  </p>
+ </div>
+</div>

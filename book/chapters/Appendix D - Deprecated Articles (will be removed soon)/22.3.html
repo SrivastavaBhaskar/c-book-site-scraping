@@ -1,0 +1,327 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   22.3 — std::string length and capacity
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   Once you’ve created strings, it’s often useful to know how long they are.  This is where length and capacity operations come into play.  We’ll also discuss various ways to convert std::string back into C-style strings, so you can use them with functions that expect strings of type char*.
+  </p>
+  <p>
+   <strong>
+    Length of a string
+   </strong>
+  </p>
+  <p>
+   The length of the string is quite simple -- it’s the number of characters in the string.  There are two identical functions for determining string length:
+  </p>
+  <div class="cpp-table-wrapper">
+   <p>
+   </p>
+   <p>
+   </p>
+   <table class="cpp-table">
+    <tbody>
+     <tr>
+      <td>
+       <b>
+        size_type string::length() const
+       </b>
+       <br/>
+       <b>
+        size_type string::size() const
+       </b>
+       <p>
+       </p>
+       <ul>
+        <li>
+         Both of these functions return the current number of characters in the string, excluding the null terminator.
+        </li>
+       </ul>
+       <p>
+        Sample code:
+       </p>
+       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::string s { "012345678" };
+std::cout &lt;&lt; s.length() &lt;&lt; '\n';</code></pre>
+       <p>
+        Output:
+       </p>
+       <pre>9
+</pre>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <p>
+   Although it’s possible to use length() to determine whether a string has any characters or not, it’s more efficient to use the empty() function:
+  </p>
+  <div class="cpp-table-wrapper">
+   <p>
+   </p>
+   <p>
+   </p>
+   <table class="cpp-table">
+    <tbody>
+     <tr>
+      <td>
+       <b>
+        bool string::empty() const
+       </b>
+       <p>
+       </p>
+       <ul>
+        <li>
+         Returns true if the string has no characters, false otherwise.
+        </li>
+       </ul>
+       <p>
+        Sample code:
+       </p>
+       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::string string1 { "Not Empty" };
+std::cout &lt;&lt; (string1.empty() ? "true" : "false") &lt;&lt; '\n';
+std::string string2; // empty
+std::cout &lt;&lt; (string2.empty() ? "true" : "false")  &lt;&lt; '\n';</code></pre>
+       <p>
+        Output:
+       </p>
+       <pre>false
+true
+</pre>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <p>
+   There is one more size-related function that you will probably never use, but we’ll include it here for completeness:
+  </p>
+  <div class="cpp-table-wrapper">
+   <p>
+   </p>
+   <p>
+   </p>
+   <table class="cpp-table">
+    <tbody>
+     <tr>
+      <td>
+       <b>
+        size_type string::max_size() const
+       </b>
+       <p>
+       </p>
+       <ul>
+        <li>
+         Returns the maximum number of characters that a string is allowed to have.
+        </li>
+        <li>
+         This value will vary depending on operating system and system architecture.
+        </li>
+       </ul>
+       <p>
+        Sample code:
+       </p>
+       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::string s { "MyString" };
+std::cout &lt;&lt; s.max_size() &lt;&lt; '\n';</code></pre>
+       <p>
+        Output:
+       </p>
+       <pre>4294967294
+</pre>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <p>
+   <strong>
+    Capacity of a string
+   </strong>
+  </p>
+  <p>
+   The capacity of a string reflects how much memory the string allocated to hold its contents.  This value is measured in string characters, excluding the NULL terminator.  For example, a string with capacity 8 could hold 8 characters.
+  </p>
+  <div class="cpp-table-wrapper">
+   <p>
+   </p>
+   <p>
+   </p>
+   <table class="cpp-table">
+    <tbody>
+     <tr>
+      <td>
+       <b>
+        size_type string::capacity() const
+       </b>
+       <p>
+       </p>
+       <ul>
+        <li>
+         Returns the number of characters a string can hold without reallocation.
+        </li>
+       </ul>
+       <p>
+        Sample code:
+       </p>
+       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::string s { "01234567" };
+std::cout &lt;&lt; "Length: " &lt;&lt; s.length() &lt;&lt; '\n';
+std::cout &lt;&lt; "Capacity: " &lt;&lt; s.capacity() &lt;&lt; '\n';</code></pre>
+       <p>
+        Output:
+       </p>
+       <pre>Length: 8
+Capacity: 15
+</pre>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <p>
+   Note that the capacity is higher than the length of the string!  Although our string was length 8, the string actually allocated enough memory for 15 characters!  Why was this done?
+  </p>
+  <p>
+   The important thing to recognize here is that if a user wants to put more characters into a string than the string has capacity for, the string has to be reallocated to a larger capacity.  For example, if a string had both length and capacity of 8, then adding any characters to the string would force a reallocation.  By making the capacity larger than the actual string, this gives the user some buffer room to expand the string before reallocation needs to be done.
+  </p>
+  <p>
+   As it turns out, reallocation is bad for several reasons:
+  </p>
+  <p>
+   First, reallocating a string is comparatively expensive.  First, new memory has to be allocated.  Then each character in the string has to be copied to the new memory.  This can take a long time if the string is big.  Finally, the old memory has to be deallocated.  If you are doing many reallocations, this process can slow your program down significantly.
+  </p>
+  <p>
+   Second, whenever a string is reallocated, the contents of the string change to a new memory address.  This means all references, pointers, and iterators to the string become invalid!
+  </p>
+  <p>
+   Note that it’s not always the case that strings will be allocated with capacity greater than length.  Consider the following program:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::string s { "0123456789abcde" };
+std::cout &lt;&lt; "Length: " &lt;&lt; s.length() &lt;&lt; '\n';
+std::cout &lt;&lt; "Capacity: " &lt;&lt; s.capacity() &lt;&lt; '\n';</code></pre>
+  <p>
+   This program outputs:
+  </p>
+  <pre>Length: 15
+Capacity: 15
+</pre>
+  <p>
+   (Results may vary depending on compiler).
+  </p>
+  <p>
+   Let’s add one character to the string and watch the capacity change:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::string s("0123456789abcde");
+std::cout &lt;&lt; "Length: " &lt;&lt; s.length() &lt;&lt; '\n';
+std::cout &lt;&lt; "Capacity: " &lt;&lt; s.capacity() &lt;&lt; '\n';
+
+// Now add a new character
+s += "f";
+std::cout &lt;&lt; "Length: " &lt;&lt; s.length() &lt;&lt; '\n';
+std::cout &lt;&lt; "Capacity: " &lt;&lt; s.capacity() &lt;&lt; '\n';</code></pre>
+  <p>
+   This produces the result:
+  </p>
+  <pre>Length: 15
+Capacity: 15
+Length: 16
+Capacity: 31
+</pre>
+  <div class="cpp-table-wrapper">
+   <p>
+   </p>
+   <p>
+   </p>
+   <table class="cpp-table">
+    <tbody>
+     <tr>
+      <td>
+       <b>
+        void string::reserve()
+       </b>
+       <br/>
+       <b>
+        void string::reserve(size_type unSize)
+       </b>
+       <p>
+       </p>
+       <ul>
+        <li>
+         The second flavor of this function sets the capacity of the string to at least unSize (it can be greater).  Note that this may require a reallocation to occur.
+        </li>
+        <li>
+         If the first flavor of the function is called, or the second flavor is called with unSize less than the current capacity, the function will try to shrink the capacity to match the length.  This request to shrink the capacity may be ignored, depending on implementation.
+        </li>
+       </ul>
+       <p>
+        Sample code:
+       </p>
+       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::string s { "01234567" };
+std::cout &lt;&lt; "Length: " &lt;&lt; s.length() &lt;&lt; '\n';
+std::cout &lt;&lt; "Capacity: " &lt;&lt; s.capacity() &lt;&lt; '\n';
+
+s.reserve(200);
+std::cout &lt;&lt; "Length: " &lt;&lt; s.length() &lt;&lt; '\n';
+std::cout &lt;&lt; "Capacity: " &lt;&lt; s.capacity() &lt;&lt; '\n';
+
+s.reserve();
+std::cout &lt;&lt; "Length: " &lt;&lt; s.length() &lt;&lt; '\n';
+std::cout &lt;&lt; "Capacity: " &lt;&lt; s.capacity() &lt;&lt; '\n';</code></pre>
+       <p>
+        Output:
+       </p>
+       <pre>Length: 8
+Capacity: 15
+Length: 8
+Capacity: 207
+Length: 8
+Capacity: 207
+</pre>
+      </td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <p>
+   This example shows two interesting things.  First, although we requested a capacity of 200, we actually got a capacity of 207.  The capacity is always guaranteed to be at least as large as your request, but may be larger.  We then requested the capacity change to fit the string.  This request was ignored, as the capacity did not change.
+  </p>
+  <p>
+   If you know in advance that you’re going to be constructing a large string by doing lots of string operations that will add to the size of the string, you can avoid having the string reallocated multiple times by reserving enough capacity from the outset:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;cstdlib&gt; // for rand() and srand()
+#include &lt;ctime&gt; // for time()
+
+int main()
+{
+    std::srand(std::time(nullptr)); // seed random number generator
+
+    std::string s{}; // length 0
+    s.reserve(64); // reserve 64 characters
+
+    // Fill string up with random lower case characters
+    for (int count{ 0 }; count &lt; 64; ++count)
+        s += 'a' + std::rand() % 26;
+
+    std::cout &lt;&lt; s;
+}</code></pre>
+  <p>
+   The result of this program will change each time, but here’s the output from one execution:
+  </p>
+  <pre>wzpzujwuaokbakgijqdawvzjqlgcipiiuuxhyfkdppxpyycvytvyxwqsbtielxpy
+</pre>
+  <p>
+   Rather than having to reallocate s multiple times, we set the capacity once and then fill the string up.  This can make a huge difference in performance when constructing large strings via concatenation.
+  </p>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

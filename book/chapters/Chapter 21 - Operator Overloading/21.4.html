@@ -1,0 +1,604 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   21.4 — Overloading the I/O operators
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   For classes that have multiple member variables, printing each of the individual variables on the screen can get tiresome fast.  For example, consider the following class:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">class Point
+{
+private:
+    double m_x{};
+    double m_y{};
+    double m_z{};
+
+public:
+    Point(double x=0.0, double y=0.0, double z=0.0)
+      : m_x{x}, m_y{y}, m_z{z}
+    {
+    }
+
+    double getX() const { return m_x; }
+    double getY() const { return m_y; }
+    double getZ() const { return m_z; }
+};</code></pre>
+  <p>
+   If you wanted to print an instance of this class to the screen, you’d have to do something like this:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">Point point { 5.0, 6.0, 7.0 };
+
+std::cout &lt;&lt; "Point(" &lt;&lt; point.getX() &lt;&lt; ", " &lt;&lt;
+    point.getY() &lt;&lt; ", " &lt;&lt;
+    point.getZ() &lt;&lt; ')';</code></pre>
+  <p>
+   Of course, it makes more sense to do this as a reusable function.  And in previous examples, you’ve seen us create print() functions that work like this:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">class Point
+{
+private:
+    double m_x{};
+    double m_y{};
+    double m_z{};
+
+public:
+    Point(double x=0.0, double y=0.0, double z=0.0)
+      : m_x{x}, m_y{y}, m_z{z}
+    {
+    }
+
+    double getX() const { return m_x; }
+    double getY() const { return m_y; }
+    double getZ() const { return m_z; }
+
+    void print() const
+    {
+        std::cout &lt;&lt; "Point(" &lt;&lt; m_x &lt;&lt; ", " &lt;&lt; m_y &lt;&lt; ", " &lt;&lt; m_z &lt;&lt; ')';
+    }
+};</code></pre>
+  <p>
+   While this is much better, it still has some downsides.  Because print() returns void, it can’t be called in the middle of an output statement.  Instead, you have to do this:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    const Point point { 5.0, 6.0, 7.0 };
+
+    std::cout &lt;&lt; "My point is: ";
+    point.print();
+    std::cout &lt;&lt; " in Cartesian space.\n";
+}</code></pre>
+  <p>
+   It would be much easier if you could simply type:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">Point point{5.0, 6.0, 7.0};
+cout &lt;&lt; "My point is: " &lt;&lt; point &lt;&lt; " in Cartesian space.\n";</code></pre>
+  <p>
+   and get the same result.  There would be no breaking up output across multiple statements, and no having to remember what you named the print function.
+  </p>
+  <p>
+   Fortunately, by overloading the &lt;&lt; operator, you can!
+  </p>
+  <p>
+   <strong>
+    Overloading operator&lt;&lt;
+   </strong>
+  </p>
+  <p>
+   Overloading operator&lt;&lt; is similar to overloading operator+ (they are both binary operators), except that the parameter types are different.
+  </p>
+  <p>
+   Consider the expression
+   <code>
+    std::cout &lt;&lt; point
+   </code>
+   .  If the operator is &lt;&lt;, what are the operands?  The left operand is the std::cout object, and the right operand is your Point class object.  std::cout is actually an object of type std::ostream.  Therefore, our overloaded function will look like this:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">// std::ostream is the type for object std::cout
+friend std::ostream&amp; operator&lt;&lt; (std::ostream&amp; out, const Point&amp; point);</code></pre>
+  <p>
+   Implementation of operator&lt;&lt; for our Point class is fairly straightforward -- because C++ already knows how to output doubles using operator&lt;&lt;, and our members are all doubles, we can simply use operator&lt;&lt; to output the member variables of our Point.  Here is the above Point class with the overloaded operator&lt;&lt;.
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Point
+{
+private:
+    double m_x{};
+    double m_y{};
+    double m_z{};
+
+public:
+    Point(double x=0.0, double y=0.0, double z=0.0)
+      : m_x{x}, m_y{y}, m_z{z}
+    {
+    }
+
+    friend std::ostream&amp; operator&lt;&lt; (std::ostream&amp; out, const Point&amp; point);
+};
+
+std::ostream&amp; operator&lt;&lt; (std::ostream&amp; out, const Point&amp; point)
+{
+    // Since operator&lt;&lt; is a friend of the Point class, we can access Point's members directly.
+    out &lt;&lt; "Point(" &lt;&lt; point.m_x &lt;&lt; ", " &lt;&lt; point.m_y &lt;&lt; ", " &lt;&lt; point.m_z &lt;&lt; ')'; // actual output done here
+
+    return out; // return std::ostream so we can chain calls to operator&lt;&lt;
+}
+
+int main()
+{
+    const Point point1 { 2.0, 3.0, 4.0 };
+
+    std::cout &lt;&lt; point1 &lt;&lt; '\n';
+
+    return 0;
+}</code></pre>
+  <p>
+   This is pretty straightforward -- note how similar our output line is to the line in the print() function we wrote previously.  The most notable difference is that std::cout has become parameter out (which will be a reference to std::cout when the function is called).
+  </p>
+  <p>
+   The trickiest part here is the return type.  With the arithmetic operators, we calculated and returned a single answer by value (because we were creating and returning a new result).  However, if you try to return std::ostream by value, you’ll get a compiler error.  This happens because std::ostream specifically disallows being copied.
+  </p>
+  <p>
+   In this case, we return the left hand parameter as a reference.  This not only prevents a copy of std::ostream from being made, it also allows us to “chain” output commands together, such as
+   <code>
+    std::cout &lt;&lt; point &lt;&lt; std::endl;
+   </code>
+  </p>
+  <p>
+   Consider what would happen if our operator&lt;&lt; returned void instead.  When the compiler evaluates
+   <code>
+    std::cout &lt;&lt; point &lt;&lt; '\n'
+   </code>
+   , due to the precedence/associativity rules, it evaluates this expression as
+   <code>
+    (std::cout &lt;&lt; point) &lt;&lt; '\n';
+   </code>
+   .
+   <code>
+    std::cout &lt;&lt; point
+   </code>
+   would call our void-returning overloaded operator&lt;&lt; function, which returns void.  Then the partially evaluated expression becomes:
+   <code>
+    void &lt;&lt; '\n';
+   </code>
+   , which makes no sense!
+  </p>
+  <p>
+   By returning the out parameter as the return type instead,
+   <code>
+    (std::cout&lt;&lt; point)
+   </code>
+   returns std::cout.  Then our partially evaluated expression becomes:
+   <code>
+    std::cout &lt;&lt; '\n';
+   </code>
+   , which then gets evaluated itself!
+  </p>
+  <p>
+   Any time we want our overloaded binary operators to be chainable in such a manner, the left operand should be returned (by reference).  Returning the left-hand parameter by reference is okay in this case -- since the left-hand parameter was passed in by the calling function, it must still exist when the called function returns.  Therefore, we don’t have to worry about referencing something that will go out of scope and get destroyed when the operator returns.
+  </p>
+  <p>
+   Just to prove it works, consider the following example, which uses the Point class with the overloaded operator&lt;&lt; we wrote above:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Point
+{
+private:
+    double m_x{};
+    double m_y{};
+    double m_z{};
+
+public:
+    Point(double x=0.0, double y=0.0, double z=0.0)
+      : m_x{x}, m_y{y}, m_z{z}
+    {
+    }
+
+    friend std::ostream&amp; operator&lt;&lt; (std::ostream&amp; out, const Point&amp; point);
+};
+
+std::ostream&amp; operator&lt;&lt; (std::ostream&amp; out, const Point&amp; point)
+{
+    // Since operator&lt;&lt; is a friend of the Point class, we can access Point's members directly.
+    out &lt;&lt; "Point(" &lt;&lt; point.m_x &lt;&lt; ", " &lt;&lt; point.m_y &lt;&lt; ", " &lt;&lt; point.m_z &lt;&lt; ')';
+
+    return out;
+}
+
+int main()
+{
+    Point point1 { 2.0, 3.5, 4.0 };
+    Point point2 { 6.0, 7.5, 8.0 };
+
+    std::cout &lt;&lt; point1 &lt;&lt; ' ' &lt;&lt; point2 &lt;&lt; '\n';
+
+    return 0;
+}</code></pre>
+  <p>
+   This produces the following result:
+  </p>
+  <pre>Point(2, 3.5, 4) Point(6, 7.5, 8)
+</pre>
+  <p>
+   In the above example,
+   <code>
+    operator&lt;&lt;
+   </code>
+   is a friend because it needs direct access to the member of
+   <code>
+    Point
+   </code>
+   .  However, if the members could be accessed via getters, then
+   <code>
+    operator&lt;&lt;
+   </code>
+   could be implemented as a non-friend.
+  </p>
+  <p>
+   <strong>
+    Overloading operator&gt;&gt;
+   </strong>
+  </p>
+  <p>
+   It is also possible to overload the input operator.  This is done in a manner analogous to overloading the output operator.  The key thing you need to know is that std::cin is an object of type std::istream.  Here’s our Point class with an overloaded operator&gt;&gt; added:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+class Point
+{
+private:
+    double m_x{};
+    double m_y{};
+    double m_z{};
+
+public:
+    Point(double x=0.0, double y=0.0, double z=0.0)
+      : m_x{x}, m_y{y}, m_z{z}
+    {
+    }
+
+    friend std::ostream&amp; operator&lt;&lt; (std::ostream&amp; out, const Point&amp; point);
+};
+
+std::ostream&amp; operator&lt;&lt; (std::ostream&amp; out, const Point&amp; point)
+{
+    // Since operator&lt;&lt; is a friend of the Point class, we can access Point's members directly.
+    out &lt;&lt; "Point(" &lt;&lt; point.m_x &lt;&lt; ", " &lt;&lt; point.m_y &lt;&lt; ", " &lt;&lt; point.m_z &lt;&lt; ')';
+
+    return out;
+}
+
+// note that parameter point must be non-const so we can modify the object
+// note that this implementation is a non-friend
+std::istream&amp; operator&gt;&gt; (std::istream&amp; in, Point&amp; point)
+{
+    double x{};
+    double y{};
+    double z{};
+    
+    in &gt;&gt; x &gt;&gt; y &gt;&gt; z;
+
+    if (in)                     // if all input succeeded
+        point = Point{x, y, z}; // overwrite our existing point
+        
+    return in;
+}
+
+int main()
+{
+    std::cout &lt;&lt; "Enter a point: ";
+
+    Point point{};
+    std::cin &gt;&gt; point;
+
+    std::cout &lt;&lt; "You entered: " &lt;&lt; point &lt;&lt; '\n';
+
+    return 0;
+}</code></pre>
+  <p>
+   Assuming the user enters
+   <code>
+    3.0 4.5 7.26
+   </code>
+   as input, the program produces the following result:
+  </p>
+  <pre>You entered: Point(3, 4.5, 7.26)
+</pre>
+  <p>
+   In this implementation, we use
+   <code>
+    operator=
+   </code>
+   to overwrite the values in our
+   <code>
+    point
+   </code>
+   .  Because
+   <code>
+    operator=
+   </code>
+   is publicly available, this means we don’t need our
+   <code>
+    operator&gt;&gt;
+   </code>
+   to be a friend.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Guarding against partial extraction
+  </p>
+  <p>
+   You might have expected to see our overloaded
+   <code>
+    operator&gt;&gt;
+   </code>
+   for
+   <code>
+    Point
+   </code>
+   implemented more like this:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">// Assume this operator is a friend of Point so we can directly access the members of point
+std::istream&amp; operator&gt;&gt; (std::istream&amp; in, Point&amp; point)
+{
+    // This version subject to partial extraction issues
+    in &gt;&gt; point.m_x &gt;&gt; point.m_y &gt;&gt; point.m_z;
+    
+    return in;
+}</code></pre>
+  <p>
+   However, this implementation may result in a partial extraction.  Consider what would happen if the user were to enter “3.0 a b” as input.  3.0 would be extracted to
+   <code>
+    m_x
+   </code>
+   .  The extraction to
+   <code>
+    m_y
+   </code>
+   and
+   <code>
+    m_z
+   </code>
+   would both fail, meaning
+   <code>
+    m_y
+   </code>
+   and
+   <code>
+    m_z
+   </code>
+   would be set to
+   <code>
+    0.0
+   </code>
+   .  Our
+   <code>
+    point
+   </code>
+   would be partially overwritten by input and partially zero’d.
+  </p>
+  <p>
+   With a Point object, that might be an acceptable outcome.  But imagine we were inputting a Fraction instead.  A failed extraction to the denominator would set the denominator to
+   <code>
+    0.0
+   </code>
+   , which might later cause a divide by zero.
+  </p>
+  <p>
+   For this reason, it’s better to store all inputs until we can validate that all inputs were successful, and only then overwrite the object.
+  </p>
+  <p>
+   <strong>
+    Conclusion
+   </strong>
+  </p>
+  <p>
+   Overloading operator&lt;&lt; and operator&gt;&gt; make it extremely easy to output your class to screen and accept user input from the console.
+  </p>
+  <p>
+   <strong>
+    Quiz time
+   </strong>
+  </p>
+  <p>
+   Take the Fraction class we wrote in the previous quiz (listed below) and add an overloaded operator&lt;&lt; and operator&gt;&gt; to it.
+  </p>
+  <p>
+   The following program should compile:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+	Fraction f1{};
+	std::cout &lt;&lt; "Enter fraction 1: ";
+	std::cin &gt;&gt; f1;
+
+	Fraction f2{};
+	std::cout &lt;&lt; "Enter fraction 2: ";
+	std::cin &gt;&gt; f2;
+
+	std::cout &lt;&lt; f1 &lt;&lt; " * " &lt;&lt; f2 &lt;&lt; " is " &lt;&lt; f1 * f2 &lt;&lt; '\n'; // note: The result of f1 * f2 is an r-value
+
+	return 0;
+}</code></pre>
+  <p>
+   And produce the result:
+  </p>
+  <pre>Enter fraction 1: 2/3
+Enter fraction 2: 3/8
+2/3 * 3/8 is 1/4
+</pre>
+  <p>
+   Here’s the Fraction class:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+#include &lt;numeric&gt; // for std::gcd
+ 
+class Fraction
+{
+private:
+	int m_numerator{};
+	int m_denominator{};
+ 
+public:
+	Fraction(int numerator=0, int denominator=1):
+		m_numerator{numerator}, m_denominator{denominator}
+	{
+		// We put reduce() in the constructor to ensure any new fractions we make get reduced!
+		// Any fractions that are overwritten will need to be re-reduced
+		reduce();
+	}
+
+	void reduce()
+	{
+		int gcd{ std::gcd(m_numerator, m_denominator) };
+		if (gcd)
+		{
+			m_numerator /= gcd;
+			m_denominator /= gcd;
+		}
+	}
+ 
+	friend Fraction operator*(const Fraction&amp; f1, const Fraction&amp; f2);
+	friend Fraction operator*(const Fraction&amp; f1, int value);
+	friend Fraction operator*(int value, const Fraction&amp; f1);
+ 
+	void print() const
+	{
+		std::cout &lt;&lt; m_numerator &lt;&lt; '/' &lt;&lt; m_denominator &lt;&lt; '\n';
+	}
+};
+ 
+Fraction operator*(const Fraction&amp; f1, const Fraction&amp; f2)
+{
+	return Fraction { f1.m_numerator * f2.m_numerator, f1.m_denominator * f2.m_denominator };
+}
+ 
+Fraction operator*(const Fraction&amp; f1, int value)
+{
+	return Fraction { f1.m_numerator * value, f1.m_denominator };
+}
+ 
+Fraction operator*(int value, const Fraction&amp; f1)
+{
+	return Fraction { f1.m_numerator * value, f1.m_denominator };
+}</code></pre>
+  <p>
+   If you’re on a pre-C++17 compiler, you can replace std::gcd with this function:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;cmath&gt;
+ 
+int gcd(int a, int b) {
+    return (b == 0) ? std::abs(a) : gcd(b, a % b);
+}</code></pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_0'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_0" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+#include &lt;limits&gt;
+#include &lt;numeric&gt; // for std::gcd
+
+class Fraction
+{
+private:
+    int m_numerator{ 0 };
+    int m_denominator{ 1 };
+
+public:
+    Fraction(int numerator=0, int denominator = 1) :
+        m_numerator{ numerator }, m_denominator{ denominator }
+    {
+        // We put reduce() in the constructor to ensure any new fractions we make get reduced!
+        // Any fractions that are overwritten will need to be re-reduced
+        reduce();
+    }
+
+    void reduce()
+    {
+        int gcd{ std::gcd(m_numerator, m_denominator) };
+        if (gcd)
+        {
+            m_numerator /= gcd;
+            m_denominator /= gcd;
+        }
+    }
+
+    friend Fraction operator*(const Fraction&amp; f1, const Fraction&amp; f2);
+    friend Fraction operator*(const Fraction&amp; f1, int value);
+    friend Fraction operator*(int value, const Fraction&amp; f1);
+
+    friend std::ostream&amp; operator&lt;&lt;(std::ostream&amp; out, const Fraction&amp; f1);
+
+    void print()
+    {
+        std::cout &lt;&lt; m_numerator &lt;&lt; '/' &lt;&lt; m_denominator &lt;&lt; '\n';
+    }
+};
+
+Fraction operator*(const Fraction&amp; f1, const Fraction&amp; f2)
+{
+    return Fraction { f1.m_numerator * f2.m_numerator, f1.m_denominator * f2.m_denominator };
+}
+
+Fraction operator*(const Fraction&amp; f1, int value)
+{
+    return Fraction { f1.m_numerator * value, f1.m_denominator };
+}
+
+Fraction operator*(int value, const Fraction&amp; f1)
+{
+    return Fraction { f1.m_numerator * value, f1.m_denominator };
+}
+
+std::ostream&amp; operator&lt;&lt;(std::ostream&amp; out, const Fraction&amp; f1)
+{
+    out &lt;&lt; f1.m_numerator &lt;&lt; '/' &lt;&lt; f1.m_denominator;
+    return out;
+}
+
+std::istream&amp; operator&gt;&gt;(std::istream&amp; in, Fraction&amp; f1)
+{
+    int numerator {};
+    char ignore {};
+    int denominator {};
+
+    // Overwrite the values of f1
+    in &gt;&gt; numerator &gt;&gt; ignore &gt;&gt; denominator;
+
+    if (in)
+        f1 = Fraction { numerator, denominator };
+
+    return in;
+}
+
+int main()
+{
+    Fraction f1{};
+    std::cout &lt;&lt; "Enter fraction 1: ";
+    std::cin &gt;&gt; f1;
+    std::cout &lt;&lt; f1 &lt;&lt; '\n';
+
+    Fraction f2{};
+    std::cout &lt;&lt; "Enter fraction 2: ";
+    std::cin &gt;&gt; f2;
+
+    std::cout &lt;&lt; f1 &lt;&lt; " * " &lt;&lt; f2 &lt;&lt; " is " &lt;&lt; f1 * f2 &lt;&lt; '\n'; // note: The result of f1 * f2 is an r-value
+
+    return 0;
+}</code></pre>
+  </div>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

@@ -1,0 +1,258 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   12.9 — Pointers and const
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   Consider the following code snippet:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    int x { 5 };
+    int* ptr { &amp;x }; // ptr is a normal (non-const) pointer
+
+    int y { 6 };
+    ptr = &amp;y; // we can point at another value
+
+    *ptr = 7; // we can change the value at the address being held
+
+    return 0;
+}</code></pre>
+  <p>
+   With normal (non-const) pointers, we can change both what the pointer is pointing at (by assigning the pointer a new address to hold) or change the value at the address being held (by assigning a new value to the dereferenced pointer).
+  </p>
+  <p>
+   However, what happens if the value we want to point at is const?
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    const int x { 5 }; // x is now const
+    int* ptr { &amp;x };   // compile error: cannot convert from const int* to int*
+
+    return 0;
+}</code></pre>
+  <p>
+   The above snippet won’t compile -- we can’t set a normal pointer to point at a const variable.  This makes sense: a const variable is one whose value cannot be changed.  Allowing the programmer to set a non-const pointer to a const value would allow the programmer to dereference the pointer and change the value.  That would violate the const-ness of the variable.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Pointer to const value
+  </p>
+  <p>
+   A
+   <strong>
+    pointer to a const value
+   </strong>
+   (sometimes called a
+   <code>
+    pointer to const
+   </code>
+   for short) is a (non-const) pointer that points to a constant value.
+  </p>
+  <p>
+   To declare a pointer to a const value, use the
+   <code>
+    const
+   </code>
+   keyword before the pointer’s data type:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    const int x{ 5 };
+    const int* ptr { &amp;x }; // okay: ptr is pointing to a "const int"
+
+    *ptr = 6; // not allowed: we can't change a const value
+
+    return 0;
+}</code></pre>
+  <p>
+   In the above example,
+   <code>
+    ptr
+   </code>
+   points to a
+   <code>
+    const int
+   </code>
+   .  Because the data type being pointed to is const, the value being pointed to can’t be changed.
+  </p>
+  <p>
+   However, because a pointer to const is not const itself (it just points to a const value), we can change what the pointer is pointing at by assigning the pointer a new address:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    const int x{ 5 };
+    const int* ptr { &amp;x }; // ptr points to const int x
+
+    const int y{ 6 };
+    ptr = &amp;y; // okay: ptr now points at const int y
+
+    return 0;
+}</code></pre>
+  <p>
+   Just like a reference to const, a pointer to const can point to non-const variables too.  A pointer to const treats the value being pointed to as constant, regardless of whether the object at that address was initially defined as const or not:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    int x{ 5 }; // non-const
+    const int* ptr { &amp;x }; // ptr points to a "const int"
+
+    *ptr = 6;  // not allowed: ptr points to a "const int" so we can't change the value through ptr
+    x = 6; // allowed: the value is still non-const when accessed through non-const identifier x
+
+    return 0;
+}</code></pre>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Const pointers
+  </p>
+  <p>
+   We can also make a pointer itself constant.  A
+   <strong>
+    const pointer
+   </strong>
+   is a pointer whose address can not be changed after initialization.
+  </p>
+  <p>
+   To declare a const pointer, use the
+   <code>
+    const
+   </code>
+   keyword after the asterisk in the pointer declaration:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    int x{ 5 };
+    int* const ptr { &amp;x }; // const after the asterisk means this is a const pointer
+
+    return 0;
+}</code></pre>
+  <p>
+   In the above case,
+   <code>
+    ptr
+   </code>
+   is a const pointer to a (non-const) int value.
+  </p>
+  <p>
+   Just like a normal const variable, a const pointer must be initialized upon definition, and this value can’t be changed via assignment:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    int x{ 5 };
+    int y{ 6 };
+
+    int* const ptr { &amp;x }; // okay: the const pointer is initialized to the address of x
+    ptr = &amp;y; // error: once initialized, a const pointer can not be changed.
+
+    return 0;
+}</code></pre>
+  <p>
+   However, because the
+   <em>
+    value
+   </em>
+   being pointed to is non-const, it is possible to change the value being pointed to via dereferencing the const pointer:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    int x{ 5 };
+    int* const ptr { &amp;x }; // ptr will always point to x
+
+    *ptr = 6; // okay: the value being pointed to is non-const
+
+    return 0;
+}</code></pre>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Const pointer to a const value
+  </p>
+  <p>
+   Finally, it is possible to declare a
+   <strong>
+    const pointer to a const value
+   </strong>
+   by using the
+   <code>
+    const
+   </code>
+   keyword both before the type and after the asterisk:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    int value { 5 };
+    const int* const ptr { &amp;value }; // a const pointer to a const value
+
+    return 0;
+}</code></pre>
+  <p>
+   A const pointer to a const value can not have its address changed, nor can the value it is pointing to be changed through the pointer.  It can only be dereferenced to get the value it is pointing at.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Pointer and const recap
+  </p>
+  <p>
+   To summarize, you only need to remember 4 rules, and they are pretty logical:
+  </p>
+  <ul>
+   <li>
+    A non-const pointer can be assigned another address to change what it is pointing at.
+   </li>
+   <li>
+    A const pointer always points to the same address, and this address can not be changed.
+   </li>
+  </ul>
+  <p>
+   <!-- list break -->
+  </p>
+  <ul>
+   <li>
+    A pointer to a non-const value can change the value it is pointing to.  These can not point to a const value.
+   </li>
+   <li>
+    A pointer to a const value treats the value as const when accessed through the pointer, and thus can not change the value it is pointing to.  These can be pointed to const or non-const l-values (but not r-values, which don’t have an address).
+   </li>
+  </ul>
+  <p>
+   Keeping the declaration syntax straight can be a bit challenging:
+  </p>
+  <ul>
+   <li>
+    A
+    <code>
+     const
+    </code>
+    before the asterisk is associated with the type being pointed to.  Therefore, this is a pointer to a const value, and the value cannot be modified through the pointer.
+   </li>
+   <li>
+    A
+    <code>
+     const
+    </code>
+    after the asterisk is associated with the pointer itself.  Therefore, this pointer cannot be assigned a new address.
+   </li>
+  </ul>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    int v{ 5 };
+
+    int* ptr0 { &amp;v };             // points to an "int" but is not const itself, so this is a normal pointer.
+    const int* ptr1 { &amp;v };       // points to a "const int" but is not const itself, so this is a pointer to a const value.
+    int* const ptr2 { &amp;v };       // points to an "int" and is const itself, so this is a const pointer (to a non-const value).
+    const int* const ptr3 { &amp;v }; // points to a "const int" and is const itself, so this is a const pointer to a const value.
+
+    // if the const is on the left side of the *, the const belongs to the value
+    // if the const is on the right side of the *, the const belongs to the pointer
+
+    return 0;
+}</code></pre>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

@@ -1,0 +1,544 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <h1 class="entry-title singular-title" itemprop="headline">
+   10.8 — Type deduction for objects using the auto keyword
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   There’s a subtle redundancy lurking in this simple variable definition:
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">double d{ 5.0 };</code></pre>
+   <p>
+    In C++, we are required to provide an explicit type for all objects. Thus, we’ve specified that variable
+    <code>
+     d
+    </code>
+    is of type double.
+    <p>
+     However, the literal value
+     <code>
+      5.0
+     </code>
+     used to initialize
+     <code>
+      d
+     </code>
+     also has type double (implicitly determined via the format of the literal).
+     <div class="cpp-note cpp-lightgraybackground">
+      <p class="cpp-note-title cpp-bottomline">
+       Related content
+       <p>
+        We discuss how literal types are determined in lesson
+        <a href="https://www.learncpp.com/cpp-tutorial/literals/">
+         5.2 -- Literals
+        </a>
+        .
+       </p>
+      </p>
+     </div>
+     <p>
+      In cases where we want a variable and its initializer to have the same type, we’re effectively providing the same type information twice.
+      <p class="cpp-section cpp-topline" style="clear:both">
+       Type deduction for initialized variables
+       <p>
+        <strong>
+         Type deduction
+        </strong>
+        (also sometimes called
+        <strong>
+         type inference
+        </strong>
+        ) is a feature that allows the compiler to deduce the type of an object from the object’s initializer. When defining a variable, type deduction can be invoked by using the
+        <code>
+         auto
+        </code>
+        keyword can be used in place of the variable’s type:
+        <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    auto d { 5.0 }; // 5.0 is a double literal, so d will be deduced as a double
+    auto i { 1 + 2 }; // 1 + 2 evaluates to an int, so i will be deduced as an int
+    auto x { i }; // i is an int, so x will be deduced as an int
+
+    return 0;
+}</code></pre>
+        <p>
+         In the first case, because
+         <code>
+          5.0
+         </code>
+         is a double literal, the compiler will deduce that variable
+         <code>
+          d
+         </code>
+         should be of type
+         <code>
+          double
+         </code>
+         . In the second case, the expression
+         <code>
+          1 + 2
+         </code>
+         yields an int result, so variable
+         <code>
+          i
+         </code>
+         will be of type
+         <code>
+          int
+         </code>
+         . In the third case,
+         <code>
+          i
+         </code>
+         was previously deduced to be of type
+         <code>
+          int
+         </code>
+         , so
+         <code>
+          x
+         </code>
+         will also be deduced to be of type
+         <code>
+          int
+         </code>
+         .
+         <div class="cpp-note cpp-lightredbackground">
+          <p class="cpp-note-title cpp-bottomline">
+           Warning
+           <p>
+            Prior to C++17,
+            <code>
+             auto d{ 5.0 };
+            </code>
+            would deduce
+            <code>
+             d
+            </code>
+            to be of type
+            <code>
+             std::initializer_list&lt;double&gt;
+            </code>
+            rather than
+            <code>
+             double
+            </code>
+            . This was fixed in C++17, and many compilers (such as gcc and Clang) have back-ported this change to previous language standards.
+            <p>
+             If you are using C++14 or older, and the above example doesn’t compile on your compiler, use copy initialization with
+             <code>
+              auto
+             </code>
+             instead (
+             <code>
+              auto d = 5.0
+             </code>
+             ).
+            </p>
+           </p>
+          </p>
+         </div>
+         <p>
+          Because function calls are valid expressions, we can even use type deduction when our initializer is a non-void function call:
+          <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int add(int x, int y)
+{
+    return x + y;
+}
+
+int main()
+{
+    auto sum { add(5, 6) }; // add() returns an int, so sum's type will be deduced as an int
+
+    return 0;
+}</code></pre>
+          <p>
+           The
+           <code>
+            add()
+           </code>
+           function returns an
+           <code>
+            int
+           </code>
+           value, so the compiler will deduce that variable
+           <code>
+            sum
+           </code>
+           should have type
+           <code>
+            int
+           </code>
+           .
+           <p>
+            Literal suffixes can be used in combination with type deduction to specify a particular type:
+            <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    auto a { 1.23f }; // f suffix causes a to be deduced to float
+    auto b { 5u };    // u suffix causes b to be deduced to unsigned int
+
+    return 0;
+}</code></pre>
+            <p>
+             Variables using type deduction may also use other specifiers/qualifiers, such as
+             <code>
+              const
+             </code>
+             or
+             <code>
+              constexpr
+             </code>
+             :
+             <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    int a { 5 };            // a is an int
+
+    const auto b { 5 };     // b is a const int
+    constexpr auto c { 5 }; // c is a constexpr int
+
+    return 0;
+}</code></pre>
+             <p class="cpp-section cpp-topline" style="clear:both">
+              Type deduction must have something to deduce from
+              <p>
+               Type deduction will not work for objects that either do not have initializers or have empty initializers. It also will not work when the initializer has type
+               <code>
+                void
+               </code>
+               (or any other incomplete type). Thus, the following is not valid:
+               <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+void foo()
+{
+}
+
+int main()
+{
+    auto a;           // The compiler is unable to deduce the type of a
+    auto b { };       // The compiler is unable to deduce the type of b
+    auto c { foo() }; // Invalid: c can't have type incomplete type void
+    
+    return 0;
+}</code></pre>
+               <p>
+                Although using type deduction for fundamental data types only saves a few (if any) keystrokes, in future lessons we will see examples where the types get complex and lengthy (and in some cases, can be hard to figure out). In those cases, using
+                <code>
+                 auto
+                </code>
+                can save a lot of typing (and typos).
+                <div class="cpp-note cpp-lightgraybackground">
+                 <p class="cpp-note-title cpp-bottomline">
+                  Related content
+                  <p>
+                   The type deduction rules for pointers and references are a bit more complex. We discuss these in
+                   <a href="https://www.learncpp.com/cpp-tutorial/type-deduction-with-pointers-references-and-const/">
+                    12.14 -- Type deduction with pointers, references, and const
+                   </a>
+                   .
+                  </p>
+                 </p>
+                </div>
+                <p class="cpp-section cpp-topline" style="clear:both">
+                 Type deduction drops
+                 <code>
+                  const
+                 </code>
+                 from the deduced type
+                 <p>
+                  In most cases, type deduction will drop the
+                  <code>
+                   const
+                  </code>
+                  from deduced types. For example:
+                  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    const int a { 5 }; // a has type const int
+    auto b { a };      // b has type int (const dropped)
+
+    return 0;
+}</code></pre>
+                  <p>
+                   In the above example,
+                   <code>
+                    a
+                   </code>
+                   has type
+                   <code>
+                    const int
+                   </code>
+                   , but when deducing a type for variable
+                   <code>
+                    b
+                   </code>
+                   using
+                   <code>
+                    a
+                   </code>
+                   as the initializer, type deduction deduces the type as
+                   <code>
+                    int
+                   </code>
+                   , not
+                   <code>
+                    const int
+                   </code>
+                   .
+                   <p>
+                    If you want a deduced type to be const, you must supply the
+                    <code>
+                     const
+                    </code>
+                    yourself as part of the definition:
+                    <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    const int a { 5 };  // a has type const int
+    const auto b { a }; // b has type const int (const dropped but reapplied)
+
+
+    return 0;
+}</code></pre>
+                    <p>
+                     In this example, the type deduced from
+                     <code>
+                      a
+                     </code>
+                     will be
+                     <code>
+                      int
+                     </code>
+                     (the
+                     <code>
+                      const
+                     </code>
+                     is dropped), but because we’ve re-added a
+                     <code>
+                      const
+                     </code>
+                     qualifier during the definition of variable
+                     <code>
+                      b
+                     </code>
+                     , variable
+                     <code>
+                      b
+                     </code>
+                     will have type
+                     <code>
+                      const int
+                     </code>
+                     .
+                     <p class="cpp-section cpp-topline" style="clear:both">
+                      Type deduction for string literals
+                      <p>
+                       For historical reasons, string literals in C++ have a strange type. Therefore, the following probably won’t work as expected:
+                       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">auto s { "Hello, world" }; // s will be type const char*, not std::string</code></pre>
+                       <p>
+                        If you want the type deduced from a string literal to be
+                        <code>
+                         std::string
+                        </code>
+                        or
+                        <code>
+                         std::string_view
+                        </code>
+                        , you’ll need to use the
+                        <code>
+                         s
+                        </code>
+                        or
+                        <code>
+                         sv
+                        </code>
+                        literal suffixes (introduced in lessons
+                        <a href="https://www.learncpp.com/cpp-tutorial/introduction-to-stdstring/">
+                         5.7 -- Introduction to std::string
+                        </a>
+                        and
+                        <a href="https://www.learncpp.com/cpp-tutorial/introduction-to-stdstring_view/">
+                         5.8 -- Introduction to std::string_view
+                        </a>
+                        ):
+                        <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;string&gt;
+#include &lt;string_view&gt;
+
+int main()
+{
+    using namespace std::literals; // easiest way to access the s and sv suffixes
+
+    auto s1 { "goo"s };  // "goo"s is a std::string literal, so s1 will be deduced as a std::string
+    auto s2 { "moo"sv }; // "moo"sv is a std::string_view literal, so s2 will be deduced as a std::string_view
+
+    return 0;
+}</code></pre>
+                        <p>
+                         But in such cases, it may be better to not use type deduction.
+                         <p class="cpp-section cpp-topline" style="clear:both">
+                          Type deduction and constexpr
+                          <p>
+                           Because
+                           <code>
+                            constexpr
+                           </code>
+                           is not part of the type system, it cannot be deduced as part of type deduction. However, a
+                           <code>
+                            constexpr
+                           </code>
+                           variable is implicitly const, and this const will be dropped during type deduction (and can be readded if desired):
+                           <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+    constexpr double a { 3.4 };  // a has type const double (constexpr not part of type, const is implicit)
+
+    auto b { a };                // b has type double (const dropped)
+    const auto c { a };          // c has type const double (const dropped but reapplied)
+    constexpr auto d { a };      // d has type const double (const dropped but implicitly reapplied by constexpr)
+
+    return 0;
+}</code></pre>
+                           <p class="cpp-section cpp-topline" style="clear:both">
+                            Type deduction benefits and downsides
+                            <p>
+                             Type deduction is not only convenient, but also has a number of other benefits.
+                             <p>
+                              First, if two or more variables are defined on sequential lines, the names of the variables will be lined up, helping to increase readability:
+                              <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">// harder to read
+int a { 5 };
+double b { 6.7 };
+
+// easier to read
+auto c { 5 };
+auto d { 6.7 };</code></pre>
+                              <p>
+                               Second, type deduction only works on variables that have initializers, so if you are in the habit of using type deduction, it can help avoid unintentionally uninitialized variables:
+                               <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int x; // oops, we forgot to initialize x, but the compiler may not complain
+auto y; // the compiler will error out because it can't deduce a type for y</code></pre>
+                               <p>
+                                Third, you are guaranteed that there will be no unintended performance-impacting conversions:
+                                <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">std::string_view getString();   // some function that returns a std::string_view
+
+std::string s1 { getString() }; // bad: expensive conversion from std::string_view to std::string (assuming you didn't want this)
+auto s2 { getString() };        // good: no conversion required</code></pre>
+                                <p>
+                                 Type deduction also has a few downsides.
+                                 <p>
+                                  First, type deduction obscures an object’s type information in the code. Although a good IDE should be able to show you the deduced type (e.g. when hovering a variable), it’s still a bit easier to make type-based mistakes when using type deduction.
+                                  <p>
+                                   For example:
+                                   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">auto y { 5 }; // oops, we wanted a double here but we accidentally provided an int literal</code></pre>
+                                   <p>
+                                    In the above code, if we’d explicitly specified
+                                    <code>
+                                     y
+                                    </code>
+                                    as type double,
+                                    <code>
+                                     y
+                                    </code>
+                                    would have been a double even though we accidentally provided an int literal initializer. With type deduction,
+                                    <code>
+                                     y
+                                    </code>
+                                    will be deduced to be of type int.
+                                    <p>
+                                     Here’s another example:
+                                     <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int main()
+{
+     auto x { 3 };
+     auto y { 2 };
+
+     std::cout &lt;&lt; x / y &lt;&lt; '\n'; // oops, we wanted floating point division here
+
+     return 0;
+}</code></pre>
+                                     <p>
+                                      In this example, it’s less clear that we’re getting an integer division rather than a floating-point division.
+                                      <p>
+                                       Similar cases occur when a variable is
+                                       <code>
+                                        unsigned
+                                       </code>
+                                       . Since we don’t want to mix signed and unsigned values, explicitly knowing that a variable has an unsigned type is generally something that shouldn’t be obscured.
+                                       <p>
+                                        Second, if the type of an initializer changes, the type of a variable using type deduction will also change, perhaps unexpectedly. Consider:
+                                        <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">auto sum { add(5, 6) + gravity };</code></pre>
+                                        <p>
+                                         If the return type of
+                                         <code>
+                                          add
+                                         </code>
+                                         changes from int to double, or
+                                         <code>
+                                          gravity
+                                         </code>
+                                         changes from int to double,
+                                         <code>
+                                          sum
+                                         </code>
+                                         will also change type from int to double.
+                                         <p>
+                                          Overall, the modern consensus is that type deduction is generally safe to use for objects, and that doing so can help make your code more readable by de-emphasizing type information so the logic of your code stands out better.
+                                          <div class="cpp-note cpp-lightgreenbackground">
+                                           <p class="cpp-note-title cpp-bottomline">
+                                            Best practice
+                                            <p>
+                                             Use type deduction for your variables when the type of the object doesn’t matter.
+                                             <p>
+                                              Favor an explicit type when you require a specific type that differs from the type of the initializer, or when your object is used in a context where making the type obvious is useful.
+                                             </p>
+                                            </p>
+                                           </p>
+                                          </div>
+                                          <div class="cpp-note cpp-lightgraybackground">
+                                           <p class="cpp-note-title cpp-bottomline">
+                                            Author’s note
+                                            <p>
+                                             In future lessons, we’ll continue to use explicit types instead of type deduction when we feel showing the type information is helpful to understanding a concept or example.
+                                            </p>
+                                           </p>
+                                          </div>
+                                         </p>
+                                        </p>
+                                       </p>
+                                      </p>
+                                     </p>
+                                    </p>
+                                   </p>
+                                  </p>
+                                 </p>
+                                </p>
+                               </p>
+                              </p>
+                             </p>
+                            </p>
+                           </p>
+                          </p>
+                         </p>
+                        </p>
+                       </p>
+                      </p>
+                     </p>
+                    </p>
+                   </p>
+                  </p>
+                 </p>
+                </p>
+               </p>
+              </p>
+             </p>
+            </p>
+           </p>
+          </p>
+         </p>
+        </p>
+       </p>
+      </p>
+     </p>
+    </p>
+   </p>
+  </p>
+ </div>
+</div>

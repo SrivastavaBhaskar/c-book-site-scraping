@@ -1,0 +1,246 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   10.1 — Implicit type conversion
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p class="cpp-section">
+   Introduction to type conversion
+  </p>
+  <p>
+   The value of an object is stored as a sequence of bits, and the data type of the object tells the compiler how to interpret those bits into meaningful values.  Different data types may represent the “same” number differently.  For example, the integer value
+   <code>
+    3
+   </code>
+   might be stored as binary
+   <code>
+    0000 0000 0000 0000 0000 0000 0000 0011
+   </code>
+   , whereas floating point value
+   <code>
+    3.0
+   </code>
+   might be stored as binary
+   <code>
+    0100 0000 0100 0000 0000 0000 0000 0000
+   </code>
+   .
+  </p>
+  <p style="clear: both">
+  </p>
+  <!-- break around image -->
+  <p>
+   So what happens when we do something like this?
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">float f{ 3 }; // initialize floating point variable with int 3</code></pre>
+  <p>
+   In such a case, the compiler can’t just copy the bits representing the
+   <code>
+    int
+   </code>
+   value
+   <code>
+    3
+   </code>
+   into the memory allocated for
+   <code>
+    float
+   </code>
+   variable
+   <code>
+    f
+   </code>
+   .  Instead, it needs to convert the integer value
+   <code>
+    3
+   </code>
+   to the equivalent floating point value
+   <code>
+    3.0
+   </code>
+   , which can then be stored in the memory allocated for
+   <code>
+    f
+   </code>
+   .
+  </p>
+  <p>
+   The process of producing a new value of some type from a value of a different type is called a
+   <strong>
+    conversion
+   </strong>
+   .
+  </p>
+  <div class="cpp-note cpp-lightbluebackground">
+   <p class="cpp-note-title cpp-bottomline">
+    Key insight
+   </p>
+   <p>
+    Conversions do not change the value or type being converted.  Instead, a new value with the desired type is created as a result of the conversion.
+   </p>
+  </div>
+  <p>
+   Type conversion can be invoked in one of two ways: either implicitly (as needed by the compiler), or explicitly (when requested by the programmer).  We’ll cover implicit type conversion in this lesson, and explicit type conversions (casting) in upcoming lesson
+   <a href="https://www.learncpp.com/cpp-tutorial/explicit-type-conversion-casting-and-static-cast/">
+    10.6 -- Explicit type conversion (casting) and static_cast
+   </a>
+   .
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Implicit type conversion
+  </p>
+  <p>
+   <strong>
+    Implicit type conversion
+   </strong>
+   (also called
+   <strong>
+    automatic type conversion
+   </strong>
+   or
+   <strong>
+    coercion
+   </strong>
+   ) is performed automatically by the compiler when one data type is required, but a different data type is supplied.  The vast majority of type conversions in C++ are implicit type conversions.  For example, implicit type conversion happens in all of the following cases:
+  </p>
+  <p>
+   When initializing (or assigning a value to) a variable with a value of a different data type:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">double d{ 3 }; // int value 3 implicitly converted to type double
+d = 6; // int value 6 implicitly converted to type double</code></pre>
+  <p>
+   When the type of a return value is different from the function’s declared return type:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">float doSomething()
+{
+    return 3.0; // double value 3.0 implicitly converted to type float
+}</code></pre>
+  <p>
+   When using certain binary operators with operands of different types:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">double division{ 4.0 / 3 }; // int value 3 implicitly converted to type double</code></pre>
+  <p>
+   When using a non-Boolean value in an if-statement:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">if (5) // int value 5 implicitly converted to type bool
+{
+}</code></pre>
+  <p>
+   When an argument passed to a function is a different type than the function parameter:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">void doSomething(long l)
+{
+}
+
+doSomething(3); // int value 3 implicitly converted to type long</code></pre>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   What happens when a type conversion is invoked
+  </p>
+  <p>
+   When a type conversion is invoked (whether implicitly or explicitly), the compiler will determine whether it can convert the value from the current type to the desired type.  If a valid conversion can be found, then the compiler will produce a new value of the desired type.  Note that type conversions don’t change the value or type of the value or object being converted.
+  </p>
+  <p>
+   If the compiler can’t find an acceptable conversion, then the compilation will fail with a compile error.  Type conversions can fail for any number of reasons.  For example, the compiler might not know how to convert a value between the original type and the desired type.  In other cases, statements may disallow certain types of conversions.  For example:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int x { 3.5 }; // brace-initialization disallows conversions that result in data loss</code></pre>
+  <p>
+   Even though the compiler knows how to convert a
+   <code>
+    double
+   </code>
+   value to an
+   <code>
+    int
+   </code>
+   value, such conversions are disallowed when using brace-initialization.
+  </p>
+  <p>
+   There are also cases where the compiler may not be able to figure out which of several possible type conversions is unambiguously the best one to use.  We’ll see examples of this in lesson
+   <a href="https://www.learncpp.com/cpp-tutorial/function-overload-resolution-and-ambiguous-matches/">
+    11.3 -- Function overload resolution and ambiguous matches
+   </a>
+   .
+  </p>
+  <p>
+   So how does the compiler actually determine whether it can convert a value from one type to another?
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   The standard conversions
+  </p>
+  <p>
+   The C++ language standard defines how different fundamental types (and in some cases, compound types) can be converted to other types.  These conversion rules are called the
+   <strong>
+    standard conversions
+   </strong>
+   .
+  </p>
+  <p>
+   The standard conversions can be broadly divided into 4 categories, each covering different types of conversions:
+  </p>
+  <ul>
+   <li>
+    Numeric promotions (covered in lesson
+    <a href="https://www.learncpp.com/cpp-tutorial/floating-point-and-integral-promotion/">
+     10.2 -- Floating-point and integral promotion
+    </a>
+    )
+   </li>
+   <li>
+    Numeric conversions (covered in lesson
+    <a href="https://www.learncpp.com/cpp-tutorial/numeric-conversions/">
+     10.3 -- Numeric conversions
+    </a>
+    )
+   </li>
+   <li>
+    Arithmetic conversions (covered in lesson
+    <a href="https://www.learncpp.com/cpp-tutorial/arithmetic-conversions/">
+     10.5 -- Arithmetic conversions
+    </a>
+    )
+   </li>
+   <li>
+    Other conversions (which includes various pointer and reference conversions)
+   </li>
+  </ul>
+  <p>
+   When a type conversion is needed, the compiler will see if there are standard conversions that it can use to convert the value to the desired type.  The compiler may apply zero, one, or (in certain cases) two standard conversions in the conversion process.
+  </p>
+  <div class="cpp-note cpp-lightgraybackground">
+   <p class="cpp-note-title cpp-bottomline">
+    As an aside…
+   </p>
+   <p>
+    How do you have a type conversion with zero conversions?  As an example, on architectures where
+    <code>
+     int
+    </code>
+    and
+    <code>
+     long
+    </code>
+    both have the same size and range, the same sequence of bits is used to represent values of both types.  Therefore, no actual conversion is needed to convert a value between those types -- the value can simply be copied.
+   </p>
+  </div>
+  <p>
+   The full set of rules describing how type conversions work is both lengthy and complicated, and for the most part, type conversion “just works”.  In the next set of lessons, we’ll cover the most important things you need to know about type conversions.  If finer detail is required for some uncommon case, the full rules are detailed in
+   <a href="https://en.cppreference.com/w/cpp/language/implicit_conversion">
+    technical reference documentation for implicit conversions
+   </a>
+   .
+  </p>
+  <p>
+   Let’s get to it!
+  </p>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

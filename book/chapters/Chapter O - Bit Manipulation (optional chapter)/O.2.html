@@ -1,0 +1,1183 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   O.2 — Bitwise operators
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p class="cpp-section">
+   The bitwise operators
+  </p>
+  <p>
+   C++ provides 6 bit manipulation operators, often called
+   <strong>
+    bitwise
+   </strong>
+   operators:
+  </p>
+  <p style="clear: both">
+  </p>
+  <div class="cpp-table-wrapper">
+   <p>
+   </p>
+   <p>
+   </p>
+   <table class="cpp-table">
+    <tbody>
+     <tr>
+      <th>
+       Operator
+      </th>
+      <th>
+       Symbol
+      </th>
+      <th>
+       Form
+      </th>
+      <th>
+       Operation
+      </th>
+     </tr>
+     <tr>
+      <td>
+       left shift
+      </td>
+      <td>
+       &lt;&lt;
+      </td>
+      <td>
+       x &lt;&lt; y
+      </td>
+      <td>
+       all bits in x shifted left y bits
+      </td>
+     </tr>
+     <tr>
+      <td>
+       right shift
+      </td>
+      <td>
+       &gt;&gt;
+      </td>
+      <td>
+       x &gt;&gt; y
+      </td>
+      <td>
+       all bits in x shifted right y bits
+      </td>
+     </tr>
+     <tr>
+      <td>
+       bitwise NOT
+      </td>
+      <td>
+       ~
+      </td>
+      <td>
+       ~x
+      </td>
+      <td>
+       all bits in x flipped
+      </td>
+     </tr>
+     <tr>
+      <td>
+       bitwise AND
+      </td>
+      <td>
+       &amp;
+      </td>
+      <td>
+       x &amp; y
+      </td>
+      <td>
+       each bit in x AND each bit in y
+      </td>
+     </tr>
+     <tr>
+      <td>
+       bitwise OR
+      </td>
+      <td>
+       |
+      </td>
+      <td>
+       x | y
+      </td>
+      <td>
+       each bit in x OR each bit in y
+      </td>
+     </tr>
+     <tr>
+      <td>
+       bitwise XOR
+      </td>
+      <td>
+       ^
+      </td>
+      <td>
+       x ^ y
+      </td>
+      <td>
+       each bit in x XOR each bit in y
+      </td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <div class="cpp-note cpp-lightgraybackground">
+   <p class="cpp-note-title cpp-bottomline">
+    Author’s note
+   </p>
+   <p>
+    In the following examples, we will largely be working with 4-bit binary values.  This is for the sake of convenience and keeping the examples simple.  In actual programs, the number of bits used is based on the size of the object (e.g. a 2 byte object would store 16 bits).
+   </p>
+   <p>
+    For readability, we’ll also omit the 0b prefix outside of code examples (e.g. instead of 0b0101, we’ll just use 0101).
+   </p>
+  </div>
+  <p>
+   The bitwise operators are defined for integral types and std::bitset.  We’ll use std::bitset in our examples because it’s easier to print the output in binary.
+  </p>
+  <p>
+   Avoid using the bitwise operators with signed operands, as many operators will return implementation-defined results prior to C++20 or have other potential gotchas that are easily avoided by using unsigned operands (or std::bitset).
+  </p>
+  <div class="cpp-note cpp-lightgreenbackground">
+   <p class="cpp-note-title cpp-bottomline">
+    Best practice
+   </p>
+   <p>
+    To avoid surprises, use the bitwise operators with unsigned operands or std::bitset.
+   </p>
+  </div>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Bitwise left shift (&lt;&lt;) and bitwise right shift (&gt;&gt;) operators
+  </p>
+  <p>
+   The
+   <strong>
+    bitwise left shift
+   </strong>
+   (&lt;&lt;) operator shifts bits to the left.  The left operand is the expression to shift the bits of, and the right operand is an integer number of bits to shift left by.
+  </p>
+  <p>
+   So when we say
+   <code>
+    x &lt;&lt; 1
+   </code>
+   , we are saying “shift the bits in the variable x left by 1 place”.  New bits shifted in from the right side receive the value 0.
+  </p>
+  <p>
+   0011 &lt;&lt; 1 is 0110
+   <br/>
+   0011 &lt;&lt; 2 is 1100
+   <br/>
+   0011 &lt;&lt; 3 is 1000
+  </p>
+  <p>
+   Note that in the third case, we shifted a bit off the end of the number!  Bits that are shifted off the end of the binary number are lost forever.
+  </p>
+  <p>
+   The
+   <strong>
+    bitwise right shift
+   </strong>
+   (&gt;&gt;) operator shifts bits to the right.
+  </p>
+  <p>
+   1100 &gt;&gt; 1 is 0110
+   <br/>
+   1100 &gt;&gt; 2 is 0011
+   <br/>
+   1100 &gt;&gt; 3 is 0001
+  </p>
+  <p>
+   Note that in the third case we shifted a bit off the right end of the number, so it is lost.
+  </p>
+  <p>
+   Here’s an example of doing some bit shifting:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    std::bitset&lt;4&gt; x { 0b1100 };
+
+    std::cout &lt;&lt; x &lt;&lt; '\n';
+    std::cout &lt;&lt; (x &gt;&gt; 1) &lt;&lt; '\n'; // shift right by 1, yielding 0110
+    std::cout &lt;&lt; (x &lt;&lt; 1) &lt;&lt; '\n'; // shift left by 1, yielding 1000
+
+    return 0;
+}</code></pre>
+  <p>
+   This prints:
+  </p>
+  <pre>1100
+0110
+1000
+</pre>
+  <div class="cpp-note cpp-lightgraybackground">
+   <p class="cpp-note-title cpp-bottomline">
+    For advanced readers
+   </p>
+   <p>
+    Bit-shifting in C++ is
+    <a href="https://en.wikipedia.org/wiki/Endianness">
+     endian
+    </a>
+    -agnostic.  Left-shift is always towards the most significant bit, and right-shift towards the least significant bit.
+   </p>
+  </div>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   What!?  Aren’t operator&lt;&lt; and operator&gt;&gt; used for input and output?
+  </p>
+  <p>
+   They sure are.
+  </p>
+  <p>
+   Programs today typically do not make much use of the bitwise left and right shift operators to shift bits.  Rather, you tend to see the bitwise left shift operator used with std::cout (or other stream objects) to output text.  Consider the following program:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    unsigned int x { 0b0100 };
+    x = x &lt;&lt; 1; // use operator&lt;&lt; for left shift
+    std::cout &lt;&lt; std::bitset&lt;4&gt;{ x } &lt;&lt; '\n'; // use operator&lt;&lt; for output
+
+    return 0;
+}</code></pre>
+  <p>
+   This program prints:
+  </p>
+  <pre>1000
+</pre>
+  <p>
+   In the above program, how does operator&lt;&lt; know to shift bits in one case and output
+   <em>
+    x
+   </em>
+   in another case?  The answer is that std::cout has
+   <strong>
+    overloaded
+   </strong>
+   (provided an alternate definition for) operator&lt;&lt; that does console output rather than bit shifting.
+  </p>
+  <p>
+   When the compiler sees that the left operand of operator&lt;&lt; is std::cout, it knows that it should call the version of operator&lt;&lt; that std::cout overloaded to do output.  If the left operand is an integral type, then operator&lt;&lt; knows it should do its usual bit-shifting behavior.
+  </p>
+  <p>
+   The same applies for operator&gt;&gt;.
+  </p>
+  <p>
+   Note that if you’re using operator &lt;&lt; for both output and left shift, parenthesization is required:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+	std::bitset&lt;4&gt; x{ 0b0110 };
+
+	std::cout &lt;&lt; x &lt;&lt; 1 &lt;&lt; '\n'; // print value of x (0110), then 1
+	std::cout &lt;&lt; (x &lt;&lt; 1) &lt;&lt; '\n'; // print x left shifted by 1 (1100)
+
+	return 0;
+}</code></pre>
+  <p>
+   This prints:
+  </p>
+  <pre>01101
+1100
+</pre>
+  <p>
+   The first line prints the value of x (0110), and then the literal 1.  The second line prints the value of x left-shifted by 1 (1100).
+  </p>
+  <p>
+   We will talk more about operator overloading in a future chapter, including discussion of how to overload operators for your own purposes.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Bitwise NOT
+  </p>
+  <p>
+   The
+   <strong>
+    bitwise NOT
+   </strong>
+   operator (~) is perhaps the easiest to understand of all the bitwise operators.  It simply flips each bit from a 0 to a 1, or vice versa.  Note that the result of a
+   <em>
+    bitwise NOT
+   </em>
+   is dependent on what size your data type is.
+  </p>
+  <p>
+   Flipping 4 bits:
+   <br/>
+   ~0100 is 1011
+  </p>
+  <p>
+   Flipping 8 bits:
+   <br/>
+   ~0000 0100 is 1111 1011
+  </p>
+  <p>
+   In both the 4-bit and 8-bit cases, we start with the same number (binary 0100 is the same as 0000 0100 in the same way that decimal 7 is the same as 07), but we end up with a different result.
+  </p>
+  <p>
+   We can see this in action in the following program:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+	std::cout &lt;&lt; ~std::bitset&lt;4&gt;{ 0b0100 } &lt;&lt; ' ' &lt;&lt; ~std::bitset&lt;8&gt;{ 0b0100 } &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+  <p>
+   This prints:
+   <br/>
+   1011 11111011
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Bitwise OR
+  </p>
+  <p>
+   <strong>
+    Bitwise OR
+   </strong>
+   (|) works much like its
+   <em>
+    logical OR
+   </em>
+   counterpart.  However, instead of applying the
+   <em>
+    OR
+   </em>
+   to the operands to produce a single result,
+   <em>
+    bitwise OR
+   </em>
+   applies to each bit!  For example, consider the expression
+   <code>
+    0b0101 | 0b0110
+   </code>
+   .
+  </p>
+  <p>
+   To do (any) bitwise operations, it is easiest to line the two operands up like this:
+  </p>
+  <pre>0 1 0 1 OR
+0 1 1 0
+</pre>
+  <p>
+   and then apply the operation to each
+   <em>
+    column
+   </em>
+   of bits.
+  </p>
+  <p>
+   If you remember,
+   <em>
+    logical OR
+   </em>
+   evaluates to
+   <em>
+    true (1)
+   </em>
+   if either the left, right, or both operands are
+   <em>
+    true (1)
+   </em>
+   , and
+   <em>
+    0
+   </em>
+   otherwise.
+   <em>
+    Bitwise OR
+   </em>
+   evaluates to
+   <em>
+    1
+   </em>
+   if either the left, right, or both bits are
+   <em>
+    1
+   </em>
+   , and
+   <em>
+    0
+   </em>
+   otherwise.  Consequently, the expression evaluates like this:
+  </p>
+  <pre>0 1 0 1 OR
+0 1 1 0
+-------
+0 1 1 1
+</pre>
+  <p>
+   Our result is 0111 binary.
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+	std::cout &lt;&lt; (std::bitset&lt;4&gt;{ 0b0101 } | std::bitset&lt;4&gt;{ 0b0110 }) &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+  <p>
+   This prints:
+  </p>
+  <pre>0111
+</pre>
+  <p>
+   We can do the same thing to compound OR expressions, such as
+   <code>
+    0b0111 | 0b0011 | 0b0001
+   </code>
+   .  If any of the bits in a column are
+   <em>
+    1
+   </em>
+   , the result of that column is
+   <em>
+    1
+   </em>
+   .
+  </p>
+  <pre>0 1 1 1 OR
+0 0 1 1 OR
+0 0 0 1
+--------
+0 1 1 1
+</pre>
+  <p>
+   Here’s code for the above:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+	std::cout &lt;&lt; (std::bitset&lt;4&gt;{ 0b0111 } | std::bitset&lt;4&gt;{ 0b0011 } | std::bitset&lt;4&gt;{ 0b0001 }) &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+  <p>
+   This prints:
+  </p>
+  <pre>0111
+</pre>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Bitwise AND
+  </p>
+  <p>
+   <strong>
+    Bitwise AND
+   </strong>
+   (&amp;) works similarly to the above.
+   <em>
+    Logical AND
+   </em>
+   evaluates to true if both the left and right operand evaluate to
+   <em>
+    true
+   </em>
+   .
+   <em>
+    Bitwise AND
+   </em>
+   evaluates to
+   <em>
+    true (1)
+   </em>
+   if both bits in the column are
+   <em>
+    1
+   </em>
+   .  Consider the expression
+   <code>
+    0b0101 &amp; 0b0110
+   </code>
+   .  Lining each of the bits up and applying an AND operation to each column of bits:
+  </p>
+  <pre>0 1 0 1 AND
+0 1 1 0
+--------
+0 1 0 0
+</pre>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+	std::cout &lt;&lt; (std::bitset&lt;4&gt;{ 0b0101 } &amp; std::bitset&lt;4&gt;{ 0b0110 }) &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+  <p>
+   This prints:
+  </p>
+  <pre>0100
+</pre>
+  <p>
+   Similarly, we can do the same thing to compound AND expressions, such as
+   <code>
+    0b0001 &amp; 0b0011 &amp; 0b0111
+   </code>
+   .  If all of the bits in a column are 1, the result of that column is 1.
+  </p>
+  <pre>0 0 0 1 AND
+0 0 1 1 AND
+0 1 1 1
+--------
+0 0 0 1
+</pre>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+	std::cout &lt;&lt; (std::bitset&lt;4&gt;{ 0b0001 } &amp; std::bitset&lt;4&gt;{ 0b0011 } &amp; std::bitset&lt;4&gt;{ 0b0111 }) &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+  <p>
+   This prints:
+  </p>
+  <pre>0001
+</pre>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Bitwise XOR
+  </p>
+  <p>
+   The last operator is the
+   <strong>
+    bitwise XOR
+   </strong>
+   (^), also known as
+   <strong>
+    exclusive or
+   </strong>
+   .
+  </p>
+  <p>
+   When evaluating two operands, XOR evaluates to
+   <em>
+    true (1)
+   </em>
+   if one
+   <em>
+    and only one
+   </em>
+   of its operands is
+   <em>
+    true (1)
+   </em>
+   .  If neither or both are true, it evaluates to
+   <em>
+    0
+   </em>
+   .  Consider the expression
+   <code>
+    0b0110 ^ 0b0011
+   </code>
+   :
+  </p>
+  <pre>0 1 1 0 XOR
+0 0 1 1
+-------
+0 1 0 1
+</pre>
+  <p>
+   It is also possible to evaluate compound XOR expression column style, such as
+   <code>
+    0b0001 ^ 0b0011 ^ 0b0111
+   </code>
+   .  If there are an even number of 1 bits in a column, the result is
+   <em>
+    0
+   </em>
+   .  If there are an odd number of 1 bits in a column, the result is
+   <em>
+    1
+   </em>
+   .
+  </p>
+  <pre>0 0 0 1 XOR
+0 0 1 1 XOR
+0 1 1 1
+--------
+0 1 0 1
+</pre>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Bitwise assignment operators
+  </p>
+  <p>
+   Similar to the arithmetic assignment operators, C++ provides bitwise assignment operators in order to facilitate easy modification of variables.
+  </p>
+  <div class="cpp-table-wrapper">
+   <p>
+   </p>
+   <p>
+   </p>
+   <table class="cpp-table">
+    <tbody>
+     <tr>
+      <th>
+       Operator
+      </th>
+      <th>
+       Symbol
+      </th>
+      <th>
+       Form
+      </th>
+      <th>
+       Operation
+      </th>
+     </tr>
+     <tr>
+      <td>
+       Left shift assignment
+      </td>
+      <td>
+       &lt;&lt;=
+      </td>
+      <td>
+       x &lt;&lt;= y
+      </td>
+      <td>
+       Shift x left by y bits
+      </td>
+     </tr>
+     <tr>
+      <td>
+       Right shift assignment
+      </td>
+      <td>
+       &gt;&gt;=
+      </td>
+      <td>
+       x &gt;&gt;= y
+      </td>
+      <td>
+       Shift x right by y bits
+      </td>
+     </tr>
+     <tr>
+      <td>
+       Bitwise OR assignment
+      </td>
+      <td>
+       |=
+      </td>
+      <td>
+       x |= y
+      </td>
+      <td>
+       Assign x | y to x
+      </td>
+     </tr>
+     <tr>
+      <td>
+       Bitwise AND assignment
+      </td>
+      <td>
+       &amp;=
+      </td>
+      <td>
+       x &amp;= y
+      </td>
+      <td>
+       Assign x &amp; y to x
+      </td>
+     </tr>
+     <tr>
+      <td>
+       Bitwise XOR assignment
+      </td>
+      <td>
+       ^=
+      </td>
+      <td>
+       x ^= y
+      </td>
+      <td>
+       Assign x ^ y to x
+      </td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+  <p>
+   For example, instead of writing
+   <code>
+    x = x &gt;&gt; 1;
+   </code>
+   , you can write
+   <code>
+    x &gt;&gt;= 1;
+   </code>
+   .
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    std::bitset&lt;4&gt; bits { 0b0100 };
+    bits &gt;&gt;= 1;
+    std::cout &lt;&lt; bits &lt;&lt; '\n';
+
+    return 0;
+}</code></pre>
+  <p>
+   This program prints:
+  </p>
+  <pre>0010
+</pre>
+  <div class="cpp-note cpp-lightgraybackground">
+   <p class="cpp-note-title cpp-bottomline">
+    As an aside…
+   </p>
+   <p>
+    There is no bitwise NOT assignment operator.  This is because the other bitwise operators are binary, but bitwise NOT is unary (so what would go on the right-hand side of a
+    <code>
+     ~=
+    </code>
+    operator?).  If you want to flip all of the bits, you can use normal assignment here:
+    <code>
+     x = ~x;
+    </code>
+   </p>
+  </div>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Bitwise operators perform integral promotion on smaller integral types
+  </p>
+  <p>
+   If the operand(s) of a bitwise operator are an integral type smaller than an
+   <code>
+    int
+   </code>
+   , those operands will be promoted (converted) to
+   <code>
+    int
+   </code>
+   or
+   <code>
+    unsigned int
+   </code>
+   , and the result returned will also be an
+   <code>
+    int
+   </code>
+   or
+   <code>
+    unsigned int
+   </code>
+   .  For example, if our operands are
+   <code>
+    unsigned short
+   </code>
+   , they will be promoted (converted) to
+   <code>
+    unsigned int
+   </code>
+   , and the result of the operation will be returned as an
+   <code>
+    unsigned int
+   </code>
+   .
+  </p>
+  <p>
+   In many cases, this won’t matter.
+  </p>
+  <div class="cpp-note cpp-lightgraybackground">
+   <p class="cpp-note-title cpp-bottomline">
+    Related content
+   </p>
+   <p>
+    We cover integral promotion in lesson
+    <a href="https://www.learncpp.com/cpp-tutorial/floating-point-and-integral-promotion/">
+     10.2 -- Floating-point and integral promotion
+    </a>
+    .
+   </p>
+  </div>
+  <p>
+   However, when using bitwise operators on integral types narrower than
+   <code>
+    int
+   </code>
+   or
+   <code>
+    unsigned int
+   </code>
+   , there are two cases to watch out for:
+  </p>
+  <ul>
+   <li>
+    <code>
+     operator~
+    </code>
+    and
+    <code>
+     operator&lt;&lt;
+    </code>
+    are width-sensitive and may produce different results depending on the width of the operand.
+   </li>
+   <li>
+    Initializing or assigning the result to a variable of the smaller integral type is a narrowing conversion (since converting an
+    <code>
+     int
+    </code>
+    or
+    <code>
+     unsigned int
+    </code>
+    to a smaller integral type may result in data loss).  This is disallowed in list initialization, and your compiler may or may not complain about a narrowing assignment.
+   </li>
+  </ul>
+  <p>
+   The following program exhibits these issues (assuming 32-bit ints):
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;cstdint&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    std::uint8_t c { 0b00001111 };
+    
+    std::cout &lt;&lt; std::bitset&lt;32&gt;(~c) &lt;&lt; '\n';     // incorrect: prints 11111111111111111111111111110000
+    std::cout &lt;&lt; std::bitset&lt;32&gt;(c &lt;&lt; 6) &lt;&lt; '\n'; // incorrect: prints 0000000000000000001111000000
+    std::uint8_t cneg { ~c };                     // error: narrowing conversion from unsigned int to std::uint8_t
+    c = ~c;                                       // possible warning: narrowing conversion from unsigned int to std::uint8_t
+ 
+    return 0;
+}</code></pre>
+  <p>
+   These issues can be addressed by using
+   <code>
+    static_cast
+   </code>
+   to convert the result of your bitwise operation back to the narrower integral type.  The following program produces the correct results:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;cstdint&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    std::uint8_t c { 0b00001111 };
+
+    std::cout &lt;&lt; std::bitset&lt;32&gt;(static_cast&lt;std::uint8_t&gt;(~c)) &lt;&lt; '\n';     // correct: prints 00000000000000000000000011110000
+    std::cout &lt;&lt; std::bitset&lt;32&gt;(static_cast&lt;std::uint8_t&gt;(c &lt;&lt; 6)) &lt;&lt; '\n'; // correct: prints 0000000000000000000011000000
+    std::uint8_t cneg { static_cast&lt;std::uint8_t&gt;(~c) };                     // compiles
+    c = static_cast&lt;std::uint8_t&gt;(~c);                                       // no warning
+ 
+    return 0;
+}</code></pre>
+  <div class="cpp-note cpp-lightredbackground">
+   <p class="cpp-note-title cpp-bottomline">
+    Warning
+   </p>
+   <p>
+    Bitwise operators will promote operands with narrower integral types to
+    <code>
+     int
+    </code>
+    or
+    <code>
+     unsigned int
+    </code>
+    .
+   </p>
+   <p>
+    <code>
+     operator~
+    </code>
+    and
+    <code>
+     operator&lt;&lt;
+    </code>
+    are width-sensitive and may produce different results depending on the width of the operand.
+   </p>
+   <p>
+    <code>
+     static_cast
+    </code>
+    the result of such bitwise operations back to the narrower integral type before using to ensure correct results.
+   </p>
+  </div>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Summary
+  </p>
+  <p>
+   Summarizing how to evaluate bitwise operations utilizing the column method:
+  </p>
+  <p>
+   When evaluating
+   <em>
+    bitwise OR
+   </em>
+   , if any bit in a column is 1, the result for that column is 1.
+   <br/>
+   When evaluating
+   <em>
+    bitwise AND
+   </em>
+   , if all bits in a column are 1, the result for that column is 1.
+   <br/>
+   When evaluating
+   <em>
+    bitwise XOR
+   </em>
+   , if there are an odd number of 1 bits in a column, the result for that column is 1.
+  </p>
+  <p>
+   In the next lesson, we’ll explore how these operators can be used in conjunction with bit masks to facilitate bit manipulation.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Quiz time
+  </p>
+  <div class="quiz" style="clear: both">
+   <p class="quiz-header">
+    Question #1
+   </p>
+   <p>
+    a) What does 0110 &gt;&gt; 2 evaluate to in binary?
+   </p>
+   <p>
+    <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_0'), this, 'Show Solution', 'Hide Solution')">
+     Show Solution
+    </a>
+   </p>
+   <div class="wpsolution" id="cpp_solution_id_0" style="display:none">
+    <p>
+     0110 &gt;&gt; 2 evaluates to 0001
+    </p>
+   </div>
+   <p>
+    b) What does the following evaluate to in binary: 0011 | 0101?
+   </p>
+   <p>
+    <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_1'), this, 'Show Solution', 'Hide Solution')">
+     Show Solution
+    </a>
+   </p>
+   <div class="wpsolution" id="cpp_solution_id_1" style="display:none">
+    <pre>0 0 1 1 OR
+0 1 0 1
+--------
+0 1 1 1
+</pre>
+   </div>
+   <p>
+    c) What does the following evaluate to in binary: 0011 &amp; 0101?
+   </p>
+   <p>
+    <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_2'), this, 'Show Solution', 'Hide Solution')">
+     Show Solution
+    </a>
+   </p>
+   <div class="wpsolution" id="cpp_solution_id_2" style="display:none">
+    <pre>0 0 1 1 AND
+0 1 0 1
+--------
+0 0 0 1
+</pre>
+   </div>
+   <p>
+    d) What does the following evaluate to in binary (0011 | 0101) &amp; 1001?
+   </p>
+   <p>
+    <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_3'), this, 'Show Solution', 'Hide Solution')">
+     Show Solution
+    </a>
+   </p>
+   <div class="wpsolution" id="cpp_solution_id_3" style="display:none">
+    <pre>Inside the parenthesis:
+
+0 0 1 1 OR
+0 1 0 1
+--------
+0 1 1 1
+
+Then:
+
+0 1 1 1 AND
+1 0 0 1
+--------
+0 0 0 1
+</pre>
+   </div>
+  </div>
+  <div class="quiz" style="clear: both">
+   <p class="quiz-header">
+    Question #2
+   </p>
+   <p>
+    A bitwise rotation is like a bitwise shift, except that any bits shifted off one end are added back to the other end.  For example
+    <code>
+     0b1001 &lt;&lt; 1
+    </code>
+    would be
+    <code>
+     0b0010
+    </code>
+    , but a left rotate by 1 would result in
+    <code>
+     0b0011
+    </code>
+    instead.  Implement a function that does a left rotate on a
+    <code>
+     std::bitset&lt;4&gt;
+    </code>
+    .  For this one, it’s okay to use test() and set().
+   </p>
+   <p>
+    The following code should execute:
+   </p>
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;iostream&gt;
+
+// "rotl" stands for "rotate left"
+std::bitset&lt;4&gt; rotl(std::bitset&lt;4&gt; bits)
+{
+// Your code here
+}
+
+int main()
+{
+	std::bitset&lt;4&gt; bits1{ 0b0001 };
+	std::cout &lt;&lt; rotl(bits1) &lt;&lt; '\n';
+
+	std::bitset&lt;4&gt; bits2{ 0b1001 };
+	std::cout &lt;&lt; rotl(bits2) &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+   <p>
+    and print the following:
+   </p>
+   <pre>0010
+0011
+</pre>
+   <p>
+    <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_4'), this, 'Show Solution', 'Hide Solution')">
+     Show Solution
+    </a>
+   </p>
+   <div class="wpsolution" id="cpp_solution_id_4" style="display:none">
+    <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;iostream&gt;
+
+std::bitset&lt;4&gt; rotl(std::bitset&lt;4&gt; bits)
+{
+	// keep track of whether the leftmost bit was a 1
+	const bool leftbit{ bits.test(3) };
+
+	bits &lt;&lt;= 1; // do left shift (which shifts the leftmost bit off the end)
+
+	// if the left bit was a 1
+	if (leftbit)
+		bits.set(0); // set the rightmost bit to a 1
+
+	return bits;
+}
+
+int main()
+{
+	std::bitset&lt;4&gt; bits1{ 0b0001 };
+	std::cout &lt;&lt; rotl(bits1) &lt;&lt; '\n';
+
+	std::bitset&lt;4&gt; bits2{ 0b1001 };
+	std::cout &lt;&lt; rotl(bits2) &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+    <p>
+     We have named the function “rotl” rather than “rotateLeft”, because “rotl” is a well-established name in computer science and also the name of the standard function,
+     <a href="https://en.cppreference.com/w/cpp/numeric/rotl">
+      <code>
+       std::rotl
+      </code>
+     </a>
+     .
+    </p>
+   </div>
+   <p>
+   </p>
+  </div>
+  <div class="quiz" style="clear: both">
+   <p class="quiz-header">
+    Question #3
+   </p>
+   <p>
+    Extra credit: Redo quiz #2 but don’t use the test and set functions (use bitwise operators).
+   </p>
+   <p>
+    <a class="hint_link_show" href="javascript:void(0)" onclick="cppHintToggle(document.getElementById('cpp_hint_id_0'), this, 'Show Hint', '')">
+     Show Hint
+    </a>
+   </p>
+   <div class="wphint" id="cpp_hint_id_0" style="display:none; margin-bottom: 1em">
+    Hint: How might we get the leftmost bit into the rightmost position?
+   </div>
+   <p>
+    <a class="hint_link_show" href="javascript:void(0)" onclick="cppHintToggle(document.getElementById('cpp_hint_id_1'), this, 'Show Hint', '')">
+     Show Hint
+    </a>
+   </p>
+   <div class="wphint" id="cpp_hint_id_1" style="display:none; margin-bottom: 1em">
+    Hint: Consider a “shift” in your perspective
+   </div>
+   <p>
+    <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_5'), this, 'Show Solution', 'Hide Solution')">
+     Show Solution
+    </a>
+   </p>
+   <div class="wpsolution" id="cpp_solution_id_5" style="display:none">
+    <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;bitset&gt;
+#include &lt;iostream&gt;
+
+// h/t to reader Chris for this solution
+std::bitset&lt;4&gt; rotl(std::bitset&lt;4&gt; bits)
+{
+	// bits &lt;&lt; 1 does the left shift
+	// bits &gt;&gt; 3 handle the rotation of the leftmost bit
+	return (bits&lt;&lt;1) | (bits&gt;&gt;3);
+}
+
+int main()
+{
+	std::bitset&lt;4&gt; bits1{ 0b0001 };
+	std::cout &lt;&lt; rotl(bits1) &lt;&lt; '\n';
+
+	std::bitset&lt;4&gt; bits2{ 0b1001 };
+	std::cout &lt;&lt; rotl(bits2) &lt;&lt; '\n';
+
+	return 0;
+}</code></pre>
+   </div>
+  </div>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

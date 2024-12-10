@@ -1,0 +1,848 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   15.x — Chapter 15 summary and quiz
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p class="cpp-section">
+   Chapter Review
+  </p>
+  <p>
+   Inside every (non-static) member function, the keyword
+   <strong>
+    this
+   </strong>
+   is a const pointer that holds the address of the current implicit object.  We can have functions return
+   <code>
+    *this
+   </code>
+   by reference in order to enable
+   <strong>
+    method chaining
+   </strong>
+   , where several member functions can be called on the same object in a single expression.
+  </p>
+  <p>
+   Prefer to put your class definitions in a header file with the same name as the class.  Trivial member functions (such as access functions, constructors with empty bodies, etc…) can be defined inside the class definition.
+  </p>
+  <p>
+   Prefer to define non-trivial member functions in a source file with the same name as the class.
+  </p>
+  <p>
+   A type that is defined inside a class type is called a
+   <strong>
+    nested type
+   </strong>
+   (or
+   <strong>
+    member type
+   </strong>
+   ).  Type aliases can also be nested.
+  </p>
+  <p>
+   Member functions defined inside a class template definition can use the template parameters of the class template itself.  Member functions defined outside the class template definition must resupply a template parameter declaration, and should be defined (in the same file) just below the class template definition.
+  </p>
+  <p>
+   <strong>
+    Static member variables
+   </strong>
+   are static duration members that are shared by all objects of the class.  Static members exist even if no objects of the class have been instantiated.  Prefer to access them using the class name, the scope resolution operator, and the members name.
+  </p>
+  <p>
+   Making static members
+   <code>
+    inline
+   </code>
+   allows them to be initialized inside the class definition.
+  </p>
+  <p>
+   <strong>
+    Static member functions
+   </strong>
+   are member functions that can be called with no object.  They do not have a
+   <code>
+    *this
+   </code>
+   pointer, and cannot access non-static data members.
+  </p>
+  <p>
+   Inside the body of a class, a
+   <strong>
+    friend declaration
+   </strong>
+   (using the
+   <code>
+    friend
+   </code>
+   keyword) can be used to tell the compiler that some other class or function is now a friend.  A
+   <strong>
+    friend
+   </strong>
+   is a class or function (member or non-member) that has been granted full access to the private and protected members of another class.  A
+   <strong>
+    friend function
+   </strong>
+   is a function (member or non-member) that can access the private and protected members of a class as though it were a member of that class.  A
+   <strong>
+    friend class
+   </strong>
+   is a class that can access the private and protected members of another class.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Quiz time
+  </p>
+  <p class="cpp-quiz-question" style="clear: both">
+   Question #1
+  </p>
+  <p>
+   Let’s create a random monster generator.  This one should be fun.
+  </p>
+  <p>
+   a) First, let’s create an scoped enumeration of monster types named
+   <code>
+    MonsterType
+   </code>
+   .  Include the following monster types: Dragon, Goblin, Ogre, Orc, Skeleton, Troll, Vampire, and Zombie.  Add an additional maxMonsterTypes enumerator so we can count how many enumerators there are.
+  </p>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_0'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_0" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">enum class MonsterType
+{
+	dragon,
+	goblin,
+	ogre,
+	orc,
+	skeleton,
+	troll,
+	vampire,
+	zombie,
+	maxMonsterTypes,
+};</code></pre>
+  </div>
+  <p>
+   b) Now, let’s create our
+   <code>
+    Monster
+   </code>
+   class.  Our
+   <code>
+    Monster
+   </code>
+   will have 4 attributes (member variables): a type (
+   <code>
+    MonsterType
+   </code>
+   ), a name (
+   <code>
+    std::string
+   </code>
+   ), a roar (
+   <code>
+    std::string
+   </code>
+   ) and the number of hit points (
+   <code>
+    int
+   </code>
+   ).
+  </p>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_1'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_1" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;string&gt;
+
+enum class MonsterType
+{
+	dragon,
+	goblin,
+	ogre,
+	orc,
+	skeleton,
+	troll,
+	vampire,
+	zombie,
+	maxMonsterTypes,
+};
+
+class Monster
+{
+private:
+	MonsterType m_type{};
+	std::string m_name{"???"};
+	std::string m_roar{"???"};
+	int m_hitPoints{};
+};</code></pre>
+  </div>
+  <p>
+   c)
+   <code>
+    enum class MonsterType
+   </code>
+   is specific to
+   <code>
+    Monster
+   </code>
+   , so make
+   <code>
+    MonsterType
+   </code>
+   a nested unscoped enum inside
+   <code>
+    Monster
+   </code>
+   and rename it to
+   <code>
+    Type
+   </code>
+   .
+  </p>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_2'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_2" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;string&gt;
+
+class Monster
+{
+public:
+	enum Type
+	{
+		dragon,
+		goblin,
+		ogre,
+		orc,
+		skeleton,
+		troll,
+		vampire,
+		zombie,
+		maxMonsterTypes,
+	};
+
+private:
+
+	Type m_type{};
+	std::string m_name{"???"};
+	std::string m_roar{"???"};
+	int m_hitPoints{};
+};</code></pre>
+  </div>
+  <p>
+   d) Create a constructor that allows you to initialize all of the member variables.
+  </p>
+  <p>
+   The following program should compile:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+	Monster skeleton{ Monster::skeleton, "Bones", "*rattle*", 4 };
+
+	return 0;
+}</code></pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_3'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_3" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;string&gt;
+#include &lt;string_view&gt;
+
+class Monster
+{
+public:
+	enum Type
+	{
+		dragon,
+		goblin,
+		ogre,
+		orc,
+		skeleton,
+		troll,
+		vampire,
+		zombie,
+		maxMonsterTypes,
+	};
+
+private:
+
+	Type m_type{};
+	std::string m_name{"???"};
+	std::string m_roar{"???"};
+	int m_hitPoints{};
+
+public:
+	Monster(Type type, std::string_view name, std::string_view roar, int hitPoints)
+		: m_type{ type }, m_name{ name }, m_roar{ roar }, m_hitPoints{ hitPoints }
+	{
+	}
+};
+
+int main()
+{
+	Monster skeleton{ Monster::skeleton, "Bones", "*rattle*", 4 };
+
+	return 0;
+}</code></pre>
+  </div>
+  <p>
+   e) Now we want to be able to print our monster so we can validate it’s correct.  Write two functions: One called
+   <code>
+    getTypeString()
+   </code>
+   that returns the monster’s type as a string, and one called
+   <code>
+    print()
+   </code>
+   that matches the output in the sample program below.
+  </p>
+  <p>
+   The following program should compile:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+	Monster skeleton{ Monster::skeleton, "Bones", "*rattle*", 4 };
+	skeleton.print();
+
+	Monster vampire{ Monster::vampire, "Nibblez", "*hiss*", 0 };
+	vampire.print();
+
+	return 0;
+}</code></pre>
+  <p>
+   and print:
+  </p>
+  <pre>Bones the skeleton has 4 hit points and says *rattle*.
+Nibblez the vampire is dead.
+</pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_4'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_4" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;string_view&gt;
+
+class Monster
+{
+public:
+	enum Type
+	{
+		dragon,
+		goblin,
+		ogre,
+		orc,
+		skeleton,
+		troll,
+		vampire,
+		zombie,
+		maxMonsterTypes,
+	};
+
+private:
+
+	Type m_type{};
+	std::string m_name{"???"};
+	std::string m_roar{"???"};
+	int m_hitPoints{};
+
+public:
+	Monster(Type type, std::string_view name, std::string_view roar, int hitPoints)
+		: m_type{ type }, m_name{ name }, m_roar{ roar }, m_hitPoints{ hitPoints }
+	{
+
+	}
+
+	constexpr std::string_view getTypeString() const
+	{
+		switch (m_type)
+		{
+		case dragon:   return "dragon";
+		case goblin:   return "goblin";
+		case ogre:     return "ogre";
+		case orc:      return "orc";
+		case skeleton: return "skeleton";
+		case troll:    return "troll";
+		case vampire:  return "vampire";
+		case zombie:   return "zombie";
+		default:       return "???";
+		}
+	}
+
+	void print() const
+	{
+		std::cout &lt;&lt; m_name &lt;&lt; " the " &lt;&lt; getTypeString();
+
+		if (m_hitPoints &lt;= 0)
+			std::cout &lt;&lt; " is dead.\n";
+		else
+			std::cout &lt;&lt; " has " &lt;&lt; m_hitPoints &lt;&lt; " hit points and says " &lt;&lt; m_roar &lt;&lt; ".\n";
+	}
+};
+
+int main()
+{
+	Monster skeleton{ Monster::skeleton, "Bones", "*rattle*", 4 };
+	skeleton.print();
+
+	Monster vampire{ Monster::vampire, "Nibblez", "*hiss*", 0 };
+	vampire.print();
+
+	return 0;
+}</code></pre>
+  </div>
+  <p>
+   f) Now we can create a random monster generator.  Let’s consider how our
+   <code>
+    MonsterGenerator
+   </code>
+   will work.  Ideally, we’ll ask it to give us a
+   <code>
+    Monster
+   </code>
+   , and it will create a random one for us.  Because
+   <code>
+    MonsterGenerator
+   </code>
+   doesn’t have any state, this is a good candidate for a namespace.
+  </p>
+  <p>
+   Create a
+   <code>
+    MonsterGenerator
+   </code>
+   namespace.  Create function within named
+   <code>
+    generate()
+   </code>
+   .  This should return a
+   <code>
+    Monster
+   </code>
+   .  For now, make it return
+   <code>
+    Monster{ Monster::skeleton, "Bones", "*rattle*", 4}
+   </code>
+   ;
+  </p>
+  <p>
+   The following program should compile:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+	Monster m{ MonsterGenerator::generate() };
+	m.print();
+
+	return 0;
+}</code></pre>
+  <p>
+   and print:
+  </p>
+  <pre>Bones the skeleton has 4 hit points and says *rattle*
+</pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_5'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_5" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;string_view&gt;
+
+class Monster
+{
+public:
+	enum Type
+	{
+		dragon,
+		goblin,
+		ogre,
+		orc,
+		skeleton,
+		troll,
+		vampire,
+		zombie,
+		maxMonsterTypes,
+	};
+
+private:
+
+	Type m_type{};
+	std::string m_name{};
+	std::string m_roar{};
+	int m_hitPoints{};
+
+public:
+	Monster(Type type, std::string_view name, const std::string&amp; roar, int hitPoints)
+		: m_type{ type }, m_name{ name }, m_roar{ roar }, m_hitPoints{ hitPoints }
+	{
+
+	}
+
+	constexpr std::string_view getTypeString() const
+	{
+		switch (m_type)
+		{
+		case Type::dragon: return "dragon";
+		case Type::goblin: return "goblin";
+		case Type::ogre: return "ogre";
+		case Type::orc: return "orc";
+		case Type::skeleton: return "skeleton";
+		case Type::troll: return "troll";
+		case Type::vampire: return "vampire";
+		case Type::zombie: return "zombie";
+		default: return "???";
+		}
+	}
+
+	void print() const
+	{
+		if (m_hitPoints &lt;= 0)
+			std::cout &lt;&lt; m_name &lt;&lt; " is dead.\n";
+		else
+			std::cout &lt;&lt; m_name &lt;&lt; " the " &lt;&lt; getTypeString() &lt;&lt; " has " &lt;&lt; m_hitPoints &lt;&lt; " hit points and says " &lt;&lt; m_roar &lt;&lt; ".\n";
+	}
+};
+
+namespace MonsterGenerator
+{
+	Monster generate()
+	{
+		return Monster{ Monster::skeleton, "Bones", "*rattle*", 4 };
+	}
+};
+
+int main()
+{
+	Monster m{ MonsterGenerator::generate() };
+	m.print();
+
+	return 0;
+}</code></pre>
+  </div>
+  <p>
+   g) Add two more functions to the
+   <code>
+    MonsterGenerator
+   </code>
+   namespace.
+   <code>
+    getName(int)
+   </code>
+   will take a number between 0 and 5 (inclusive) and return a name of your choice.
+   <code>
+    getRoar(int)
+   </code>
+   will also take a number between 0 and 5 (inclusive) and return a roar of your choice.  Also update your
+   <code>
+    generate()
+   </code>
+   function to call
+   <code>
+    getName(0)
+   </code>
+   and
+   <code>
+    getRoar(0)
+   </code>
+   .
+  </p>
+  <p>
+   The following program should compile:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">int main()
+{
+	Monster m{ MonsterGenerator::generate() };
+	m.print();
+
+	return 0;
+}</code></pre>
+  <p>
+   and print:
+  </p>
+  <pre>Blarg the skeleton has 4 hit points and says *ROAR*
+</pre>
+  <p>
+   Your name and sound will vary based on what you chose.
+  </p>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_6'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_6" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;string_view&gt;
+
+class Monster
+{
+public:
+	enum Type
+	{
+		dragon,
+		goblin,
+		ogre,
+		orc,
+		skeleton,
+		troll,
+		vampire,
+		zombie,
+		maxMonsterTypes,
+	};
+
+private:
+
+	Type m_type{};
+	std::string m_name{"???"};
+	std::string m_roar{"???"};
+	int m_hitPoints{};
+
+public:
+	Monster(Type type, std::string_view name, std::string_view roar, int hitPoints)
+		: m_type{ type }, m_name{ name }, m_roar{ roar }, m_hitPoints{ hitPoints }
+	{
+
+	}
+
+	constexpr std::string_view getTypeString() const
+	{
+		switch (m_type)
+		{
+		case dragon:   return "dragon";
+		case goblin:   return "goblin";
+		case ogre:     return "ogre";
+		case orc:      return "orc";
+		case skeleton: return "skeleton";
+		case troll:    return "troll";
+		case vampire:  return "vampire";
+		case zombie:   return "zombie";
+		default: return "???";
+		}
+	}
+
+	void print() const
+	{
+		std::cout &lt;&lt; m_name &lt;&lt; " the " &lt;&lt; getTypeString();
+
+		if (m_hitPoints &lt;= 0)
+			std::cout &lt;&lt; " is dead.\n";
+		else
+			std::cout &lt;&lt; " has " &lt;&lt; m_hitPoints &lt;&lt; " hit points and says " &lt;&lt; m_roar &lt;&lt; ".\n";
+	}
+};
+
+namespace MonsterGenerator
+{
+    std::string_view getName(int n)
+	{
+        switch (n)
+        {
+            case 0:  return "Blarg";
+            case 1:  return "Moog";
+            case 2:  return "Pksh";
+            case 3:  return "Tyrn";
+            case 4:  return "Mort";
+            case 5:  return "Hans";
+            default: return "???";
+        }
+    }
+
+    std::string_view getRoar(int n)
+	{
+        switch (n)
+        {
+            case 0:  return "*ROAR*";
+            case 1:  return "*peep*";
+            case 2:  return "*squeal*";
+            case 3:  return "*whine*";
+            case 4:  return "*growl*";
+            case 5:  return "*burp*";
+            default: return "???";
+        }
+    }
+
+	Monster generate()
+	{
+		return Monster{ Monster::skeleton, getName(0), getRoar(0), 4 };
+	}
+
+};
+
+int main()
+{
+	Monster m{ MonsterGenerator::generate() };
+	m.print();
+
+	return 0;
+}</code></pre>
+  </div>
+  <p>
+   h) Now we’ll randomize our generated monster.  Grab the “Random.h” code from
+   <a href="https://www.learncpp.com/cpp-tutorial/global-random-numbers-random-h/#RandomH">
+    8.15 -- Global random numbers (Random.h)
+   </a>
+   and save it as Random.h.  Then use
+   <code>
+    Random::get()
+   </code>
+   to generate a random monster type, random name, random roar, and random hit points (between 1 and 100).
+  </p>
+  <p>
+   The following program should compile:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include "Random.h"
+
+int main()
+{
+	Monster m{ MonsterGenerator::generate() };
+	m.print();
+
+	return 0;
+}</code></pre>
+  <p>
+   and print something like this:
+  </p>
+  <pre>Mort the zombie has 61 hit points and says *growl*
+</pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_7'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_7" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include "Random.h"
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;string_view&gt;
+
+class Monster
+{
+public:
+	enum Type
+	{
+		dragon,
+		goblin,
+		ogre,
+		orc,
+		skeleton,
+		troll,
+		vampire,
+		zombie,
+		maxMonsterTypes,
+	};
+
+private:
+
+	Type m_type{};
+	std::string m_name{"???"};
+	std::string m_roar{"???"};
+	int m_hitPoints{};
+
+public:
+	Monster(Type type, std::string_view name, std::string_view roar, int hitPoints)
+		: m_type{ type }, m_name{ name }, m_roar{ roar }, m_hitPoints{ hitPoints }
+	{
+
+	}
+
+	constexpr std::string_view getTypeString() const
+	{
+		switch (m_type)
+		{
+		case dragon:   return "dragon";
+		case goblin:   return "goblin";
+		case ogre:     return "ogre";
+		case orc:      return "orc";
+		case skeleton: return "skeleton";
+		case troll:    return "troll";
+		case vampire:  return "vampire";
+		case zombie:   return "zombie";
+		default: return "???";
+		}
+	}
+
+	void print() const
+	{
+		std::cout &lt;&lt; m_name &lt;&lt; " the " &lt;&lt; getTypeString();
+
+		if (m_hitPoints &lt;= 0)
+			std::cout &lt;&lt; " is dead.\n";
+		else
+			std::cout &lt;&lt; " has " &lt;&lt; m_hitPoints &lt;&lt; " hit points and says " &lt;&lt; m_roar &lt;&lt; ".\n";
+	}
+};
+
+namespace MonsterGenerator
+{
+    std::string_view getName(int n)
+	{
+        switch (n)
+        {
+            case 0:  return "Blarg";
+            case 1:  return "Moog";
+            case 2:  return "Pksh";
+            case 3:  return "Tyrn";
+            case 4:  return "Mort";
+            case 5:  return "Hans";
+            default: return "???";
+        }
+    }
+
+    std::string_view getRoar(int n)
+	{
+        switch (n)
+        {
+            case 0:  return "*ROAR*";
+            case 1:  return "*peep*";
+            case 2:  return "*squeal*";
+            case 3:  return "*whine*";
+            case 4:  return "*growl*";
+            case 5:  return "*burp*";
+            default: return "???";
+        }
+    }
+
+    Monster generate()
+    {
+        return Monster{
+            static_cast&lt;Monster::Type&gt;(Random::get(0, Monster::maxMonsterTypes-1)),
+            getName(Random::get(0,5)),
+            getRoar(Random::get(0,5)),
+            Random::get(1, 100)
+            };
+	}
+
+};
+
+int main()
+{
+	Monster m{ MonsterGenerator::generate() };
+	m.print();
+
+	return 0;
+}</code></pre>
+  </div>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>

@@ -1,0 +1,537 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <h1 class="entry-title singular-title" itemprop="headline">
+   3.x — Chapter 3 summary and quiz
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p class="cpp-section">
+   Chapter Review
+   <p>
+    A
+    <strong>
+     syntax error
+    </strong>
+    is an error that occurs when you write a statement that is not valid according to the grammar of the C++ language. The compiler will catch these.
+    <p>
+     A
+     <strong>
+      semantic error
+     </strong>
+     occurs when a statement is syntactically valid, but does not do what the programmer intended.
+     <p>
+      The process of finding and removing errors from a program is called
+      <strong>
+       debugging
+      </strong>
+      .
+      <p>
+       We can use a five step process to approach debugging:
+       <ol>
+        <li>
+         Find the root cause.
+         <li>
+          Understand the problem.
+          <li>
+           Determine a fix.
+           <li>
+            Repair the issue.
+            <li>
+             Retest.
+            </li>
+           </li>
+          </li>
+         </li>
+        </li>
+       </ol>
+       <p>
+        Finding an error is usually the hardest part of debugging.
+        <p>
+         <strong>
+          Static analysis tools
+         </strong>
+         are tools that analyze your code and look for semantic issues that may indicate problems with your code.
+         <p>
+          Being able to reliably reproduce an issue is the first and most important step in debugging.
+          <p>
+           There are a number of tactics we can use to help find issues:
+           <ul>
+            <li>
+             Commenting out code.
+             <li>
+              Using output statements to validate your code flow.
+              <li>
+               Printing values.
+              </li>
+             </li>
+            </li>
+           </ul>
+           <p>
+            When using print statements to debug, use
+            <em>
+             std::cerr
+            </em>
+            instead of
+            <em>
+             std::cout
+            </em>
+            . But even better, avoid debugging via print statements.
+            <p>
+             A
+             <strong>
+              log file
+             </strong>
+             is a file that records events that occur in a program. The process of writing information to a log file is called
+             <strong>
+              logging
+             </strong>
+             .
+             <p>
+              The process of restructuring your code without changing how it behaves is called
+              <strong>
+               refactoring
+              </strong>
+              . This is typically done to make your program more organized, modular, or performant.
+              <p>
+               <strong>
+                Unit testing
+               </strong>
+               is a software testing method by which small units of source code are tested to determine whether they are correct.
+               <p>
+                <strong>
+                 Defensive programming
+                </strong>
+                is a technique whereby the programmer tries to anticipate all of the ways the software could be misused. These misuses can often be detected and mitigated.
+                <p>
+                 All of the information tracked in a program (variable values, which functions have been called, the current point of execution) is part of the
+                 <strong>
+                  program state
+                 </strong>
+                 .
+                 <p>
+                  A
+                  <strong>
+                   debugger
+                  </strong>
+                  is a tool that allows the programmer to control how a program executes and examine the program state while the program is running. An
+                  <strong>
+                   integrated debugger
+                  </strong>
+                  is a debugger that integrates into the code editor.
+                  <p>
+                   <strong>
+                    Stepping
+                   </strong>
+                   is the name for a set of related debugging features that allow you to step through your code statement by statement.
+                   <p>
+                    <strong>
+                     Step into
+                    </strong>
+                    executes the next statement in the normal execution path of the program, and then pauses execution. If the statement contains a function call,
+                    <em>
+                     step into
+                    </em>
+                    causes the program to jump to the top of the function being called.
+                    <p>
+                     <strong>
+                      Step over
+                     </strong>
+                     executes the next statement in the normal execution path of the program, and then pauses execution. If the statement contains a function call,
+                     <em>
+                      step over
+                     </em>
+                     executes the function and returns control to you after the function has been executed.
+                     <p>
+                      <strong>
+                       Step out
+                      </strong>
+                      executes all remaining code in the function currently being executed and then returns control to you when the function has returned.
+                      <p>
+                       <strong>
+                        Run to cursor
+                       </strong>
+                       executes the program until execution reaches the statement selected by your mouse cursor.
+                       <p>
+                        <strong>
+                         Continue
+                        </strong>
+                        runs the program, until the program terminates or a breakpoint is hit.
+                        <strong>
+                         Start
+                        </strong>
+                        is the same as continue, just from the beginning of the program.
+                        <p>
+                         A
+                         <strong>
+                          breakpoint
+                         </strong>
+                         is a special marker that tells the debugger to stop execution of the program when the breakpoint is reached.
+                         <p>
+                          The
+                          <strong>
+                           set next statement
+                          </strong>
+                          command allows us to change the point of execution to some other statement (sometimes informally called jumping). This can be used to jump the point of execution forwards and skip some code that would otherwise execute, or backwards and have something that already executed run again.
+                          <p>
+                           <strong>
+                            Watching a variable
+                           </strong>
+                           allows you to inspect the value of a variable while the program is executing in debug mode. The
+                           <strong>
+                            watch window
+                           </strong>
+                           allows you to examine the value of variables or expressions.
+                           <p>
+                            The
+                            <strong>
+                             call stack
+                            </strong>
+                            is a list of all the active functions that have been executed to get to the current point of execution. The
+                            <strong>
+                             call stack window
+                            </strong>
+                            is a debugger window that shows the call stack.
+                            <p class="cpp-section cpp-topline" style="clear:both">
+                             Quiz time
+                             <p class="cpp-quiz-question" style="clear:both">
+                              Question #1
+                              <p>
+                               The following program is supposed to add two numbers, but doesn’t work correctly.
+                               <p>
+                                Use the integrated debugger to step through this program and watch the value of x. Based on the information you learn, fix the following program:
+                                <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int readNumber(int x)
+{
+	std::cout &lt;&lt; "Please enter a number: ";
+	std::cin &gt;&gt; x;
+	return x;
+}
+
+void writeAnswer(int x)
+{
+	std::cout &lt;&lt; "The sum is: " &lt;&lt; x &lt;&lt; '\n';
+}
+
+int main()
+{
+	int x {};
+	readNumber(x);
+	x = x + readNumber(x);
+	writeAnswer(x);
+
+	return 0;
+}</code></pre>
+                                <p>
+                                 <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_0'),this,'Show Solution','Hide Solution')">
+                                  Show Solution
+                                 </a>
+                                 <div class="wpsolution" id="cpp_solution_id_0" style="display:none">
+                                  <p>
+                                   The major issue here is in the second line of function
+                                   <em>
+                                    main
+                                   </em>
+                                   -- the return value of readNumber isn’t assigned to anything, so it is discarded. A minor issue is that
+                                   <em>
+                                    readNumber
+                                   </em>
+                                   is taking an argument when it should have a local variable instead.
+                                   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int readNumber()
+{
+	std::cout &lt;&lt; "Please enter a number: ";
+	int x {};
+	std::cin &gt;&gt; x;
+	return x;
+}
+
+void writeAnswer(int x)
+{
+	std::cout &lt;&lt; "The sum is: " &lt;&lt; x &lt;&lt; '\n';
+}
+
+int main()
+{
+	int x { readNumber() };
+	x = x + readNumber();
+	writeAnswer(x);
+
+	return 0;
+}</code></pre>
+                                  </p>
+                                 </div>
+                                 <p class="cpp-quiz-question cpp-topline" style="clear:both">
+                                  Question #2
+                                  <p>
+                                   The following program is supposed to divide two numbers, but doesn’t work correctly.
+                                   <p>
+                                    Use the integrated debugger to step through this program. For inputs, enter 8 and 4. Based on the information you learn, fix the following program:
+                                    <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int readNumber()
+{
+	std::cout &lt;&lt; "Please enter a number: ";
+	int x {};
+	std::cin &gt;&gt; x;
+	return x;
+}
+
+void writeAnswer(int x)
+{
+	std::cout &lt;&lt; "The quotient is: " &lt;&lt; x &lt;&lt; '\n';
+}
+
+int main()
+{
+	int x{ };
+	int y{ };
+	x = readNumber();
+	x = readNumber();
+	writeAnswer(x/y);
+
+	return 0;
+}</code></pre>
+                                    <p>
+                                     <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_1'),this,'Show Solution','Hide Solution')">
+                                      Show Solution
+                                     </a>
+                                     <div class="wpsolution" id="cpp_solution_id_1" style="display:none">
+                                      <p>
+                                       The issue here is that the second call to
+                                       <em>
+                                        readNumber
+                                       </em>
+                                       accidentally assigns its value to x instead of y, resulting in a division by 0, which causes undefined behavior.
+                                       <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int readNumber()
+{
+	std::cout &lt;&lt; "Please enter a number: ";
+	int x {};
+	std::cin &gt;&gt; x;
+	return x;
+}
+
+void writeAnswer(int x)
+{
+	std::cout &lt;&lt; "The quotient is: " &lt;&lt; x &lt;&lt; '\n';
+}
+
+int main()
+{
+	int x{ readNumber() };
+	int y{ readNumber() };
+	writeAnswer(x/y);
+
+	return 0;
+}</code></pre>
+                                       <p>
+                                        You may notice that when the second input doesn’t divide evenly into the first, this program appears to produce an incorrect answer. When doing division with integers, C++ will drop any fractional parts of the quotient. We’ll discuss this in more detail in lesson
+                                        <a href="https://www.learncpp.com/cpp-tutorial/arithmetic-operators/">
+                                         6.2 -- Arithmetic operators
+                                        </a>
+                                        .
+                                       </p>
+                                      </p>
+                                     </div>
+                                     <p class="cpp-quiz-question cpp-topline" style="clear:both">
+                                      Question #3
+                                      <p>
+                                       What does the call stack look like in the following program when the point of execution is on line 4? Only the function names are needed for this exercise, not the line numbers indicating the point of return.
+                                       <p>
+                                        We talk about the call stack in lesson
+                                        <a href="https://www.learncpp.com/cpp-tutorial/using-an-integrated-debugger-the-call-stack/">
+                                         3.9 -- Using an integrated debugger: The call stack
+                                        </a>
+                                        .
+                                        <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+void d()
+{ // here
+}
+
+void c()
+{
+}
+
+void b()
+{
+	c();
+	d();
+}
+
+void a()
+{
+	b();
+}
+
+int main()
+{
+	a();
+
+	return 0;
+}</code></pre>
+                                        <p>
+                                         <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_2'),this,'Show Solution','Hide Solution')">
+                                          Show Solution
+                                         </a>
+                                         <div class="wpsolution" id="cpp_solution_id_2" style="display:none">
+                                          <p>
+                                           d
+                                           <br/>
+                                           b
+                                           <br/>
+                                           a
+                                           <br/>
+                                           main
+                                          </p>
+                                         </div>
+                                         <p class="cpp-quiz-question cpp-topline" style="clear:both">
+                                          Question #4
+                                          <p>
+                                           Extra credit: The following program is supposed to add two numbers, but doesn’t work correctly.
+                                           <p>
+                                            Use the integrated debugger to step through this program. For inputs, enter 8 and 4. Based on the information you learn, fix the following program:
+                                            <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int readNumber()
+{
+    std::cout &lt;&lt; "Please enter a number: ";
+    char x{};
+    std::cin &gt;&gt; x;
+    
+    return x;
+}
+
+void writeAnswer(int x)
+{
+    std::cout &lt;&lt; "The sum is: " &lt;&lt; x &lt;&lt; '\n';
+}
+
+int main()
+{
+    int x { readNumber() };
+    int y { readNumber() };
+    writeAnswer(x + y);
+
+    return 0;
+}</code></pre>
+                                            <p>
+                                             <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_3'),this,'Show Solution','Hide Solution')">
+                                              Show Solution
+                                             </a>
+                                             <div class="wpsolution" id="cpp_solution_id_3" style="display:none">
+                                              <p>
+                                               The issue is the
+                                               <code>
+                                                char
+                                               </code>
+                                               data type on line 6. When we enter numeric value 8, it is not stored as the value
+                                               <code>
+                                                8
+                                               </code>
+                                               , it is stored as
+                                               <code>
+                                                56
+                                               </code>
+                                               instead. When we enter numeric value 4, it is not stored as the value
+                                               <code>
+                                                4
+                                               </code>
+                                               , it is stored as
+                                               <code>
+                                                52
+                                               </code>
+                                               instead. The
+                                               <code>
+                                                readNumber()
+                                               </code>
+                                               function thus returns
+                                               <code>
+                                                56
+                                               </code>
+                                               and
+                                               <code>
+                                                52
+                                               </code>
+                                               instead of
+                                               <code>
+                                                8
+                                               </code>
+                                               and
+                                               <code>
+                                                4
+                                               </code>
+                                               as expected.
+                                               <p>
+                                                The solution is to change the data type on line 6 from
+                                                <code>
+                                                 char
+                                                </code>
+                                                to
+                                                <code>
+                                                 int
+                                                </code>
+                                                .
+                                               </p>
+                                              </p>
+                                             </div>
+                                             <div class="cpp-note cpp-lightgraybackground">
+                                              <p class="cpp-note-title cpp-bottomline">
+                                               Author’s note
+                                               <p>
+                                                It’s hard to find good examples of simple programs that have non-obvious issues to debug, given the limited material covered so far. Any readers have any suggestions?
+                                               </p>
+                                              </p>
+                                             </div>
+                                            </p>
+                                           </p>
+                                          </p>
+                                         </p>
+                                        </p>
+                                       </p>
+                                      </p>
+                                     </p>
+                                    </p>
+                                   </p>
+                                  </p>
+                                 </p>
+                                </p>
+                               </p>
+                              </p>
+                             </p>
+                            </p>
+                           </p>
+                          </p>
+                         </p>
+                        </p>
+                       </p>
+                      </p>
+                     </p>
+                    </p>
+                   </p>
+                  </p>
+                 </p>
+                </p>
+               </p>
+              </p>
+             </p>
+            </p>
+           </p>
+          </p>
+         </p>
+        </p>
+       </p>
+      </p>
+     </p>
+    </p>
+   </p>
+  </p>
+ </div>
+</div>

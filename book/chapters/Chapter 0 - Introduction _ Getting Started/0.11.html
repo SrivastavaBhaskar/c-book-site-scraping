@@ -1,0 +1,415 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <h1 class="entry-title singular-title" itemprop="headline">
+   0.11 — Configuring your compiler: Warning and error levels
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   When you write your programs, the compiler will check to ensure you’ve followed the rules of the C++ language (assuming you’ve turned off compiler extensions, as per lesson
+   <a href="https://www.learncpp.com/cpp-tutorial/configuring-your-compiler-compiler-extensions/">
+    0.10 -- Configuring your compiler: Compiler extensions
+   </a>
+   ). If you have done something that definitively violates the rules of the language, then your program is
+   <strong>
+    ill-formed
+   </strong>
+   .
+   <p>
+    In most cases, when the compiler encounters some kind of issue, it will emit
+    <strong>
+     diagnostic message
+    </strong>
+    (often called a
+    <strong>
+     diagnostic
+    </strong>
+    for short). The C++ standard does not define how diagnostic messages should be categorized, worded, or how those issues should affect the compilation of the program. However, modern compilers have conventionally adopted the following:
+    <ul>
+     <li>
+      A
+      <strong>
+       diagnostic error
+      </strong>
+      means the compiler has decided to halt compilation, because it either cannot proceed or deems the error serious enough to stop.
+      <li>
+       A
+       <strong>
+        diagnostic warning
+       </strong>
+       means the compiler has decided not to halt compilation. In such cases, the issue is simply ignored, and compilation proceeds.
+      </li>
+     </li>
+    </ul>
+    <div class="cpp-note cpp-lightbluebackground">
+     <p class="cpp-note-title cpp-bottomline">
+      Key insight
+      <p>
+       In many cases, whether a compiler emits an error or a diagnostic is up to the compiler. One compiler may generate an error for the same issue that another compiler may generate a warning for.
+      </p>
+     </p>
+    </div>
+    <p>
+     To help you identify where the issue is, diagnostic messages typically contain both the filename and line number where the compiler found the issue, and some text about what was expected vs what was found. The actual issue may be on that line, or on a preceding line. Once you’ve addressed the issue causing the diagnostic, you can try compiling again to see if the associated diagnostic message is no longer generated.
+     <p>
+      In some cases, the compiler may identify code that does not violate the rules of the language, but that it believes could be incorrect. In such cases, the compiler may decide to emit a warning as a notice to the programmer that something seems amiss. Such issues can be resolved either by fixing the issue the warning is pointing out, or by rewriting the offending lines of code in such a way that the warning is no longer generated.
+      <div class="cpp-note cpp-lightgraybackground">
+       <p class="cpp-note-title cpp-bottomline">
+        For advanced readers
+        <p>
+         In rare cases, it may be necessary to explicitly tell the compiler to not generate a particular warning for the line of code in question. C++ does not support an official way to do this, but many individual compilers (including Visual Studio and GCC) offer solutions (via non-portable #pragma directives) to temporarily disable warnings.
+        </p>
+       </p>
+      </div>
+      <div class="cpp-note cpp-lightgreenbackground">
+       <p class="cpp-note-title cpp-bottomline">
+        Best practice
+        <p>
+         Don’t let warnings pile up. Resolve them as you encounter them (as if they were errors). Otherwise a warning about a serious issue may be lost amongst warnings about non-serious issues.
+        </p>
+       </p>
+      </div>
+      <p class="cpp-section cpp-topline" style="clear:both">
+       Increasing your warning levels
+       <p>
+        By default, most compilers will only generate warnings about the most obvious issues. However, you can request your compiler be more assertive about providing warnings, and it is generally a good idea to do so.
+        <div class="cpp-note cpp-lightgreenbackground">
+         <p class="cpp-note-title cpp-bottomline">
+          Best practice
+          <p>
+           Turn your warning levels up, especially while you are learning. The additional diagnostic information may help in identifying programming mistakes that can cause your program to malfunction.
+          </p>
+         </p>
+        </div>
+        <div class="cpp-note cpp-lightyellowbackground">
+         <p class="cpp-note-title cpp-bottomline">
+          For Visual Studio users
+          <p>
+           To increase your warning levels, right click on your project name in the
+           <em>
+            Solution Explorer
+           </em>
+           window, then choose
+           <em>
+            Properties
+           </em>
+           :
+           <div class="cpp-image-wrapper">
+            <img alt="Solution Explorer Properties" src="../../images/Solution Explorer Properties.png"/>
+           </div>
+           <p>
+            From the
+            <em>
+             Project
+            </em>
+            dialog, first make sure the
+            <em>
+             Configuration
+            </em>
+            field is set to
+            <em>
+             All Configurations
+            </em>
+            .
+            <p>
+             Then select
+             <em>
+              C/C++ &gt; General tab
+             </em>
+             and set
+             <em>
+              Warning level
+             </em>
+             to
+             <em>
+              Level4 (/W4)
+             </em>
+             :
+             <div class="cpp-image-wrapper">
+              <img alt="Enable Level 4 Warnings" src="../../images/Enable Level 4 Warnings.png"/>
+             </div>
+             <p>
+              Note: Do not choose
+              <em>
+               EnableAllWarnings (/Wall)
+              </em>
+              or you will be buried in warnings generated by the C++ standard library.
+              <p>
+               Visual Studio disables signed/unsigned conversion warnings by default, and those are useful, so if you are using Visual Studio 2019 or newer, let’s enable those:
+               <ul>
+                <li>
+                 From
+                 <em>
+                  C/C++ &gt; Command Line tab
+                 </em>
+                 , under
+                 <em>
+                  Additional Options
+                 </em>
+                 , add
+                 <code>
+                  /w44365
+                 </code>
+                 . This tells the compiler to enable signed/unsigned conversion warnings at warning level 4 (which you enabled above).
+                 <li>
+                  From
+                  <em>
+                   C/C++ &gt; External Includes tab
+                  </em>
+                  , set
+                  <em>
+                   External Header Warning Level
+                  </em>
+                  to
+                  <em>
+                   Level3 (/external:W3)
+                  </em>
+                  . This tells the compiler to compile standard library headers at warning level 3 (instead of 4) so that compiling those headers doesn’t trigger this warning.
+                 </li>
+                </li>
+               </ul>
+               <p>
+                The “External Includes” tab isn’t shown in the graphic above, but appears in VS Community 2019 or newer between the “Browse Information” and “Advanced” tabs. See
+                <a href="https://devblogs.microsoft.com/cppblog/customized-warning-levels-and-code-analysis-for-external-headers/">
+                 this link
+                </a>
+                , which contains a recent photo of the dialog containing the “External Includes” tab.
+                <p>
+                 If the above has been set correctly, compiling the following program should generate warning C4365:
+                 <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">void foo(int)
+{  
+}
+
+int main()
+{
+    unsigned int x { 5 };
+    foo(x);
+
+    return 0;
+}</code></pre>
+                 <p>
+                  If you do not see the warning, check both the
+                  <em>
+                   Output
+                  </em>
+                  and
+                  <em>
+                   Error List
+                  </em>
+                  tabs (if they exist).
+                 </p>
+                </p>
+               </p>
+              </p>
+             </p>
+            </p>
+           </p>
+          </p>
+         </p>
+        </div>
+        <div class="cpp-note cpp-lightyellowbackground">
+         <p class="cpp-note-title cpp-bottomline">
+          For Code::Blocks users
+          <p>
+           From
+           <em>
+            Settings menu &gt; Compiler &gt; Compiler settings tab
+           </em>
+           , find and check the options that correlate with
+           <em>
+            -Wall
+           </em>
+           ,
+           <em>
+            -Weffc++
+           </em>
+           , and
+           <em>
+            -Wextra
+           </em>
+           :
+           <div class="cpp-image-wrapper">
+            <img alt="Enable All Warnings" src="../../images/Enable All Warnings.png"/>
+           </div>
+           <p>
+            Then go to the
+            <em>
+             Other compiler options tab
+            </em>
+            , and add
+            <em>
+             -Wconversion -Wsign-conversion
+            </em>
+            to the following text edit area:
+            <div class="cpp-image-wrapper">
+             <img alt="Add -Wsign-conversion" src="../../images/Add -Wsign-conversion.png"/>
+            </div>
+            <p>
+             Note: The
+             <em>
+              -Werror
+             </em>
+             parameter is explained below.
+            </p>
+           </p>
+          </p>
+         </p>
+        </div>
+        <div class="cpp-note cpp-lightyellowbackground">
+         <p class="cpp-note-title cpp-bottomline">
+          For gcc users
+          <p>
+           Add the following flags to your command line:
+           <em>
+            -Wall -Weffc++ -Wextra -Wconversion -Wsign-conversion
+           </em>
+          </p>
+         </p>
+        </div>
+        <div class="cpp-note cpp-lightyellowbackground">
+         <p class="cpp-note-title cpp-bottomline">
+          For VS Code users
+          <p>
+           Open the tasks.json file, find “args”, and then locate the line
+           <em>
+            “${file}”
+           </em>
+           within that section.
+           <p>
+            Above the
+            <em>
+             “${file}”
+            </em>
+            line, add new lines containing the following commands (one per line):
+            <pre>"-Wall",
+"-Weffc++",
+"-Wextra",
+"-Wconversion",
+"-Wsign-conversion",
+</pre>
+           </p>
+          </p>
+         </p>
+        </div>
+        <p class="cpp-section cpp-topline" style="clear:both">
+         Treat warnings as errors
+         <p>
+          It is also possible to tell your compiler to treat all warnings as if they were errors (in which case, the compiler will halt compilation if it finds any warnings). This is a good way to enforce the recommendation that you should fix all warnings (if you lack self-discipline, which most of us do).
+          <div class="cpp-note cpp-lightgreenbackground">
+           <p class="cpp-note-title cpp-bottomline">
+            Best practice
+            <p>
+             Enable “Treat warnings as errors”. This will force you to resolve all issues causing warnings.
+            </p>
+           </p>
+          </div>
+          <div class="cpp-note cpp-lightyellowbackground">
+           <p class="cpp-note-title cpp-bottomline">
+            For Visual Studio users
+            <p>
+             To treat warnings as errors, right click on your project name in the
+             <em>
+              Solution Explorer
+             </em>
+             window, then choose
+             <em>
+              Properties
+             </em>
+             :
+             <div class="cpp-image-wrapper">
+              <img alt="Solution Explorer Properties" src="../../images/Solution Explorer Properties.png"/>
+             </div>
+             <p>
+              From the
+              <em>
+               Project
+              </em>
+              dialog, first make sure the
+              <em>
+               Configuration
+              </em>
+              field is set to
+              <em>
+               All Configurations
+              </em>
+              .
+              <p>
+               Then select
+               <em>
+                C/C++ &gt; General tab
+               </em>
+               and set
+               <em>
+                Treat Warnings As Errors
+               </em>
+               to
+               <em>
+                Yes (/WX)
+               </em>
+               .
+               <div class="cpp-image-wrapper">
+                <img alt="Treat warnings as errors" src="../../images/Treat warnings as errors.png"/>
+               </div>
+              </p>
+             </p>
+            </p>
+           </p>
+          </div>
+          <div class="cpp-note cpp-lightyellowbackground">
+           <p class="cpp-note-title cpp-bottomline">
+            For Code::Blocks users
+            <p>
+             From
+             <em>
+              Settings menu &gt; Compiler &gt; Other compiler options tab
+             </em>
+             , add
+             <em>
+              -Werror
+             </em>
+             to the text edit area:
+             <div class="cpp-image-wrapper">
+              <img alt="Add -Werror" src="../../images/Add -Werror.png"/>
+             </div>
+            </p>
+           </p>
+          </div>
+          <div class="cpp-note cpp-lightyellowbackground">
+           <p class="cpp-note-title cpp-bottomline">
+            For gcc users
+            <p>
+             Add the following flag to your command line:
+             <em>
+              -Werror
+             </em>
+            </p>
+           </p>
+          </div>
+          <div class="cpp-note cpp-lightyellowbackground">
+           <p class="cpp-note-title cpp-bottomline">
+            For VS Code users
+            <p>
+             In the
+             <code>
+              tasks.json
+             </code>
+             file, add the following flags before “${file}”, one per line:
+             <pre>"-Werror",
+</pre>
+            </p>
+           </p>
+          </div>
+         </p>
+        </p>
+       </p>
+      </p>
+     </p>
+    </p>
+   </p>
+  </p>
+ </div>
+</div>

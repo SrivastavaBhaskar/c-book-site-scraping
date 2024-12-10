@@ -1,0 +1,283 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <h1 class="entry-title singular-title" itemprop="headline">
+   7.5 — Variable shadowing (name hiding)
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p>
+   Each block defines its own scope region. So what happens when we have a variable inside a nested block that has the same name as a variable in an outer block? When this happens, the nested variable “hides” the outer variable in areas where they are both in scope. This is called
+   <strong>
+    name hiding
+   </strong>
+   or
+   <strong>
+    shadowing
+   </strong>
+   .
+   <p class="cpp-section cpp-topline" style="clear:both">
+    Shadowing of local variables
+    <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int main()
+{ // outer block
+    int apples { 5 }; // here's the outer block apples
+
+    { // nested block
+        // apples refers to outer block apples here
+        std::cout &lt;&lt; apples &lt;&lt; '\n'; // print value of outer block apples
+
+        int apples{ 0 }; // define apples in the scope of the nested block
+
+        // apples now refers to the nested block apples
+        // the outer block apples is temporarily hidden
+
+        apples = 10; // this assigns value 10 to nested block apples, not outer block apples
+
+        std::cout &lt;&lt; apples &lt;&lt; '\n'; // print value of nested block apples
+    } // nested block apples destroyed
+
+
+    std::cout &lt;&lt; apples &lt;&lt; '\n'; // prints value of outer block apples
+
+    return 0;
+} // outer block apples destroyed</code></pre>
+    <p>
+     If you run this program, it prints:
+     <pre>5
+10
+5
+</pre>
+     <p>
+      In the above program, we first declare a variable named
+      <code>
+       apples
+      </code>
+      in the outer block. This variable is visible within the inner block, which we can see by printing its value (
+      <code>
+       5
+      </code>
+      ). Then we declare a different variable (also named
+      <code>
+       apples
+      </code>
+      ) in the nested block. From this point to the end of the block, the name
+      <code>
+       apples
+      </code>
+      refers to the nested block
+      <code>
+       apples
+      </code>
+      , not the outer block
+      <code>
+       apples
+      </code>
+      .
+      <p>
+       Thus, when we assign value
+       <code>
+        10
+       </code>
+       to
+       <code>
+        apples
+       </code>
+       , we’re assigning it to the nested block
+       <code>
+        apples
+       </code>
+       . After printing this value (
+       <code>
+        10
+       </code>
+       ), the nested block ends and nested block
+       <code>
+        apples
+       </code>
+       is destroyed. The existence and value of outer block
+       <code>
+        apples
+       </code>
+       is not affected, and we prove this by printing the value of outer block
+       <code>
+        apples
+       </code>
+       (
+       <code>
+        5
+       </code>
+       ).
+       <p>
+        Note that if the nested block
+        <code>
+         apples
+        </code>
+        had not been defined, the name
+        <code>
+         apples
+        </code>
+        in the nested block would still refer to the outer block
+        <code>
+         apples
+        </code>
+        , so the assignment of value
+        <code>
+         10
+        </code>
+        to
+        <code>
+         apples
+        </code>
+        would have applied to the outer block
+        <code>
+         apples
+        </code>
+        :
+        <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+
+int main()
+{ // outer block
+    int apples{5}; // here's the outer block apples
+
+    { // nested block
+        // apples refers to outer block apples here
+        std::cout &lt;&lt; apples &lt;&lt; '\n'; // print value of outer block apples
+
+        // no inner block apples defined in this example
+
+        apples = 10; // this applies to outer block apples
+
+        std::cout &lt;&lt; apples &lt;&lt; '\n'; // print value of outer block apples
+    } // outer block apples retains its value even after we leave the nested block
+
+    std::cout &lt;&lt; apples &lt;&lt; '\n'; // prints value of outer block apples
+
+    return 0;
+} // outer block apples destroyed</code></pre>
+        <p>
+         The above program prints:
+         <pre>5
+10
+10
+</pre>
+         <p>
+          When inside the nested block, there’s no way to directly access the shadowed variable from the outer block.
+          <p class="cpp-section cpp-topline" style="clear:both">
+           Shadowing of global variables
+           <p>
+            Similar to how variables in a nested block can shadow variables in an outer block, local variables with the same name as a global variable will shadow the global variable wherever the local variable is in scope:
+            <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+int value { 5 }; // global variable
+
+void foo()
+{
+    std::cout &lt;&lt; "global variable value: " &lt;&lt; value &lt;&lt; '\n'; // value is not shadowed here, so this refers to the global value
+}
+
+int main()
+{
+    int value { 7 }; // hides the global variable value (wherever local variable value is in scope)
+
+    ++value; // increments local value, not global value
+
+    std::cout &lt;&lt; "local variable value: " &lt;&lt; value &lt;&lt; '\n';
+
+    foo();
+
+    return 0;
+} // local value is destroyed</code></pre>
+            <p>
+             This code prints:
+             <pre>local variable value: 8
+global variable value: 5
+</pre>
+             <p>
+              However, because global variables are part of the global namespace, we can use the scope operator (::) with no prefix to tell the compiler we mean the global variable instead of the local variable.
+              <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+int value { 5 }; // global variable
+
+int main()
+{
+    int value { 7 }; // hides the global variable value
+    ++value; // increments local value, not global value
+
+    --(::value); // decrements global value, not local value (parenthesis added for readability)
+
+    std::cout &lt;&lt; "local variable value: " &lt;&lt; value &lt;&lt; '\n';
+    std::cout &lt;&lt; "global variable value: " &lt;&lt; ::value &lt;&lt; '\n';
+
+    return 0;
+} // local value is destroyed</code></pre>
+              <p>
+               This code prints:
+               <pre>local variable value: 8
+global variable value: 4
+</pre>
+               <p class="cpp-section cpp-topline" style="clear:both">
+                Avoid variable shadowing
+                <p>
+                 Shadowing of local variables should generally be avoided, as it can lead to inadvertent errors where the wrong variable is used or modified. Some compilers will issue a warning when a variable is shadowed.
+                 <p>
+                  For the same reason that we recommend avoiding shadowing local variables, we recommend avoiding shadowing global variables as well. This is trivially avoidable if all of your global names use a “g_” prefix.
+                  <div class="cpp-note cpp-lightgreenbackground">
+                   <p class="cpp-note-title cpp-bottomline">
+                    Best practice
+                    <p>
+                     Avoid variable shadowing.
+                    </p>
+                   </p>
+                  </div>
+                  <div class="cpp-note cpp-lightyellowbackground">
+                   <p class="cpp-note-title cpp-bottomline">
+                    For gcc users
+                    <p>
+                     GCC and Clang support the flag
+                     <code>
+                      -Wshadow
+                     </code>
+                     that will generate warnings if a variable is shadowed. There are several subvariants of this flag (
+                     <code>
+                      -Wshadow=global
+                     </code>
+                     ,
+                     <code>
+                      -Wshadow=local
+                     </code>
+                     , and
+                     <code>
+                      -Wshadow=compatible-local
+                     </code>
+                     . Consult the
+                     <a href="https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html">
+                      GCC documentation
+                     </a>
+                     for an explanation of the differences.
+                     <p>
+                      Visual Studio has such warnings enabled by default.
+                     </p>
+                    </p>
+                   </p>
+                  </div>
+                 </p>
+                </p>
+               </p>
+              </p>
+             </p>
+            </p>
+           </p>
+          </p>
+         </p>
+        </p>
+       </p>
+      </p>
+     </p>
+    </p>
+   </p>
+  </p>
+ </div>
+</div>

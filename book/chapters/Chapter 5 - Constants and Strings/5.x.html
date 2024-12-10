@@ -1,0 +1,490 @@
+<div class="article-inner">
+ <header>
+  <div class="entry-meta beforetitle-meta">
+  </div>
+  <!-- .entry-meta -->
+  <h1 class="entry-title singular-title" itemprop="headline">
+   5.x — Chapter 5 summary and quiz
+  </h1>
+  <div class="entry-meta aftertitle-meta">
+  </div>
+  <!-- .entry-meta -->
+ </header>
+ <div class="entry-content" itemprop="articleBody">
+  <p class="cpp-section">
+   Chapter Review
+  </p>
+  <p>
+   A
+   <strong>
+    constant
+   </strong>
+   is a value that may not be changed during the program’s execution.  C++ supports two types of constants: named constants, and literals.
+  </p>
+  <p>
+   A
+   <strong>
+    named constant
+   </strong>
+   is a constant value that is associated with an identifier.  A
+   <strong>
+    Literal constant
+   </strong>
+   is a constant value not associated with an identifier.
+  </p>
+  <p>
+   A variable whose value can not be changed is called a
+   <strong>
+    constant variable
+   </strong>
+   .  The
+   <strong>
+    const
+   </strong>
+   keyword can be used to make a variable constant.  Constant variables must be initialized.  Avoid using
+   <code>
+    const
+   </code>
+   when passing by value or returning by value.
+  </p>
+  <p>
+   A
+   <strong>
+    type qualifier
+   </strong>
+   is a keyword that is applied to a type that modifies how that type behaves.  As of C++23, C++ only supports
+   <code>
+    const
+   </code>
+   and
+   <code>
+    volatile
+   </code>
+   as type qualifiers.
+  </p>
+  <p>
+   A
+   <strong>
+    constant expression
+   </strong>
+   is an expression that can be evaluated at compile-time.  An expression that is not a constant expression is sometimes called a
+   <strong>
+    runtime expression
+   </strong>
+   .
+  </p>
+  <p>
+   A
+   <strong>
+    compile-time constant
+   </strong>
+   is a constant whose value is known at compile-time.  A
+   <strong>
+    runtime constant
+   </strong>
+   is a constant whose initialization value isn’t known until runtime.
+  </p>
+  <p>
+   A
+   <strong>
+    constexpr
+   </strong>
+   variable must be a compile-time constant, and initialized with a constant expression.  Function parameters cannot be constexpr.
+  </p>
+  <p>
+   <strong>
+    Literals
+   </strong>
+   are values inserted directly into the code.  Literals have types, and literal suffixes can be used to change the type of a literal from the default type.
+  </p>
+  <p>
+   A
+   <strong>
+    magic number
+   </strong>
+   is a literal (usually a number) that either has an unclear meaning or may need to be changed later.  Don’t use magic numbers in your code.  Instead, use symbolic constants.
+  </p>
+  <p>
+   In everyday life, we count using
+   <strong>
+    decimal
+   </strong>
+   numbers, which have 10 digits.  Computers use
+   <strong>
+    binary
+   </strong>
+   , which only has 2 digits.  C++ also supports
+   <strong>
+    octal
+   </strong>
+   (base 8) and
+   <strong>
+    hexadecimal
+   </strong>
+   (base 16).  These are all examples of
+   <strong>
+    numeral systems
+   </strong>
+   , which are collections of symbols (digits) used to represent numbers.
+  </p>
+  <p>
+   A
+   <strong>
+    string
+   </strong>
+   is a collection of sequential characters that is used to represent text (such as names, words, and sentences).  String literals are always placed between double quotes.  String literals in C++ are C-style strings, which have a strange type that is hard to work with.
+  </p>
+  <p>
+   <strong>
+    std::string
+   </strong>
+   offers an easy and safe way to deal with text strings.  std::string lives in the &lt;string&gt; header.
+   <code>
+    std::string
+   </code>
+   is expensive to initialize (or assign to) and copy.
+  </p>
+  <p>
+   <strong>
+    std::string_view
+   </strong>
+   provides read-only access to an existing string (a C-style string literal, a std::string, or a char array) without making a copy.  A
+   <code>
+    std::string_view
+   </code>
+   that is viewing a string that has been destroyed is sometimes called a
+   <strong>
+    dangling
+   </strong>
+   view.  When a
+   <code>
+    std::string
+   </code>
+   is modified, all views into that
+   <code>
+    std::string
+   </code>
+   are
+   <strong>
+    invalidated
+   </strong>
+   , meaning those views are now invalid.  Using an invalidated view (other than to revalidate it) will produce undefined behavior.
+  </p>
+  <p>
+   Because C-style string literals exist for the entire program, it is okay to set a
+   <code>
+    std::string_view
+   </code>
+   to a C-style string literal, and even return such a
+   <code>
+    std::string_view
+   </code>
+   from a function.
+  </p>
+  <p>
+   A
+   <strong>
+    substring
+   </strong>
+   is a contiguous sequence of characters within an existing string.
+  </p>
+  <p class="cpp-section cpp-topline" style="clear: both">
+   Quiz time
+  </p>
+  <p class="cpp-quiz-question" style="clear: both">
+   Question #1
+  </p>
+  <p>
+   Why are named constants often a better choice than literal constants?
+  </p>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_0'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_0" style="display:none">
+   <p>
+    Using literal constants (a.k.a. magic numbers) in your program makes your program harder to understand and harder to modify.  Symbolic constants help document what the numbers actually represent, and changing a symbolic constant at its declaration changes the value everywhere it is used.
+   </p>
+  </div>
+  <p>
+   Why are const/constexpr variables usually a better choice than #defined symbolic constants?
+  </p>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_1'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_1" style="display:none">
+   <p>
+    #define constants do not show up in the debugger and are more likely to have naming conflicts.
+   </p>
+  </div>
+  <p class="cpp-quiz-question cpp-topline" style="clear: both">
+   Question #2
+  </p>
+  <p>
+   Find 3 issues in the following code:
+  </p>
+  <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;cstdint&gt; // for std::uint8_t
+#include &lt;iostream&gt;
+
+int main()
+{
+  std::cout &lt;&lt; "How old are you?\n";
+
+  std::uint8_t age{};
+  std::cin &gt;&gt; age;
+
+  std::cout &lt;&lt; "Allowed to drive a car in Texas: ";
+
+  if (age &gt;= 16)
+      std::cout &lt;&lt; "Yes";
+  else
+      std::cout &lt;&lt; "No";
+
+  std::cout &lt;&lt; '.\n';
+
+  return 0;
+}</code></pre>
+  <p>
+   Sample desired output:
+  </p>
+  <pre>How old are you?
+6
+Allowed to drive a car in Texas: No
+</pre>
+  <pre>How old are you?
+19
+Allowed to drive a car in Texas: Yes
+</pre>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_2'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_2" style="display:none">
+   <ol start="1">
+    <li>
+     On line 8,
+     <code>
+      age
+     </code>
+     is defined as a
+     <code>
+      std::uint8_t
+     </code>
+     .  Because
+     <code>
+      std::uint8_t
+     </code>
+     is typically defined as a char type, using it here will cause the program to behave as if we’re inputting and outputting a char value rather than a numeric value.  For example, if the user entered their age as “18”, only the character
+     <code>
+      '1'
+     </code>
+     would be extracted.  Because
+     <code>
+      1
+     </code>
+     has ASCII value
+     <code>
+      49
+     </code>
+     , the user would be treated as if they were 49 years old.  A regular
+     <code>
+      int
+     </code>
+     should be used to store the age, as the age doesn’t require a specific minimum integer width.  We can also remove
+     <code>
+      #include &lt;cstdint&gt;
+     </code>
+     .
+    </li>
+    <li>
+     On line 13, we use the magic number
+     <code>
+      16
+     </code>
+     .  Although the meaning of
+     <code>
+      16
+     </code>
+     is clear from the context it is used in, using a
+     <code>
+      constexpr
+     </code>
+     variable with the value
+     <code>
+      16
+     </code>
+     should be preferred instead.
+    </li>
+    <li>
+     On line 18,
+     <code>
+      '.\n'
+     </code>
+     is a multicharacter literal that will print the wrong value.  It should be double-quoted (
+     <code>
+      ".\n"
+     </code>
+     ).
+    </li>
+   </ol>
+  </div>
+  <p class="cpp-quiz-question cpp-topline" style="clear: both">
+   Question #3
+  </p>
+  <p>
+   What are the primary differences between
+   <code>
+    std::string
+   </code>
+   and
+   <code>
+    std::string_view
+   </code>
+   ?
+  </p>
+  <p>
+   What can go wrong when using a
+   <code>
+    std::string_view
+   </code>
+   ?
+  </p>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_3'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_3" style="display:none">
+   <p>
+    <code>
+     std::string
+    </code>
+    provides a modifiable string.  It is expensive to initialize and copy.
+   </p>
+   <p>
+    <code>
+     std::string_view
+    </code>
+    provide a read-only view of a string that exists elsewhere.  It is inexpensive to initialize and copy.
+    <code>
+     std::string_view
+    </code>
+    can be dangerous when the string being viewed is destroyed before the
+    <code>
+     std::string_view
+    </code>
+    that is viewing it.
+   </p>
+  </div>
+  <p class="cpp-quiz-question cpp-topline" style="clear: both">
+   Question #4
+  </p>
+  <p>
+   Write a program that asks for the name and age of two people, then prints which person is older.
+  </p>
+  <p>
+   Here is the sample output from one run of the program:
+  </p>
+  <pre>Enter the name of person #1: John Bacon
+Enter the age of John Bacon: 37
+Enter the name of person #2: David Jenkins
+Enter the age of David Jenkins: 44
+David Jenkins (age 44) is older than John Bacon (age 37).
+</pre>
+  <p>
+   <a class="hint_link_show" href="javascript:void(0)" onclick="cppHintToggle(document.getElementById('cpp_hint_id_0'), this, 'Show Hint', '')">
+    Show Hint
+   </a>
+  </p>
+  <div class="wphint" id="cpp_hint_id_0" style="display:none; margin-bottom: 1em">
+   Hint: Input the person’s name using
+   <code>
+    std::getline()
+   </code>
+  </div>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_4'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_4" style="display:none">
+   <pre class="language-cpp line-numbers"><code class="language-cpp match-braces">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;string_view&gt;
+
+std::string getName(int num)
+{
+    std::cout &lt;&lt; "Enter the name of person #" &lt;&lt; num &lt;&lt; ": ";
+    std::string name{};
+    std::getline(std::cin &gt;&gt; std::ws, name); // read a full line of text into name
+
+    return name;
+}
+
+int getAge(std::string_view sv)
+{
+    std::cout &lt;&lt; "Enter the age of " &lt;&lt; sv &lt;&lt; ": ";
+    int age{};
+    std::cin &gt;&gt; age;
+
+    return age;
+}
+
+void printOlder(std::string_view name1, int age1, std::string_view name2, int age2)
+{
+    if (age1 &gt; age2)
+        std::cout &lt;&lt; name1 &lt;&lt; " (age " &lt;&lt; age1 &lt;&lt;") is older than " &lt;&lt; name2 &lt;&lt; " (age " &lt;&lt; age2 &lt;&lt;").\n";
+    else
+        std::cout &lt;&lt; name2 &lt;&lt; " (age " &lt;&lt; age2 &lt;&lt;") is older than " &lt;&lt; name1 &lt;&lt; " (age " &lt;&lt; age1 &lt;&lt;").\n";
+}
+
+int main()
+{
+    const std::string name1{ getName(1) };
+    const int age1 { getAge(name1) };
+    
+    const std::string name2{ getName(2) };
+    const int age2 { getAge(name2) };
+
+    printOlder(name1, age1, name2, age2);
+
+    return 0;
+}</code></pre>
+  </div>
+  <p class="cpp-quiz-question cpp-topline" style="clear: both">
+   Question #5
+  </p>
+  <p>
+   In the solution to the above quiz, why can’t variable
+   <code>
+    age1
+   </code>
+   in
+   <code>
+    main
+   </code>
+   be constexpr?
+  </p>
+  <p>
+   <a class="solution_link_show" href="javascript:void(0)" onclick="cppSolutionToggle(document.getElementById('cpp_solution_id_5'), this, 'Show Solution', 'Hide Solution')">
+    Show Solution
+   </a>
+  </p>
+  <div class="wpsolution" id="cpp_solution_id_5" style="display:none">
+   <p>
+    A constexpr variable requires a constant expression initializer, and the call to
+    <code>
+     getAge()
+    </code>
+    isn’t allowed in a constant expression.  Therefore, we can only make the variable const.
+   </p>
+  </div>
+  <!-- AI CONTENT END 1 -->
+ </div>
+ <!-- .entry-content -->
+ <!-- .entry-utility -->
+</div>
